@@ -225,7 +225,6 @@ INTERESTING WEBPAGES ABOUT MAME
 
 - http://www.mame.net/
 - http://www.mameworld.net/
-- http://www.marcianitos.org/
 
 
 SKINS
