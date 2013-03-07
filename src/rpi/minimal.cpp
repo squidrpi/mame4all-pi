@@ -102,6 +102,51 @@ static void keyprocess(Uint32 *st, SDLKey key, SDL_bool pressed)
 		(st[njoy]) ^= val;
 }
 
+static void joyprocess(Uint32 *st, Uint8 button, SDL_bool pressed)
+{
+    Uint32 val=0, njoy=0;
+    switch(button)
+    {
+        case 0:
+            val=GP2X_LCTRL; break;
+        case 1:
+            val=GP2X_LALT; break;
+        case 2:
+            val=GP2X_SPACE; break;
+        case 3:
+            val=GP2X_LSHIFT; break;
+        case 4:
+            val=GP2X_ESCAPE; break;
+        case 5:
+            val=GP2X_RETURN; break;
+        case 6:
+            val=GP2X_TAB; break;
+        case 7:
+            val=GP2X_TILDE; break;
+        case 8:
+            val=GP2X_P; break;
+        case 9:
+            val=GP2X_1; break;
+        case 10:
+            val=GP2X_5; break;
+        case 129:
+            val=GP2X_DOWN; break;
+        case 130:
+            val=GP2X_LEFT; break;
+        case 131:
+            val=GP2X_UP; break;
+        case 132:
+            val=GP2X_RIGHT; break;
+        default:
+            return;
+    }
+    if (pressed)
+        (st[njoy]) |= val;
+    else
+        (st[njoy]) ^= val;
+}
+
+
 Uint32 _st_[4]={0,0,0,0};
 
 void gp2x_joystick_clear(void)
@@ -130,6 +175,66 @@ unsigned long gp2x_joystick_read(int n)
 			case SDL_KEYUP:
 				keyprocess((Uint32 *)&_st_,event.key.keysym.sym,SDL_FALSE);
 				break;
+            case SDL_JOYBUTTONDOWN:
+                joyprocess((Uint32 *)&_st_,event.jbutton.button,SDL_TRUE);
+                break;
+            case SDL_JOYBUTTONUP:
+                joyprocess((Uint32 *)&_st_,event.jbutton.button,SDL_FALSE);
+                break;
+            case SDL_JOYAXISMOTION:
+                if (event.jaxis.axis==0)
+                {
+                    static int reset_xl=0;
+                    static int reset_xr=0;
+                    if (event.jaxis.value<-6000)
+                    {
+                        if (!reset_xl){
+                            joyprocess((Uint32 *)&_st_,130,SDL_TRUE);}
+                        reset_xl=1;
+                    }
+                    else if (event.jaxis.value>6000)
+                    {
+                        if (!reset_xr){
+                            joyprocess((Uint32 *)&_st_,132,SDL_TRUE);}
+                        reset_xr=1;
+                    }
+                    else
+                    {
+                        if (reset_xr)
+                            joyprocess((Uint32 *)&_st_,132,SDL_FALSE);
+                        reset_xr=0;
+                        if (reset_xl)
+                            joyprocess((Uint32 *)&_st_,130,SDL_FALSE);
+                        reset_xl=0;
+                    }
+                }
+                else if (event.jaxis.axis==1)
+                {
+                    static int reset_yu=0;
+                    static int reset_yd=0;
+                    if (event.jaxis.value<-6000)
+                    {
+                        if (!reset_yu){
+                            joyprocess((Uint32 *)&_st_,131,SDL_TRUE);}
+                        reset_yu=1;
+                    }
+                    else if (event.jaxis.value>6000)
+                    {
+                        if (!reset_yd) {
+                            joyprocess((Uint32 *)&_st_,129,SDL_TRUE);}
+                        reset_yd=1;
+                    }
+                    else
+                    {
+                        if (reset_yd)
+                            joyprocess((Uint32 *)&_st_,129,SDL_FALSE);
+                        reset_yd=0;
+                        if (reset_yu)
+                            joyprocess((Uint32 *)&_st_,131,SDL_FALSE);
+                        reset_yu=0;
+                    }
+                }
+                break;
 		}
 	  }
 	return _st_[n];
