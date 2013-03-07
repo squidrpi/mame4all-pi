@@ -391,8 +391,8 @@ void parse_cmdline (int argc, char **argv, int game_index)
 	}
 
 	/* Underclock settings */
-	underclock_sound = get_int ("config", "uclocks",   NULL, 20);
-	underclock_cpu   = get_int ("config", "uclock",    NULL, 20);
+	underclock_sound = get_int ("config", "uclocks",   NULL, 0);
+	underclock_cpu   = get_int ("config", "uclock",    NULL, 10);
 
 	/* Fast sound setting */
 	fast_sound       = get_bool("config", "fastsound", NULL, 0);
