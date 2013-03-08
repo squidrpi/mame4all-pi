@@ -14,7 +14,7 @@ CPUDEFS += -DUSE_VCHIQ_ARM -DSTANDALONE -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_
 #CPUOBJS += $(OBJ)/cpu/nec_armnec/armV30.o $(OBJ)/cpu/nec_armnec/armV33.o $(OBJ)/cpu/nec_armnec/armnecintrf.o
 
 OSOBJS = $(OBJ)/rpi/minimal.o \
-	$(OBJ)/rpi/gp2x.o $(OBJ)/rpi/video.o $(OBJ)/rpi/blit.o \
+	$(OBJ)/rpi/rpi.o $(OBJ)/rpi/video.o $(OBJ)/rpi/blit.o \
 	$(OBJ)/rpi/sound.o $(OBJ)/rpi/input.o $(OBJ)/rpi/fileio.o \
 	$(OBJ)/rpi/usbjoy.o $(OBJ)/rpi/usbjoy_mame.o \
 	$(OBJ)/rpi/config.o $(OBJ)/rpi/fronthlp.o \
