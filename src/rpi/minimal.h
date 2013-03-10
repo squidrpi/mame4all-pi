@@ -43,12 +43,13 @@
 #define gp2x_video_getg15(C) (((C)>>3)&0xF8)
 #define gp2x_video_getb15(C) (((C)<<3)&0xF8)
 
-enum  { GP2X_UP=0x1,       GP2X_LEFT=0x4,       GP2X_DOWN=0x10,  GP2X_RIGHT=0x40,
-        GP2X_1=1<<8,   GP2X_5=1<<9,    GP2X_TAB=1<<10,    GP2X_RETURN=1<<11,
-        GP2X_T=1<<12,      GP2X_LCTRL=1<<13,        GP2X_LALT=1<<14,    GP2X_SPACE=1<<15,
-        GP2X_F10=1<<16,    GP2X_LSHIFT=1<<17,	GP2X_2=1<<18, 	 GP2X_6=1<<19,
-		GP2X_F3=1<<20,	   GP2X_F5=1<<21,  GP2X_F4=1<<22,
-        GP2X_F11=1<<23, GP2X_ESCAPE=1<<24, GP2X_TILDE=1<<25, GP2X_9=1<<26, GP2X_P=1<<27 };
+enum  { GP2X_UP=1<<0,       GP2X_LEFT=1<<1,       GP2X_DOWN=1<<2,  GP2X_RIGHT=1<<3,
+        GP2X_LCTRL=1<<4,        GP2X_LALT=1<<5,    GP2X_SPACE=1<<6, GP2X_LSHIFT=1<<7,
+		GP2X_RETURN=1<<8,	GP2X_TAB=1<<9, GP2X_ESCAPE=1<<10,	GP2X_TILDE=1<<11,
+        GP2X_1=1<<12,	GP2X_5=1<<13,    GP2X_2=1<<14,    GP2X_6=1<<15,
+		GP2X_T=1<<16,	GP2X_O=1<<17, 	GP2X_K=1<<18,
+		GP2X_F3=1<<19,	   GP2X_F5=1<<20,  GP2X_F10=1<<21, GP2X_F11=1<<22,
+        GP2X_9=1<<23, GP2X_P=1<<24 };
                                             
 extern volatile unsigned short 	gp2x_palette[512];
 extern unsigned char 		*gp2x_screen8;

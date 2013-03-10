@@ -141,9 +141,6 @@ static void updatekeyboard(void)
 		key[i]=0;
 	}	
 
-	//key[KEY_O]=ExKey1 & GP2X_LEFT;
-	//key[KEY_K]=ExKey1 & GP2X_RIGHT;
-
 	key[KEY_1]= (ExKey1 & GP2X_1);
 	key[KEY_2]= (ExKey1 & GP2X_2);
 	key[KEY_5]= (ExKey1 & GP2X_5);
@@ -152,11 +149,12 @@ static void updatekeyboard(void)
 
     key[KEY_TAB]= (ExKey1 & GP2X_TAB);
 	key[KEY_ENTER]= (ExKey1 & GP2X_RETURN);
+	key[KEY_K]= (ExKey1 & GP2X_K);
+	key[KEY_O]= (ExKey1 & GP2X_O);
 	key[KEY_P]= (ExKey1 & GP2X_P);
 	key[KEY_T]= (ExKey1 & GP2X_T);
     key[KEY_ESC]= (ExKey1 & GP2X_ESCAPE);
     key[KEY_F3]= (ExKey1 & GP2X_F3);
-    key[KEY_F4]= (ExKey1 & GP2X_F4);
     key[KEY_F5]= (ExKey1 & GP2X_F5);
     key[KEY_F10]= (ExKey1 & GP2X_F10);
     key[KEY_F11]= (ExKey1 & GP2X_F11);
