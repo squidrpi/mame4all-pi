@@ -41,71 +41,6 @@ void gp2x_video_setpalette(void)
 
 extern void keyprocess(SDLKey inkey, SDL_bool pressed);
 
-//sq static void keyprocess(SDLKey key, SDL_bool pressed)
-//sq {
-//sq 	Uint32 val=0, njoy=0;
-//sq 
-//sq 	switch(key)
-//sq 	{
-//sq 		case SDLK_1:
-//sq 			val=GP2X_1; njoy=0; break;
-//sq 		case SDLK_2:
-//sq 			val=GP2X_2; njoy=0; break;
-//sq 		case SDLK_LCTRL:
-//sq 			val=GP2X_LCTRL; njoy=0; break;
-//sq 		case SDLK_LALT:
-//sq 			val=GP2X_LALT; njoy=0; break;
-//sq 		case SDLK_SPACE:
-//sq 			val=GP2X_SPACE; njoy=0; break;
-//sq 		case SDLK_LSHIFT:
-//sq 			val=GP2X_LSHIFT; njoy=0; break;
-//sq 		case SDLK_LEFT:
-//sq 			val=GP2X_LEFT; njoy=0; break;
-//sq 		case SDLK_RIGHT:
-//sq 			val=GP2X_RIGHT; njoy=0; break;
-//sq 		case SDLK_UP:
-//sq 			val=GP2X_UP; njoy=0; break;
-//sq 		case SDLK_DOWN:
-//sq 			val=GP2X_DOWN; njoy=0; break;
-//sq 		case SDLK_TAB:
-//sq 			val=GP2X_TAB; njoy=0; break;
-//sq 		case SDLK_RETURN:
-//sq 			val=GP2X_RETURN; njoy=0; break;
-//sq 		case SDLK_5:
-//sq 			val=GP2X_5; njoy=0; break;
-//sq 		case SDLK_6:
-//sq 			val=GP2X_6; njoy=0; break;
-//sq 		case SDLK_9:
-//sq 			val=GP2X_9; njoy=0; break;
-//sq 		case SDLK_ESCAPE:
-//sq 			val=GP2X_ESCAPE; njoy=0; break;
-//sq 		case SDLK_p:
-//sq 			val=GP2X_P; njoy=0; break;
-//sq 		case SDLK_o:
-//sq 			val=GP2X_O; njoy=0; break;
-//sq 		case SDLK_k:
-//sq 			val=GP2X_K; njoy=0; break;
-//sq 		case SDLK_F3:
-//sq 			val=GP2X_F3; njoy=0; break;
-//sq 		case SDLK_F5:
-//sq 			val=GP2X_F5; njoy=0; break;
-//sq 		case SDLK_F10:
-//sq 			val=GP2X_F10; njoy=0; break;
-//sq 		case SDLK_F11:
-//sq 			val=GP2X_F11; njoy=0; break;
-//sq 		case SDLK_t:
-//sq 			val=GP2X_T; njoy=0; break;
-//sq 		case SDLK_BACKQUOTE:
-//sq 			val=GP2X_TILDE; njoy=0; break;
-//sq         default:
-//sq 			return;
-//sq 	}
-//sq 	if (pressed)
-//sq 		(st[4]) |= val;
-//sq 	else
-//sq 		(st[4]) ^= val;
-//sq }
-
 extern unsigned long ExKey1;
 extern unsigned long ExKey2;
 extern unsigned long ExKey3;
@@ -192,14 +127,10 @@ void gp2x_joystick_clear(void)
     
 }
 
-unsigned long gp2x_joystick_read(int n)
+unsigned long gp2x_joystick_read()
 {
   	unsigned long res=0;
 
-	int joynum=n;
-
-	n=0;
-    
     SDL_Event event;
 //	if (n==1)
       while(SDL_PollEvent(&event)) {
@@ -273,7 +204,7 @@ unsigned long gp2x_joystick_read(int n)
                 break;
 		}
 	  }
-	return _st_[n];
+//sq	return _st_[n];
 
     
 //sq	if (n==0)
@@ -299,11 +230,11 @@ unsigned long gp2x_joystick_read(int n)
 //sq	return res;
 }
 
-unsigned long gp2x_joystick_press (int n)
+unsigned long gp2x_joystick_press ()
 {
 	unsigned long ExKey=0;
-	while(gp2x_joystick_read(n)&0x8c0ff55) { gp2x_timer_delay(150000); }
-	while(!(ExKey=gp2x_joystick_read(n)&0x8c0ff55)) { }
+	while(gp2x_joystick_read()&0x8c0ff55) { gp2x_timer_delay(150000); }
+	while(!(ExKey=gp2x_joystick_read()&0x8c0ff55)) { }
 	return ExKey;
 }
 
