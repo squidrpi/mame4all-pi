@@ -106,9 +106,30 @@ extern void keyprocess(SDLKey inkey, SDL_bool pressed);
 //sq 		(st[4]) ^= val;
 //sq }
 
-static void joyprocess(Uint32 *st, Uint8 button, SDL_bool pressed, int njoy)
+extern unsigned long ExKey1;
+extern unsigned long ExKey2;
+extern unsigned long ExKey3;
+extern unsigned long ExKey4;
+
+static void joyprocess(Uint32 *st, Uint8 button, SDL_bool pressed, Uint8 njoy)
 {
     Uint32 val=0;
+	unsigned long *mykey;
+
+	switch(njoy)
+	{
+		case 0:
+			mykey = &ExKey1; break;
+		case 1:
+			mykey = &ExKey2; break;
+		case 2:
+			mykey = &ExKey3; break;
+		case 3:
+			mykey = &ExKey4; break;
+		default:
+			return;
+	}
+	
     switch(button)
     {
         case 0:
@@ -123,18 +144,18 @@ static void joyprocess(Uint32 *st, Uint8 button, SDL_bool pressed, int njoy)
             val=GP2X_TAB; break;
         case 5:
             val=GP2X_RETURN; break;
-/*        case 6:
-            val=GP2X_TAB; break;
-        case 7:
-            val=GP2X_TILDE; break;
-        case 8:
-            val=GP2X_ESCAPE; break;
-        case 9:
-            val=GP2X_1; break;
-        case 10:
-            val=GP2X_5; break;
-        case 11: */
-            val=GP2X_P; break;
+//sq        case 6:
+//sq            val=GP2X_TAB; break;
+//sq        case 7:
+//sq            val=GP2X_TILDE; break;
+//sq        case 8:
+//sq            val=GP2X_ESCAPE; break;
+//sq        case 9:
+//sq            val=GP2X_1; break;
+//sq        case 10:
+//sq            val=GP2X_5; break;
+//sq        case 11: 
+//sq            val=GP2X_P; break;
         case 129:
             val=GP2X_DOWN; break;
         case 130:
@@ -147,9 +168,14 @@ static void joyprocess(Uint32 *st, Uint8 button, SDL_bool pressed, int njoy)
             return;
     }
     if (pressed)
-        (st[njoy]) |= val;
+        (*mykey) |= val;
     else
-        (st[njoy]) ^= val;
+        (*mykey) ^= val;
+
+//sq    if (pressed)
+//sq        (st[njoy]) |= val;
+//sq    else
+//sq        (st[njoy]) ^= val;
 }
 
 
@@ -180,68 +206,68 @@ unsigned long gp2x_joystick_read(int n)
         switch(event.type)
 		{
 			case SDL_KEYDOWN:
-				keyprocess(event.key.keysym.sym,SDL_TRUE);
+				keyprocess(event.key.keysym.sym, SDL_TRUE);
 				break;
 			case SDL_KEYUP:
-				keyprocess(event.key.keysym.sym,SDL_FALSE);
+				keyprocess(event.key.keysym.sym, SDL_FALSE);
 				break;
             case SDL_JOYBUTTONDOWN:
-                joyprocess((Uint32 *)&_st_,event.jbutton.button,SDL_TRUE,n);
+                joyprocess((Uint32 *)&_st_,event.jbutton.button, SDL_TRUE, event.jbutton.which);
                 break;
             case SDL_JOYBUTTONUP:
-                joyprocess((Uint32 *)&_st_,event.jbutton.button,SDL_FALSE,n);
+                joyprocess((Uint32 *)&_st_,event.jbutton.button, SDL_FALSE, event.jbutton.which);
                 break;
             case SDL_JOYAXISMOTION:
                 if (event.jaxis.axis==0)
                 {
-                    static int reset_xl=0;
-                    static int reset_xr=0;
+                    static int reset_xl[4]={0,0,0,0};
+                    static int reset_xr[4]={0,0,0,0};
                     if (event.jaxis.value<-6000)
                     {
-                        if (!reset_xl){
-                            joyprocess((Uint32 *)&_st_,130,SDL_TRUE,n);}
-                        reset_xl=1;
+                        if (!reset_xl[event.jaxis.which]){
+                            joyprocess((Uint32 *)&_st_,130, SDL_TRUE, event.jaxis.which);}
+                        reset_xl[event.jaxis.which]=1;
                     }
                     else if (event.jaxis.value>6000)
                     {
-                        if (!reset_xr){
-                            joyprocess((Uint32 *)&_st_,132,SDL_TRUE,n);}
-                        reset_xr=1;
+                        if (!reset_xr[event.jaxis.which]){
+                            joyprocess((Uint32 *)&_st_,132, SDL_TRUE, event.jaxis.which);}
+                        reset_xr[event.jaxis.which]=1;
                     }
                     else
                     {
-                        if (reset_xr)
-                            joyprocess((Uint32 *)&_st_,132,SDL_FALSE,n);
-                        reset_xr=0;
-                        if (reset_xl)
-                            joyprocess((Uint32 *)&_st_,130,SDL_FALSE,n);
-                        reset_xl=0;
+                        if (reset_xr[event.jaxis.which])
+                            joyprocess((Uint32 *)&_st_,132, SDL_FALSE, event.jaxis.which);
+                        reset_xr[event.jaxis.which]=0;
+                        if (reset_xl[event.jaxis.which])
+                            joyprocess((Uint32 *)&_st_,130, SDL_FALSE, event.jaxis.which);
+                        reset_xl[event.jaxis.which]=0;
                     }
                 }
                 else if (event.jaxis.axis==1)
                 {
-                    static int reset_yu=0;
-                    static int reset_yd=0;
+                    static int reset_yu[4]={0,0,0,0};
+                    static int reset_yd[4]={0,0,0,0};
                     if (event.jaxis.value<-6000)
                     {
-                        if (!reset_yu){
-                            joyprocess((Uint32 *)&_st_,131,SDL_TRUE,n);}
-                        reset_yu=1;
+                        if (!reset_yu[event.jaxis.which]){
+                            joyprocess((Uint32 *)&_st_,131,SDL_TRUE, event.jaxis.which);}
+                        reset_yu[event.jaxis.which]=1;
                     }
                     else if (event.jaxis.value>6000)
                     {
-                        if (!reset_yd) {
-                            joyprocess((Uint32 *)&_st_,129,SDL_TRUE,n);}
-                        reset_yd=1;
+                        if (!reset_yd[event.jaxis.which]) {
+                            joyprocess((Uint32 *)&_st_,129,SDL_TRUE, event.jaxis.which);}
+                        reset_yd[event.jaxis.which]=1;
                     }
                     else
                     {
-                        if (reset_yd)
-                            joyprocess((Uint32 *)&_st_,129,SDL_FALSE,n);
-                        reset_yd=0;
-                        if (reset_yu)
-                            joyprocess((Uint32 *)&_st_,131,SDL_FALSE,n);
-                        reset_yu=0;
+                        if (reset_yd[event.jaxis.which])
+                            joyprocess((Uint32 *)&_st_,129,SDL_FALSE, event.jaxis.which);
+                        reset_yd[event.jaxis.which]=0;
+                        if (reset_yu[event.jaxis.which])
+                            joyprocess((Uint32 *)&_st_,131,SDL_FALSE, event.jaxis.which);
+                        reset_yu[event.jaxis.which]=0;
                     }
                 }
                 break;

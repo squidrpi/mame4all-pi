@@ -130,7 +130,6 @@ struct SDLtranslate
 };
 
 
-#define SDLKEY_MAX=96;
 static struct SDLtranslate sdlkeytranslate[] =
 {
 	{			KEY_A,						SDLK_a },
@@ -250,7 +249,8 @@ static void updatekeyboard(void)
 //sq		key[i]=0;
 //sq	}	
 
-	ExKey1=gp2x_joystick_read(4);
+	//sq ExKey1=gp2x_joystick_read(4);
+	gp2x_joystick_read(4);
 
 //sq 	key[KEY_LEFT]= (ExKeyKB & GP2X_LEFT);
 //sq 	key[KEY_RIGHT]= (ExKeyKB & GP2X_RIGHT);
@@ -660,20 +660,20 @@ static void poll_joystick(void)
 {
 /*	extern int num_of_joys;
 
-	switch (num_of_joys)
-	{
-		case 4: ExKey4=gp2x_joystick_read(3);
-		case 3: ExKey3=gp2x_joystick_read(2);
-		case 2: ExKey2=gp2x_joystick_read(1);
-		case 1: ExKey1=gp2x_joystick_read(0); break;
-		default:
+//sq	switch (num_of_joys)
+//sq	{
+//sq		case 4: ExKey4=gp2x_joystick_read(3);
+//sq		case 3: ExKey3=gp2x_joystick_read(2);
+//sq		case 2: ExKey2=gp2x_joystick_read(1);
+//sq		case 1: ExKey1=gp2x_joystick_read(0); break;
+//sq		default:
 //sq			ExKey1=gp2x_joystick_read(0);
 //sq			ExKey2=ExKey1;
 //sq			if(ExKey2&GP2X_1) ExKey2^=GP2X_1;
 //sq			ExKey3=ExKey2;
 //sq			ExKey4=ExKey2;
-			break;
-	} */
+//sq			break;
+//sq	} */
 }
 
 void osd_poll_joysticks(void)
