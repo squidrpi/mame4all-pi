@@ -39,74 +39,76 @@ void gp2x_video_setpalette(void)
 {
 }
 
-static void keyprocess(Uint32 *st, SDLKey key, SDL_bool pressed)
-{
-	Uint32 val=0, njoy=0;
-    
-	switch(key)
-	{
-		case SDLK_1:
-			val=GP2X_1; njoy=0; break;
-		case SDLK_2:
-			val=GP2X_2; njoy=0; break;
-		case SDLK_LCTRL:
-			val=GP2X_LCTRL; njoy=0; break;
-		case SDLK_LALT:
-			val=GP2X_LALT; njoy=0; break;
-		case SDLK_SPACE:
-			val=GP2X_SPACE; njoy=0; break;
-		case SDLK_LSHIFT:
-			val=GP2X_LSHIFT; njoy=0; break;
-		case SDLK_LEFT:
-			val=GP2X_LEFT; njoy=0; break;
-		case SDLK_RIGHT:
-			val=GP2X_RIGHT; njoy=0; break;
-		case SDLK_UP:
-			val=GP2X_UP; njoy=0; break;
-		case SDLK_DOWN:
-			val=GP2X_DOWN; njoy=0; break;
-		case SDLK_TAB:
-			val=GP2X_TAB; njoy=0; break;
-		case SDLK_RETURN:
-			val=GP2X_RETURN; njoy=0; break;
-		case SDLK_5:
-			val=GP2X_5; njoy=0; break;
-		case SDLK_6:
-			val=GP2X_6; njoy=0; break;
-		case SDLK_9:
-			val=GP2X_9; njoy=0; break;
-		case SDLK_ESCAPE:
-			val=GP2X_ESCAPE; njoy=0; break;
-		case SDLK_p:
-			val=GP2X_P; njoy=0; break;
-		case SDLK_o:
-			val=GP2X_O; njoy=0; break;
-		case SDLK_k:
-			val=GP2X_K; njoy=0; break;
-		case SDLK_F3:
-			val=GP2X_F3; njoy=0; break;
-		case SDLK_F5:
-			val=GP2X_F5; njoy=0; break;
-		case SDLK_F10:
-			val=GP2X_F10; njoy=0; break;
-		case SDLK_F11:
-			val=GP2X_F11; njoy=0; break;
-		case SDLK_t:
-			val=GP2X_T; njoy=0; break;
-		case SDLK_BACKQUOTE:
-			val=GP2X_TILDE; njoy=0; break;
-        default:
-			return;
-	}
-	if (pressed)
-		(st[njoy]) |= val;
-	else
-		(st[njoy]) ^= val;
-}
+extern void keyprocess(SDLKey inkey, SDL_bool pressed);
 
-static void joyprocess(Uint32 *st, Uint8 button, SDL_bool pressed)
+//sq static void keyprocess(SDLKey key, SDL_bool pressed)
+//sq {
+//sq 	Uint32 val=0, njoy=0;
+//sq 
+//sq 	switch(key)
+//sq 	{
+//sq 		case SDLK_1:
+//sq 			val=GP2X_1; njoy=0; break;
+//sq 		case SDLK_2:
+//sq 			val=GP2X_2; njoy=0; break;
+//sq 		case SDLK_LCTRL:
+//sq 			val=GP2X_LCTRL; njoy=0; break;
+//sq 		case SDLK_LALT:
+//sq 			val=GP2X_LALT; njoy=0; break;
+//sq 		case SDLK_SPACE:
+//sq 			val=GP2X_SPACE; njoy=0; break;
+//sq 		case SDLK_LSHIFT:
+//sq 			val=GP2X_LSHIFT; njoy=0; break;
+//sq 		case SDLK_LEFT:
+//sq 			val=GP2X_LEFT; njoy=0; break;
+//sq 		case SDLK_RIGHT:
+//sq 			val=GP2X_RIGHT; njoy=0; break;
+//sq 		case SDLK_UP:
+//sq 			val=GP2X_UP; njoy=0; break;
+//sq 		case SDLK_DOWN:
+//sq 			val=GP2X_DOWN; njoy=0; break;
+//sq 		case SDLK_TAB:
+//sq 			val=GP2X_TAB; njoy=0; break;
+//sq 		case SDLK_RETURN:
+//sq 			val=GP2X_RETURN; njoy=0; break;
+//sq 		case SDLK_5:
+//sq 			val=GP2X_5; njoy=0; break;
+//sq 		case SDLK_6:
+//sq 			val=GP2X_6; njoy=0; break;
+//sq 		case SDLK_9:
+//sq 			val=GP2X_9; njoy=0; break;
+//sq 		case SDLK_ESCAPE:
+//sq 			val=GP2X_ESCAPE; njoy=0; break;
+//sq 		case SDLK_p:
+//sq 			val=GP2X_P; njoy=0; break;
+//sq 		case SDLK_o:
+//sq 			val=GP2X_O; njoy=0; break;
+//sq 		case SDLK_k:
+//sq 			val=GP2X_K; njoy=0; break;
+//sq 		case SDLK_F3:
+//sq 			val=GP2X_F3; njoy=0; break;
+//sq 		case SDLK_F5:
+//sq 			val=GP2X_F5; njoy=0; break;
+//sq 		case SDLK_F10:
+//sq 			val=GP2X_F10; njoy=0; break;
+//sq 		case SDLK_F11:
+//sq 			val=GP2X_F11; njoy=0; break;
+//sq 		case SDLK_t:
+//sq 			val=GP2X_T; njoy=0; break;
+//sq 		case SDLK_BACKQUOTE:
+//sq 			val=GP2X_TILDE; njoy=0; break;
+//sq         default:
+//sq 			return;
+//sq 	}
+//sq 	if (pressed)
+//sq 		(st[4]) |= val;
+//sq 	else
+//sq 		(st[4]) ^= val;
+//sq }
+
+static void joyprocess(Uint32 *st, Uint8 button, SDL_bool pressed, int njoy)
 {
-    Uint32 val=0, njoy=0;
+    Uint32 val=0;
     switch(button)
     {
         case 0:
@@ -117,9 +119,11 @@ static void joyprocess(Uint32 *st, Uint8 button, SDL_bool pressed)
             val=GP2X_SPACE; break;
         case 3:
             val=GP2X_LSHIFT; break;
+        case 4:
+            val=GP2X_TAB; break;
         case 5:
             val=GP2X_RETURN; break;
-        case 6:
+/*        case 6:
             val=GP2X_TAB; break;
         case 7:
             val=GP2X_TILDE; break;
@@ -129,7 +133,7 @@ static void joyprocess(Uint32 *st, Uint8 button, SDL_bool pressed)
             val=GP2X_1; break;
         case 10:
             val=GP2X_5; break;
-        case 11:
+        case 11: */
             val=GP2X_P; break;
         case 129:
             val=GP2X_DOWN; break;
@@ -165,6 +169,10 @@ void gp2x_joystick_clear(void)
 unsigned long gp2x_joystick_read(int n)
 {
   	unsigned long res=0;
+
+	int joynum=n;
+
+	n=0;
     
     SDL_Event event;
 //	if (n==1)
@@ -172,16 +180,16 @@ unsigned long gp2x_joystick_read(int n)
         switch(event.type)
 		{
 			case SDL_KEYDOWN:
-				keyprocess((Uint32 *)&_st_,event.key.keysym.sym,SDL_TRUE);
+				keyprocess(event.key.keysym.sym,SDL_TRUE);
 				break;
 			case SDL_KEYUP:
-				keyprocess((Uint32 *)&_st_,event.key.keysym.sym,SDL_FALSE);
+				keyprocess(event.key.keysym.sym,SDL_FALSE);
 				break;
             case SDL_JOYBUTTONDOWN:
-                joyprocess((Uint32 *)&_st_,event.jbutton.button,SDL_TRUE);
+                joyprocess((Uint32 *)&_st_,event.jbutton.button,SDL_TRUE,n);
                 break;
             case SDL_JOYBUTTONUP:
-                joyprocess((Uint32 *)&_st_,event.jbutton.button,SDL_FALSE);
+                joyprocess((Uint32 *)&_st_,event.jbutton.button,SDL_FALSE,n);
                 break;
             case SDL_JOYAXISMOTION:
                 if (event.jaxis.axis==0)
@@ -191,22 +199,22 @@ unsigned long gp2x_joystick_read(int n)
                     if (event.jaxis.value<-6000)
                     {
                         if (!reset_xl){
-                            joyprocess((Uint32 *)&_st_,130,SDL_TRUE);}
+                            joyprocess((Uint32 *)&_st_,130,SDL_TRUE,n);}
                         reset_xl=1;
                     }
                     else if (event.jaxis.value>6000)
                     {
                         if (!reset_xr){
-                            joyprocess((Uint32 *)&_st_,132,SDL_TRUE);}
+                            joyprocess((Uint32 *)&_st_,132,SDL_TRUE,n);}
                         reset_xr=1;
                     }
                     else
                     {
                         if (reset_xr)
-                            joyprocess((Uint32 *)&_st_,132,SDL_FALSE);
+                            joyprocess((Uint32 *)&_st_,132,SDL_FALSE,n);
                         reset_xr=0;
                         if (reset_xl)
-                            joyprocess((Uint32 *)&_st_,130,SDL_FALSE);
+                            joyprocess((Uint32 *)&_st_,130,SDL_FALSE,n);
                         reset_xl=0;
                     }
                 }
@@ -217,22 +225,22 @@ unsigned long gp2x_joystick_read(int n)
                     if (event.jaxis.value<-6000)
                     {
                         if (!reset_yu){
-                            joyprocess((Uint32 *)&_st_,131,SDL_TRUE);}
+                            joyprocess((Uint32 *)&_st_,131,SDL_TRUE,n);}
                         reset_yu=1;
                     }
                     else if (event.jaxis.value>6000)
                     {
                         if (!reset_yd) {
-                            joyprocess((Uint32 *)&_st_,129,SDL_TRUE);}
+                            joyprocess((Uint32 *)&_st_,129,SDL_TRUE,n);}
                         reset_yd=1;
                     }
                     else
                     {
                         if (reset_yd)
-                            joyprocess((Uint32 *)&_st_,129,SDL_FALSE);
+                            joyprocess((Uint32 *)&_st_,129,SDL_FALSE,n);
                         reset_yd=0;
                         if (reset_yu)
-                            joyprocess((Uint32 *)&_st_,131,SDL_FALSE);
+                            joyprocess((Uint32 *)&_st_,131,SDL_FALSE,n);
                         reset_yu=0;
                     }
                 }
@@ -323,6 +331,7 @@ void exitfunc()
 int init_SDL(void)
 {
     SDL_Event e;
+	SDL_Joystick *joy;
     
     sdlscreen = SDL_SetVideoMode(0,0, 32, SDL_SWSURFACE);
     if (SDL_Init(SDL_INIT_JOYSTICK) < 0) {
@@ -334,10 +343,11 @@ int init_SDL(void)
 //sq	gp2x_usbjoy_init();
 
     SDL_JoystickEventState(SDL_ENABLE);
-	SDL_JoystickOpen(0);
-	SDL_JoystickOpen(1);
-	SDL_JoystickOpen(2);
-	SDL_JoystickOpen(3);
+	num_of_joys=SDL_NumJoysticks();
+	joy=SDL_JoystickOpen(0);
+	joy=SDL_JoystickOpen(1);
+	joy=SDL_JoystickOpen(2);
+	joy=SDL_JoystickOpen(3);
 	SDL_EventState(SDL_ACTIVEEVENT,SDL_IGNORE);
 	SDL_EventState(SDL_MOUSEMOTION,SDL_IGNORE);
 	SDL_EventState(SDL_MOUSEBUTTONDOWN,SDL_IGNORE);

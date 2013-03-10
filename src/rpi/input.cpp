@@ -1,6 +1,6 @@
 #include "allegro.h"
 #include "driver.h"
-#include "SDL.h"
+#include <SDL.h>
 
 int use_mouse;
 int joystick;
@@ -9,6 +9,7 @@ unsigned long ExKey1=0;
 unsigned long ExKey2=0;
 unsigned long ExKey3=0;
 unsigned long ExKey4=0;
+unsigned long ExKeyKB=0;
 int num_joysticks=4;
 #include "minimal.h"
 
@@ -122,6 +123,114 @@ static struct KeyboardInfo keylist[] =
 	{ 0, 0, 0 }	/* end of table */
 };
 
+struct SDLtranslate
+{
+    int mamekey;
+    int sdlkey;
+};
+
+
+#define SDLKEY_MAX=96;
+static struct SDLtranslate sdlkeytranslate[] =
+{
+	{			KEY_A,						SDLK_a },
+	{			KEY_B,						SDLK_b },
+	{			KEY_C,						SDLK_c },
+	{			KEY_D,						SDLK_d },
+	{			KEY_E,						SDLK_e },
+	{			KEY_F,						SDLK_f },
+	{			KEY_G,						SDLK_g },
+	{			KEY_H,						SDLK_h },
+	{			KEY_I,						SDLK_i },
+	{			KEY_J,						SDLK_j },
+	{			KEY_K,						SDLK_k },
+	{			KEY_L,						SDLK_l },
+	{			KEY_M,						SDLK_m },
+	{			KEY_N,						SDLK_n },
+	{			KEY_O,						SDLK_o },
+	{			KEY_P,						SDLK_p },
+	{			KEY_Q,						SDLK_q },
+	{			KEY_R,						SDLK_r },
+	{			KEY_S,						SDLK_s },
+	{			KEY_T,						SDLK_t },
+	{			KEY_U,						SDLK_u },
+	{			KEY_V,						SDLK_v },
+	{			KEY_W,						SDLK_w },
+	{			KEY_X,						SDLK_x },
+	{			KEY_Y,						SDLK_y },
+	{			KEY_Z,						SDLK_z },
+	{			KEY_0,						SDLK_0 },
+	{			KEY_1,						SDLK_1 },
+	{			KEY_2,						SDLK_2 },
+	{			KEY_3,						SDLK_3 },
+	{			KEY_4,						SDLK_4 },
+	{			KEY_5,						SDLK_5 },
+	{			KEY_6,						SDLK_6 },
+	{			KEY_7,						SDLK_7 },
+	{			KEY_8,						SDLK_8 },
+	{			KEY_9,						SDLK_9 },
+	{		KEY_0_PAD,						SDLK_KP0 },
+	{		KEY_1_PAD,						SDLK_KP1 },
+	{		KEY_2_PAD,						SDLK_KP2 },
+	{		KEY_3_PAD,						SDLK_KP3 },
+	{		KEY_4_PAD,						SDLK_KP4 },
+	{		KEY_5_PAD,						SDLK_KP5 },
+	{		KEY_6_PAD,						SDLK_KP6 },
+	{		KEY_7_PAD,						SDLK_KP7 },
+	{		KEY_8_PAD,						SDLK_KP8 },
+	{		KEY_9_PAD,						SDLK_KP9 },
+	{			KEY_F1,						SDLK_F1 },
+	{			KEY_F2,						SDLK_F2 },
+	{			KEY_F3,						SDLK_F3 },
+	{			KEY_F4,						SDLK_F4 },
+	{			KEY_F5,						SDLK_F5 },
+	{			KEY_F6,						SDLK_F6 },
+	{			KEY_F7,						SDLK_F7 },
+	{			KEY_F8,						SDLK_F8 },
+	{			KEY_F9,						SDLK_F9 },
+	{			KEY_F10,					SDLK_F10 },
+	{			KEY_F11,					SDLK_F11 },
+	{			KEY_F12,					SDLK_F12 },
+	{			KEY_ESC,					SDLK_ESCAPE },
+	{			KEY_TILDE,					SDLK_BACKQUOTE },
+	{          	KEY_MINUS,		          		SDLK_MINUS },
+	{          	KEY_EQUALS,		         		SDLK_EQUALS },
+	{			KEY_BACKSPACE,					SDLK_BACKSPACE },
+	{			KEY_TAB,					SDLK_TAB },
+	{          	KEY_OPENBRACE,		      		SDLK_LEFTPAREN },
+	{          	KEY_CLOSEBRACE,		     		SDLK_RIGHTPAREN },
+	{			KEY_ENTER,					SDLK_RETURN },
+	{          	KEY_COLON,		          		SDLK_COLON },
+	{          	KEY_QUOTE,		          		SDLK_QUOTE },
+	{         	KEY_BACKSLASH,		      		SDLK_BACKSLASH },
+	{			KEY_COMMA,                  SDLK_COMMA },
+	{			KEY_STOP,		           		SDLK_PERIOD },
+	{			KEY_SLASH,		          		SDLK_SLASH },
+	{			KEY_SPACE,					SDLK_SPACE },
+	{			KEY_INSERT,					SDLK_INSERT },
+	{			KEY_DEL,					SDLK_DELETE },
+	{			KEY_HOME,					SDLK_HOME },
+	{			KEY_END,					SDLK_END },
+	{			KEY_PGUP,					SDLK_PAGEUP },
+	{			KEY_PGDN,					SDLK_PAGEDOWN },
+	{			KEY_LEFT,					SDLK_LEFT },
+	{			KEY_RIGHT,					SDLK_RIGHT },
+	{			KEY_UP,						SDLK_UP },
+	{			KEY_DOWN,					SDLK_DOWN },
+	{   	   		KEY_SLASH_PAD,		      		SDLK_KP_DIVIDE },
+	{   	   		KEY_ASTERISK,		       		SDLK_KP_MULTIPLY },
+	{   		   	KEY_MINUS_PAD,		      		SDLK_KP_MINUS },
+	{   	   		KEY_PLUS_PAD,		       		SDLK_KP_PLUS },
+	{	  		KEY_ENTER_PAD,		      		SDLK_KP_ENTER },
+	{			KEY_LSHIFT,					SDLK_LSHIFT },
+	{			KEY_RSHIFT,					SDLK_RSHIFT },
+	{			KEY_LCONTROL,					SDLK_LCTRL },
+	{			KEY_RCONTROL,					SDLK_RCTRL },
+	{			KEY_ALT,					SDLK_LALT },
+	{			KEY_ALTGR,					SDLK_RALT },
+	{ 0, 0 }	/* end of table */
+};
+
 
 /* return a list of all available keys */
 const struct KeyboardInfo *osd_get_key_list(void)
@@ -135,32 +244,65 @@ static void updatekeyboard(void)
 {
 	int i=0;
 	
-	/* Initialize keyboard to not pressed */
-	for (i = 0;i < KEY_MAX;i++)
-	{
-		key[i]=0;
-	}	
+//sq	/* Initialize keyboard to not pressed */
+//sq	for (i = 0;i < KEY_MAX;i++)
+//sq	{
+//sq		key[i]=0;
+//sq	}	
 
-	key[KEY_1]= (ExKey1 & GP2X_1);
-	key[KEY_2]= (ExKey1 & GP2X_2);
-	key[KEY_5]= (ExKey1 & GP2X_5);
-	key[KEY_6]= (ExKey1 & GP2X_6);
-	key[KEY_9]= (ExKey1 & GP2X_9);
+	ExKey1=gp2x_joystick_read(4);
 
-    key[KEY_TAB]= (ExKey1 & GP2X_TAB);
-	key[KEY_ENTER]= (ExKey1 & GP2X_RETURN);
-	key[KEY_K]= (ExKey1 & GP2X_K);
-	key[KEY_O]= (ExKey1 & GP2X_O);
-	key[KEY_P]= (ExKey1 & GP2X_P);
-	key[KEY_T]= (ExKey1 & GP2X_T);
-    key[KEY_ESC]= (ExKey1 & GP2X_ESCAPE);
-    key[KEY_F3]= (ExKey1 & GP2X_F3);
-    key[KEY_F5]= (ExKey1 & GP2X_F5);
-    key[KEY_F10]= (ExKey1 & GP2X_F10);
-    key[KEY_F11]= (ExKey1 & GP2X_F11);
-    key[KEY_LSHIFT]= (ExKey1 & GP2X_LSHIFT);
-    key[KEY_TILDE]= (ExKey1 & GP2X_TILDE);
+//sq 	key[KEY_LEFT]= (ExKeyKB & GP2X_LEFT);
+//sq 	key[KEY_RIGHT]= (ExKeyKB & GP2X_RIGHT);
+//sq 	key[KEY_UP]= (ExKeyKB & GP2X_UP);
+//sq 	key[KEY_DOWN]= (ExKeyKB & GP2X_DOWN);
+//sq 
+//sq 	key[KEY_LCONTROL]= (ExKeyKB & GP2X_LCTRL);
+//sq 	key[KEY_ALT]= (ExKeyKB & GP2X_LALT);
+//sq 	key[KEY_LSHIFT]= (ExKeyKB & GP2X_LSHIFT);
+//sq 	key[KEY_SPACE]= (ExKeyKB & GP2X_SPACE);
+//sq 
+//sq 	key[KEY_1]= (ExKeyKB & GP2X_1);
+//sq 	key[KEY_2]= (ExKeyKB & GP2X_2);
+//sq 	key[KEY_5]= (ExKeyKB & GP2X_5);
+//sq 	key[KEY_6]= (ExKeyKB & GP2X_6);
+//sq 	key[KEY_9]= (ExKeyKB & GP2X_9);
+//sq 
+//sq     key[KEY_TAB]= (ExKeyKB & GP2X_TAB);
+//sq 	key[KEY_ENTER]= (ExKeyKB & GP2X_RETURN);
+//sq 	key[KEY_K]= (ExKeyKB & GP2X_K);
+//sq 	key[KEY_O]= (ExKeyKB & GP2X_O);
+//sq 	key[KEY_P]= (ExKeyKB & GP2X_P);
+//sq 	key[KEY_T]= (ExKeyKB & GP2X_T);
+//sq     key[KEY_ESC]= (ExKeyKB & GP2X_ESCAPE);
+//sq     key[KEY_F3]= (ExKeyKB & GP2X_F3);
+//sq     key[KEY_F5]= (ExKeyKB & GP2X_F5);
+//sq     key[KEY_F10]= (ExKeyKB & GP2X_F10);
+//sq     key[KEY_F11]= (ExKeyKB & GP2X_F11);
+//sq     key[KEY_TILDE]= (ExKeyKB & GP2X_TILDE);
 }
+
+// Do the translation from SDL Key to mame key
+// and set the mame keys
+//
+void keyprocess(SDLKey inkey, SDL_bool pressed)
+{
+    Uint32 val=0, njoy=0;
+	int i=0;
+
+	while(sdlkeytranslate[i].mamekey)
+	{	
+		if(inkey == sdlkeytranslate[i].sdlkey)
+		{
+			key[sdlkeytranslate[i].mamekey]=pressed;
+			break;
+		}
+		i++;
+	}
+
+}
+
+
 
 int osd_is_key_pressed(int keycode)
 {
@@ -298,16 +440,16 @@ static void init_joy_list(void)
 
 	tot = 0;
 
-	/* first of all, map mouse buttons */
-	for (j = 0;j < 3;j++)
-	{
-		sprintf(buf,"MOUSE B%d",j+1);
-		strncpy(joynames[tot],buf,MAX_JOY_NAME_LEN);
-		joynames[tot][MAX_JOY_NAME_LEN] = 0;
-		joylist[tot].name = joynames[tot];
-		joylist[tot].code = MOUSE_BUTTON(j+1);
-		tot++;
-	}
+//sq 	/* first of all, map mouse buttons */
+//sq 	for (j = 0;j < 3;j++)
+//sq 	{
+//sq 		sprintf(buf,"MOUSE B%d",j+1);
+//sq 		strncpy(joynames[tot],buf,MAX_JOY_NAME_LEN);
+//sq 		joynames[tot][MAX_JOY_NAME_LEN] = 0;
+//sq 		joylist[tot].name = joynames[tot];
+//sq 		joylist[tot].code = MOUSE_BUTTON(j+1);
+//sq 		tot++;
+//sq 	}
 
 	for (i = 0;i < num_joysticks;i++)
 	{
@@ -446,16 +588,16 @@ int osd_is_joy_pressed(int joycode)
 	int joy_num,stick;
 
 
-	/* special case for mouse buttons */
-	switch (joycode)
-	{
-		case MOUSE_BUTTON(1):
-			return ExKey1 & GP2X_LCTRL; break;
-		case MOUSE_BUTTON(2):
-			return ExKey1 & GP2X_LALT; break;
-		case MOUSE_BUTTON(3):
-			return ExKey1 & GP2X_LSHIFT; break;
-	}
+//sq	/* special case for mouse buttons */
+//sq	switch (joycode)
+//sq	{
+//sq		case MOUSE_BUTTON(1):
+//sq			return ExKey1 & GP2X_LCTRL; break;
+//sq		case MOUSE_BUTTON(2):
+//sq			return ExKey1 & GP2X_LALT; break;
+//sq		case MOUSE_BUTTON(3):
+//sq			return ExKey1 & GP2X_LSHIFT; break;
+//sq	}
 
 	joy_num = GET_JOYCODE_JOY(joycode);
 
@@ -516,7 +658,7 @@ int osd_is_joy_pressed(int joycode)
 
 static void poll_joystick(void)
 {
-	extern int num_of_joys;
+/*	extern int num_of_joys;
 
 	switch (num_of_joys)
 	{
@@ -525,14 +667,13 @@ static void poll_joystick(void)
 		case 2: ExKey2=gp2x_joystick_read(1);
 		case 1: ExKey1=gp2x_joystick_read(0); break;
 		default:
-			ExKey1=gp2x_joystick_read(0);
-			ExKey2=ExKey1;
-			if(ExKey2&GP2X_1) ExKey2^=GP2X_1;
-//sq			if(ExKey2&GP2X_5) ExKey2^=GP2X_5;
-			ExKey3=ExKey2;
-			ExKey4=ExKey2;
+//sq			ExKey1=gp2x_joystick_read(0);
+//sq			ExKey2=ExKey1;
+//sq			if(ExKey2&GP2X_1) ExKey2^=GP2X_1;
+//sq			ExKey3=ExKey2;
+//sq			ExKey4=ExKey2;
 			break;
-	}
+	} */
 }
 
 void osd_poll_joysticks(void)
