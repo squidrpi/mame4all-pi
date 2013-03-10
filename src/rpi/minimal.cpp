@@ -79,10 +79,12 @@ static void keyprocess(Uint32 *st, SDLKey key, SDL_bool pressed)
 			val=GP2X_ESCAPE; njoy=0; break;
 		case SDLK_p:
 			val=GP2X_P; njoy=0; break;
+		case SDLK_o:
+			val=GP2X_O; njoy=0; break;
+		case SDLK_k:
+			val=GP2X_K; njoy=0; break;
 		case SDLK_F3:
 			val=GP2X_F3; njoy=0; break;
-		case SDLK_F4:
-			val=GP2X_F4; njoy=0; break;
 		case SDLK_F5:
 			val=GP2X_F5; njoy=0; break;
 		case SDLK_F10:
@@ -115,8 +117,6 @@ static void joyprocess(Uint32 *st, Uint8 button, SDL_bool pressed)
             val=GP2X_SPACE; break;
         case 3:
             val=GP2X_LSHIFT; break;
-        case 4:
-            val=GP2X_ESCAPE; break;
         case 5:
             val=GP2X_RETURN; break;
         case 6:
@@ -124,11 +124,13 @@ static void joyprocess(Uint32 *st, Uint8 button, SDL_bool pressed)
         case 7:
             val=GP2X_TILDE; break;
         case 8:
-            val=GP2X_P; break;
+            val=GP2X_ESCAPE; break;
         case 9:
             val=GP2X_1; break;
         case 10:
             val=GP2X_5; break;
+        case 11:
+            val=GP2X_P; break;
         case 129:
             val=GP2X_DOWN; break;
         case 130:
