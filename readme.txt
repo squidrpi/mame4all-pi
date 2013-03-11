@@ -31,8 +31,7 @@ http://code.google.com/p/mame4all-pi/
 CONTROLS
 --------
 
-Controls are currently only available for the keyboard (No joystick support yet).
-These are the standard MAME key definitions as follows (not all MAME keys are supported):
+These are the standard MAME key definitions as follows. All MAME keys are also available.
 - Keys LControl, LAlt, Space, LShift are the fire buttons
 - Cursors Keys for up, down, left and right
 - Keys 1 & 2 to start 1 or 2 player games
@@ -42,7 +41,7 @@ These are the standard MAME key definitions as follows (not all MAME keys are su
 - Function Keys: F11 show fps, F10 toggle throttle, F5 cheats, Shift F11 show profiler
 - Key P to pause
 
-NOTE: To type OK when MAME requires it, press LEFT and then RIGHT.
+NOTE: To type OK when MAME requires it with the joystick, press LEFT and then RIGHT.
 
 
 Pi EMULATION SPEED AND SOUND
@@ -66,6 +65,11 @@ This will show the numid for the playback device, probably 3.
 Now set the volume, type "amixer cset numid=3 90%".
 Then reboot to make it permanent.
 
+If you're having problems with HDMI audio then it is likely PulseAudio
+is causing the issues as it has problems with the ALSA drivers. To fix
+this simply remove PulseAudio:
+sudo apt-get --purge remove pulseaudio
+
 
 INSTALLATION
 ------------
@@ -88,9 +92,9 @@ sta/        -> Save states directory
 
 To run MAME simple run the "mame" executable. At the command line "./mame".
 This runs the GUI frontend by default. To simply run MAME without the GUI
-enter "./mame -nogui {gamerom}" where "{gamerom}" is the game to run.
+enter "./mame {gamerom}" where "{gamerom}" is the game to run.
 
-It will work in X-Windows or in the Console. I'd recommend running in the Console.
+It will work in X-Windows or in the Console. 
 
 
 SUPPORTED GAMES
@@ -189,12 +193,20 @@ PORT CREDITS
 DEVELOPMENT
 -----------
 
+March :
+- Version 1.1: 
+- Added multiple USB joystick support.
+- Full keyboard support.
+- Added DrZ80 cpu core. Enabled by default for sound to improve performance.
+- Fixed slow sound in dkong, williams and rampage games.
+- Slightly higher sound mixer quality.
+            
+
 March 01, 2013:
 - Version 1.0: First release
 
 TODO
 ----
-- Add joystick support
 - Add rotation support
 - Add configurables
 
@@ -203,10 +215,12 @@ KNOWN PROBLEMS
 --------------
 
 - Not perfect sound or incomplete in some games. Sometimes simply quiting a game and 
-  restarting can fix the sound - believe this is due to ALSA Pi driver bugs.
+  restarting can fix the sound - believe this is due to ALSA Pi driver bugs. Additionally
+  try removing pulseaudio to improve sound problems.
 
 - Make sure nothing is running in the background. Best to run in the console instead
-  of X-Windows.
+  of X-Windows. But if experiencing black screen in the console, try running in 
+  X-Windows or downgrading to an earlier version of Raspbian.
 
 - The SDL input drivers are a little buggy, if input suddenly stops, reboot the Pi.
 
