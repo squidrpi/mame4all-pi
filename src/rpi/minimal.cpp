@@ -1,6 +1,4 @@
 /*
-
-
 */
 
 #include "minimal.h"
@@ -40,100 +38,13 @@ void gp2x_video_setpalette(void)
 }
 
 extern void keyprocess(SDLKey inkey, SDL_bool pressed);
-
-extern unsigned long ExKey1;
-extern unsigned long ExKey2;
-extern unsigned long ExKey3;
-extern unsigned long ExKey4;
-
-static void joyprocess(Uint32 *st, Uint8 button, SDL_bool pressed, Uint8 njoy)
-{
-    Uint32 val=0;
-	unsigned long *mykey;
-
-	switch(njoy)
-	{
-		case 0:
-			mykey = &ExKey1; break;
-		case 1:
-			mykey = &ExKey2; break;
-		case 2:
-			mykey = &ExKey3; break;
-		case 3:
-			mykey = &ExKey4; break;
-		default:
-			return;
-	}
-	
-    switch(button)
-    {
-        case 0:
-            val=GP2X_LCTRL; break;
-        case 1:
-            val=GP2X_LALT; break;
-        case 2:
-            val=GP2X_SPACE; break;
-        case 3:
-            val=GP2X_LSHIFT; break;
-        case 4:
-            val=GP2X_TAB; break;
-        case 5:
-            val=GP2X_RETURN; break;
-//sq        case 6:
-//sq            val=GP2X_TAB; break;
-//sq        case 7:
-//sq            val=GP2X_TILDE; break;
-//sq        case 8:
-//sq            val=GP2X_ESCAPE; break;
-//sq        case 9:
-//sq            val=GP2X_1; break;
-//sq        case 10:
-//sq            val=GP2X_5; break;
-//sq        case 11: 
-//sq            val=GP2X_P; break;
-        case 129:
-            val=GP2X_DOWN; break;
-        case 130:
-            val=GP2X_LEFT; break;
-        case 131:
-            val=GP2X_UP; break;
-        case 132:
-            val=GP2X_RIGHT; break;
-        default:
-            return;
-    }
-    if (pressed)
-        (*mykey) |= val;
-    else
-        (*mykey) ^= val;
-
-//sq    if (pressed)
-//sq        (st[njoy]) |= val;
-//sq    else
-//sq        (st[njoy]) ^= val;
-}
-
-
-Uint32 _st_[4]={0,0,0,0};
-
-void gp2x_joystick_clear(void)
-{
-    SDL_Event event;
-    while(SDL_PollEvent(&event));
-    _st_[0]= 0;
-    _st_[1]= 0;
-    _st_[2]= 0;
-    _st_[3]= 0;
-    
-}
+void joyprocess(Uint8 button, SDL_bool pressed, Uint8 njoy);
 
 unsigned long gp2x_joystick_read()
 {
-  	unsigned long res=0;
-
     SDL_Event event;
-//	if (n==1)
-      while(SDL_PollEvent(&event)) {
+
+	while(SDL_PollEvent(&event)) {
         switch(event.type)
 		{
 			case SDL_KEYDOWN:
@@ -143,99 +54,67 @@ unsigned long gp2x_joystick_read()
 				keyprocess(event.key.keysym.sym, SDL_FALSE);
 				break;
             case SDL_JOYBUTTONDOWN:
-                joyprocess((Uint32 *)&_st_,event.jbutton.button, SDL_TRUE, event.jbutton.which);
+                joyprocess(event.jbutton.button, SDL_TRUE, event.jbutton.which);
                 break;
             case SDL_JOYBUTTONUP:
-                joyprocess((Uint32 *)&_st_,event.jbutton.button, SDL_FALSE, event.jbutton.which);
+                joyprocess(event.jbutton.button, SDL_FALSE, event.jbutton.which);
                 break;
-            case SDL_JOYAXISMOTION:
-                if (event.jaxis.axis==0)
-                {
-                    static int reset_xl[4]={0,0,0,0};
-                    static int reset_xr[4]={0,0,0,0};
-                    if (event.jaxis.value<-6000)
-                    {
-                        if (!reset_xl[event.jaxis.which]){
-                            joyprocess((Uint32 *)&_st_,130, SDL_TRUE, event.jaxis.which);}
-                        reset_xl[event.jaxis.which]=1;
-                    }
-                    else if (event.jaxis.value>6000)
-                    {
-                        if (!reset_xr[event.jaxis.which]){
-                            joyprocess((Uint32 *)&_st_,132, SDL_TRUE, event.jaxis.which);}
-                        reset_xr[event.jaxis.which]=1;
-                    }
-                    else
-                    {
-                        if (reset_xr[event.jaxis.which])
-                            joyprocess((Uint32 *)&_st_,132, SDL_FALSE, event.jaxis.which);
-                        reset_xr[event.jaxis.which]=0;
-                        if (reset_xl[event.jaxis.which])
-                            joyprocess((Uint32 *)&_st_,130, SDL_FALSE, event.jaxis.which);
-                        reset_xl[event.jaxis.which]=0;
-                    }
-                }
-                else if (event.jaxis.axis==1)
-                {
-                    static int reset_yu[4]={0,0,0,0};
-                    static int reset_yd[4]={0,0,0,0};
-                    if (event.jaxis.value<-6000)
-                    {
-                        if (!reset_yu[event.jaxis.which]){
-                            joyprocess((Uint32 *)&_st_,131,SDL_TRUE, event.jaxis.which);}
-                        reset_yu[event.jaxis.which]=1;
-                    }
-                    else if (event.jaxis.value>6000)
-                    {
-                        if (!reset_yd[event.jaxis.which]) {
-                            joyprocess((Uint32 *)&_st_,129,SDL_TRUE, event.jaxis.which);}
-                        reset_yd[event.jaxis.which]=1;
-                    }
-                    else
-                    {
-                        if (reset_yd[event.jaxis.which])
-                            joyprocess((Uint32 *)&_st_,129,SDL_FALSE, event.jaxis.which);
-                        reset_yd[event.jaxis.which]=0;
-                        if (reset_yu[event.jaxis.which])
-                            joyprocess((Uint32 *)&_st_,131,SDL_FALSE, event.jaxis.which);
-                        reset_yu[event.jaxis.which]=0;
-                    }
-                }
-                break;
+//sq            case SDL_JOYAXISMOTION:
+//sq                if (event.jaxis.axis==0)
+//sq                {
+//sq                    static int reset_xl[4]={0,0,0,0};
+//sq                    static int reset_xr[4]={0,0,0,0};
+//sq                    if (event.jaxis.value<-6000)
+//sq                    {
+//sq                        if (!reset_xl[event.jaxis.which]){
+//sq                            joyprocess(130, SDL_TRUE, event.jaxis.which);}
+//sq                        reset_xl[event.jaxis.which]=1;
+//sq                    }
+//sq                    else if (event.jaxis.value>6000)
+//sq                    {
+//sq                        if (!reset_xr[event.jaxis.which]){
+//sq                            joyprocess(132, SDL_TRUE, event.jaxis.which);}
+//sq                        reset_xr[event.jaxis.which]=1;
+//sq                    }
+//sq                    else
+//sq                    {
+//sq                        if (reset_xr[event.jaxis.which])
+//sq                            joyprocess(132, SDL_FALSE, event.jaxis.which);
+//sq                        reset_xr[event.jaxis.which]=0;
+//sq                        if (reset_xl[event.jaxis.which])
+//sq                            joyprocess(130, SDL_FALSE, event.jaxis.which);
+//sq                        reset_xl[event.jaxis.which]=0;
+//sq                    }
+//sq                }
+//sq                else if (event.jaxis.axis==1)
+//sq                {
+//sq                    static int reset_yu[4]={0,0,0,0};
+//sq                    static int reset_yd[4]={0,0,0,0};
+//sq                    if (event.jaxis.value<-6000)
+//sq                    {
+//sq                        if (!reset_yu[event.jaxis.which]){
+//sq                            joyprocess(131,SDL_TRUE, event.jaxis.which);}
+//sq                        reset_yu[event.jaxis.which]=1;
+//sq                    }
+//sq                    else if (event.jaxis.value>6000)
+//sq                    {
+//sq                        if (!reset_yd[event.jaxis.which]) {
+//sq                            joyprocess(129,SDL_TRUE, event.jaxis.which);}
+//sq                        reset_yd[event.jaxis.which]=1;
+//sq                    }
+//sq                    else
+//sq                    {
+//sq                        if (reset_yd[event.jaxis.which])
+//sq                            joyprocess(129,SDL_FALSE, event.jaxis.which);
+//sq                        reset_yd[event.jaxis.which]=0;
+//sq                        if (reset_yu[event.jaxis.which])
+//sq                            joyprocess(131,SDL_FALSE, event.jaxis.which);
+//sq                        reset_yu[event.jaxis.which]=0;
+//sq                    }
+//sq                }
+//sq                break;
 		}
-	  }
-//sq	return _st_[n];
-
-    
-//sq	if (n==0)
-//sq	{
-//sq	  	unsigned long value=(gp2x_memregs[0x1198>>1] & 0x00FF);
-//sq	  	if(value==0xFD) value=0xFA;
-//sq	  	if(value==0xF7) value=0xEB;
-//sq	  	if(value==0xDF) value=0xAF;
-//sq	  	if(value==0x7F) value=0xBE;
-//sq	  	res=~((gp2x_memregs[0x1184>>1] & 0xFF00) | value | (gp2x_memregs[0x1186>>1] << 16));
-//sq	
-//sq	  	/* GP2X F200 Push Button */
-//sq	  	if ((res & GP2X_UP) && (res & GP2X_DOWN) && (res & GP2X_LEFT) && (res & GP2X_RIGHT))
-//sq	  		res |= GP2X_P;
-//sq	}
-//sq	
-//sq	if (num_of_joys>n)
-//sq	{
-//sq	  	/* Check USB Joypad */
-//sq		res |= gp2x_usbjoy_check(joys[n]);
-//sq	}
-//sq
-//sq	return res;
-}
-
-unsigned long gp2x_joystick_press ()
-{
-	unsigned long ExKey=0;
-	while(gp2x_joystick_read()&0x8c0ff55) { gp2x_timer_delay(150000); }
-	while(!(ExKey=gp2x_joystick_read()&0x8c0ff55)) { }
-	return ExKey;
+	}
 }
 
 void gp2x_sound_volume(int l, int r)
@@ -251,16 +130,10 @@ void gp2x_timer_delay(unsigned long ticks)
 
 unsigned long gp2x_timer_read(void)
 {
-//sq    struct timeval current_time;
-//sq    gettimeofday(&current_time, NULL);
-//sq
-//sq    return ((unsigned long long)current_time.tv_sec * 1000LL + (current_time.tv_usec / 1000LL));
-
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC_RAW, &now);
 
 	return ((unsigned long long)now.tv_sec * 1000000LL + (now.tv_nsec / 1000LL));
-
 
 }
 
@@ -285,26 +158,22 @@ void exitfunc()
 	bcm_host_deinit();
 }
 
+SDL_Joystick* myjoy[4];
+
 int init_SDL(void)
 {
-    SDL_Event e;
-	SDL_Joystick *joy;
-    
-    sdlscreen = SDL_SetVideoMode(0,0, 32, SDL_SWSURFACE);
     if (SDL_Init(SDL_INIT_JOYSTICK) < 0) {
         fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
         return(0);
     }
-    
-	/* USB Joysticks Initialization */
-//sq	gp2x_usbjoy_init();
+    sdlscreen = SDL_SetVideoMode(0,0, 32, SDL_SWSURFACE);
 
     SDL_JoystickEventState(SDL_ENABLE);
 	num_of_joys=SDL_NumJoysticks();
-	joy=SDL_JoystickOpen(0);
-	joy=SDL_JoystickOpen(1);
-	joy=SDL_JoystickOpen(2);
-	joy=SDL_JoystickOpen(3);
+	myjoy[0]=SDL_JoystickOpen(0);
+	myjoy[1]=SDL_JoystickOpen(1);
+	myjoy[2]=SDL_JoystickOpen(2);
+	myjoy[3]=SDL_JoystickOpen(3);
 	SDL_EventState(SDL_ACTIVEEVENT,SDL_IGNORE);
 	SDL_EventState(SDL_MOUSEMOTION,SDL_IGNORE);
 	SDL_EventState(SDL_MOUSEBUTTONDOWN,SDL_IGNORE);
@@ -339,8 +208,6 @@ void deinit_SDL(void)
 void gp2x_deinit(void)
 {
 	int ret;
-	/* USB Joysticks Close */
-	gp2x_usbjoy_close();
 
 	dispman_update = vc_dispmanx_update_start( 0 );
     ret = vc_dispmanx_element_remove( dispman_update, dispman_element );
@@ -360,7 +227,6 @@ void gp2x_deinit(void)
 void gp2x_set_video_mode(int bpp,int width,int height)
 {
 	int ret;
-	uint32_t success;
 	uint32_t display_width, display_height;
 	uint32_t display_width_save, display_height_save;
 	uint32_t display_x=0, display_y=0;
@@ -377,7 +243,7 @@ void gp2x_set_video_mode(int bpp,int width,int height)
 	gp2x_screen15=0;
 	gp2x_nflip=0;
 	
-	success = graphics_get_display_size(0 /* LCD */, &display_width, &display_height);
+	graphics_get_display_size(0 /* LCD */, &display_width, &display_height);
 
     dispman_display = vc_dispmanx_display_open( 0 );
 	assert( dispman_display != 0 );
@@ -487,9 +353,7 @@ void gp2x_frontend_init(void)
 {
 	int ret;
         
-	uint32_t success;
 	uint32_t display_width, display_height;
-	uint32_t display_width_save, display_height_save;
 	uint32_t display_border=24;
     
 	VC_RECT_T dst_rect;
@@ -502,7 +366,7 @@ void gp2x_frontend_init(void)
 	gp2x_screen15=0;
 	gp2x_nflip=0;
 	
-	success = graphics_get_display_size(0 /* LCD */, &display_width, &display_height);
+	graphics_get_display_size(0 /* LCD */, &display_width, &display_height);
     
     dispman_display = vc_dispmanx_display_open( 0 );
 	assert( dispman_display != 0 );
@@ -547,8 +411,6 @@ void gp2x_frontend_init(void)
 void gp2x_frontend_deinit(void)
 {
 	int ret;
-	/* USB Joysticks Close */
-//sq	gp2x_usbjoy_close();
     
 	dispman_update = vc_dispmanx_update_start( 0 );
     ret = vc_dispmanx_element_remove( dispman_update, dispman_element );
@@ -558,15 +420,6 @@ void gp2x_frontend_deinit(void)
 	ret = vc_dispmanx_display_close( dispman_display );
     
     free(gp2x_screen8);
-    
-//    if(sdlscreen)
-//    {
-//        SDL_FreeSurface(sdlscreen);
-//        sdlscreen = NULL;
-//    }
-//    SDL_Quit();
-//    
-//	bcm_host_deinit();
     
 }
 
