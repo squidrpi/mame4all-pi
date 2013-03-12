@@ -7,6 +7,7 @@
 #include "minimal.h"
 #include "gp2x_frontend_list.h"
 #include <SDL.h>
+#include "allegro.h"
 
 int game_num_avail=0;
 static int last_game_selected=0;
@@ -72,7 +73,7 @@ static void gp2x_intro_screen(int first_run) {
 	if(first_run) {
 		load_bmp_8bpp(gp2x_screen8,gp2xsplash_bmp);
 		gp2x_video_flip();
-		sleep(2);
+		sleep(1);
 	}
 	
 	sprintf(name,"skins/rpimenu.bmp");
@@ -253,10 +254,23 @@ static void gp2x_exit(void)
 	exit(0);
 }
 
+extern unsigned long ExKey1;
+
+extern int osd_is_key_pressed(int keycode);
+
+//These are defined in input.cpp
+//#define KEY_LEFT 75
+//#define KEY_RIGHT 77
+//#define KEY_UP 72
+//#define KEY_DOWN 80
+//#define KEY_ENTER 28
+//#define KEY_LCONTROL 29
+//#define KEY_ESC 1
+
 static void select_game(char *emu, char *game)
 {
 
-	unsigned long ExKey;
+	unsigned long ExKey=0;
 
 	/* No Selected game */
 	strcpy(game,"builtinn");
@@ -270,11 +284,28 @@ static void select_game(char *emu, char *game)
 		game_list_view(&last_game_selected);
 		gp2x_video_flip();
 
-        if( (gp2x_joystick_read(0)))
-        	gp2x_timer_delay(100000);
-		while(!(ExKey=gp2x_joystick_read(0)))
+//sq        if( (gp2x_joystick_read()))
+//sq        	gp2x_timer_delay(100000);
+		while(1)
 		{
             usleep(10000);
+			gp2x_joystick_read();	
+			if (ExKey1)
+			{
+				ExKey=ExKey1;
+				break;
+			}
+			if(osd_is_key_pressed(KEY_LEFT) ||
+			   osd_is_key_pressed(KEY_RIGHT) ||
+			   osd_is_key_pressed(KEY_UP) ||
+			   osd_is_key_pressed(KEY_DOWN) ||
+			   osd_is_key_pressed(KEY_ENTER) ||
+			   osd_is_key_pressed(KEY_LCONTROL) ||
+			   osd_is_key_pressed(KEY_ESC)) 
+			{
+				break;
+			}
+
 		}
 
 		if (ExKey & GP2X_UP) last_game_selected--;
@@ -283,17 +314,25 @@ static void select_game(char *emu, char *game)
 		if (ExKey & GP2X_RIGHT) last_game_selected+=21;
 		if (ExKey & GP2X_ESCAPE) gp2x_exit();
 
-		if ((ExKey & GP2X_LCTRL) || (ExKey & GP2X_RETURN))
+		if (osd_is_key_pressed(KEY_UP)) last_game_selected--;
+		if (osd_is_key_pressed(KEY_DOWN)) last_game_selected++;
+		if (osd_is_key_pressed(KEY_LEFT)) last_game_selected-=21;
+		if (osd_is_key_pressed(KEY_RIGHT)) last_game_selected+=21;
+		if (osd_is_key_pressed(KEY_ESC)) gp2x_exit();
+
+		if ((ExKey & GP2X_LCTRL) || (ExKey & GP2X_RETURN) || 
+			osd_is_key_pressed(KEY_LCONTROL) || osd_is_key_pressed(KEY_ENTER))
 		{
 			/* Select the game */
 			game_list_select(last_game_selected, game, emu);
 
 			break;
 		}
+       	gp2x_timer_delay(100000);
 	}
 }
 
-char* frontend_gui (char *gamename, int first_run)
+void frontend_gui (char *gamename, int first_run)
 {
 	FILE *f;
 
@@ -314,7 +353,7 @@ char* frontend_gui (char *gamename, int first_run)
     	load_bmp_8bpp(gp2x_screen8,gp2xmenu_bmp);
 		gp2x_gamelist_text_out(35, 110, "ERROR: NO AVAILABLE GAMES FOUND",255);
 		gp2x_video_flip();
-		gp2x_joystick_press(0);
+		sleep(5);
 		gp2x_exit();
 	}
 
