@@ -35,7 +35,7 @@ int  frontend_help (int argc, char **argv);
 void parse_cmdline (int argc, char **argv, int game);
 void init_inpdir(void);
 
-char* frontend_gui (char *gamename, int first_run);
+void frontend_gui (char *gamename, int first_run);
 
 static FILE *errorlog;
 
@@ -131,12 +131,12 @@ int main (int argc, char **argv)
 	{
 		if (strcasecmp(argv[i],"-log") == 0)
 			errorlog = fopen("error.log","wa");
-		if (strcasecmp(argv[i],"-cyclone") == 0)
-			use_cyclone=1;
+		if (strcasecmp(argv[i],"-nocyclone") == 0)
+			use_cyclone=0;
 		if (strcasecmp(argv[i],"-drz80") == 0)
 			use_drz80=1;
-		if (strcasecmp(argv[i],"-drz80_snd") == 0)
-			use_drz80_snd=1;
+		if (strcasecmp(argv[i],"-nodrz80_snd") == 0)
+			use_drz80_snd=0;
 		if (strcasecmp(argv[i],"-scale") == 0)
 			video_scale=1;
 		if (strcasecmp(argv[i],"-border") == 0)
@@ -439,9 +439,6 @@ gui_loop:
         use_mouse=0;
     }
 
-	/* GP2X Initialization */
-//sq	gp2x_init(1000,8,44100,16,0,60,0);
-
     /* go for it */
     printf ("%s (%s)...\n",drivers[game_index]->description,drivers[game_index]->name);
     res = run_game (game_index);
@@ -456,7 +453,7 @@ gui_loop:
 	{
 		/* wait a key press */
 		gp2x_video_flip_single();
-		gp2x_joystick_press(0);
+		sleep(5);
 	}
 
     gp2x_deinit();
