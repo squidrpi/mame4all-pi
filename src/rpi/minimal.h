@@ -63,7 +63,6 @@ extern void gp2x_video_flip_single(void);
 extern void gp2x_video_setpalette(void);
 extern void gp2x_joystick_clear(void);
 extern unsigned long gp2x_joystick_read(void);
-extern unsigned long gp2x_joystick_press (void);
 extern unsigned long gp2x_timer_read(void);
 //sq extern unsigned long gp2x_timer_read_real(void);
 //sq extern unsigned long gp2x_timer_read_scale(void);

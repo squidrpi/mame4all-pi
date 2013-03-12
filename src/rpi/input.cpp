@@ -132,101 +132,101 @@ struct SDLtranslate
 
 static struct SDLtranslate sdlkeytranslate[] =
 {
-	{			KEY_A,						SDLK_a },
-	{			KEY_B,						SDLK_b },
-	{			KEY_C,						SDLK_c },
-	{			KEY_D,						SDLK_d },
-	{			KEY_E,						SDLK_e },
-	{			KEY_F,						SDLK_f },
-	{			KEY_G,						SDLK_g },
-	{			KEY_H,						SDLK_h },
-	{			KEY_I,						SDLK_i },
-	{			KEY_J,						SDLK_j },
-	{			KEY_K,						SDLK_k },
-	{			KEY_L,						SDLK_l },
-	{			KEY_M,						SDLK_m },
-	{			KEY_N,						SDLK_n },
-	{			KEY_O,						SDLK_o },
-	{			KEY_P,						SDLK_p },
-	{			KEY_Q,						SDLK_q },
-	{			KEY_R,						SDLK_r },
-	{			KEY_S,						SDLK_s },
-	{			KEY_T,						SDLK_t },
-	{			KEY_U,						SDLK_u },
-	{			KEY_V,						SDLK_v },
-	{			KEY_W,						SDLK_w },
-	{			KEY_X,						SDLK_x },
-	{			KEY_Y,						SDLK_y },
-	{			KEY_Z,						SDLK_z },
-	{			KEY_0,						SDLK_0 },
-	{			KEY_1,						SDLK_1 },
-	{			KEY_2,						SDLK_2 },
-	{			KEY_3,						SDLK_3 },
-	{			KEY_4,						SDLK_4 },
-	{			KEY_5,						SDLK_5 },
-	{			KEY_6,						SDLK_6 },
-	{			KEY_7,						SDLK_7 },
-	{			KEY_8,						SDLK_8 },
-	{			KEY_9,						SDLK_9 },
-	{		KEY_0_PAD,						SDLK_KP0 },
-	{		KEY_1_PAD,						SDLK_KP1 },
-	{		KEY_2_PAD,						SDLK_KP2 },
-	{		KEY_3_PAD,						SDLK_KP3 },
-	{		KEY_4_PAD,						SDLK_KP4 },
-	{		KEY_5_PAD,						SDLK_KP5 },
-	{		KEY_6_PAD,						SDLK_KP6 },
-	{		KEY_7_PAD,						SDLK_KP7 },
-	{		KEY_8_PAD,						SDLK_KP8 },
-	{		KEY_9_PAD,						SDLK_KP9 },
-	{			KEY_F1,						SDLK_F1 },
-	{			KEY_F2,						SDLK_F2 },
-	{			KEY_F3,						SDLK_F3 },
-	{			KEY_F4,						SDLK_F4 },
-	{			KEY_F5,						SDLK_F5 },
-	{			KEY_F6,						SDLK_F6 },
-	{			KEY_F7,						SDLK_F7 },
-	{			KEY_F8,						SDLK_F8 },
-	{			KEY_F9,						SDLK_F9 },
-	{			KEY_F10,					SDLK_F10 },
-	{			KEY_F11,					SDLK_F11 },
-	{			KEY_F12,					SDLK_F12 },
-	{			KEY_ESC,					SDLK_ESCAPE },
-	{			KEY_TILDE,					SDLK_BACKQUOTE },
-	{          	KEY_MINUS,		          		SDLK_MINUS },
-	{          	KEY_EQUALS,		         		SDLK_EQUALS },
-	{			KEY_BACKSPACE,					SDLK_BACKSPACE },
-	{			KEY_TAB,					SDLK_TAB },
-	{          	KEY_OPENBRACE,		      		SDLK_LEFTPAREN },
-	{          	KEY_CLOSEBRACE,		     		SDLK_RIGHTPAREN },
-	{			KEY_ENTER,					SDLK_RETURN },
-	{          	KEY_COLON,		          		SDLK_COLON },
-	{          	KEY_QUOTE,		          		SDLK_QUOTE },
-	{         	KEY_BACKSLASH,		      		SDLK_BACKSLASH },
-	{			KEY_COMMA,                  SDLK_COMMA },
-	{			KEY_STOP,		           		SDLK_PERIOD },
-	{			KEY_SLASH,		          		SDLK_SLASH },
-	{			KEY_SPACE,					SDLK_SPACE },
-	{			KEY_INSERT,					SDLK_INSERT },
-	{			KEY_DEL,					SDLK_DELETE },
-	{			KEY_HOME,					SDLK_HOME },
-	{			KEY_END,					SDLK_END },
-	{			KEY_PGUP,					SDLK_PAGEUP },
-	{			KEY_PGDN,					SDLK_PAGEDOWN },
-	{			KEY_LEFT,					SDLK_LEFT },
-	{			KEY_RIGHT,					SDLK_RIGHT },
-	{			KEY_UP,						SDLK_UP },
-	{			KEY_DOWN,					SDLK_DOWN },
-	{   	   		KEY_SLASH_PAD,		      		SDLK_KP_DIVIDE },
-	{   	   		KEY_ASTERISK,		       		SDLK_KP_MULTIPLY },
-	{   		   	KEY_MINUS_PAD,		      		SDLK_KP_MINUS },
-	{   	   		KEY_PLUS_PAD,		       		SDLK_KP_PLUS },
-	{	  		KEY_ENTER_PAD,		      		SDLK_KP_ENTER },
-	{			KEY_LSHIFT,					SDLK_LSHIFT },
-	{			KEY_RSHIFT,					SDLK_RSHIFT },
-	{			KEY_LCONTROL,					SDLK_LCTRL },
-	{			KEY_RCONTROL,					SDLK_RCTRL },
-	{			KEY_ALT,					SDLK_LALT },
-	{			KEY_ALTGR,					SDLK_RALT },
+	{	KEY_A,						SDLK_a },
+	{	KEY_B,						SDLK_b },
+	{	KEY_C,						SDLK_c },
+	{	KEY_D,						SDLK_d },
+	{	KEY_E,						SDLK_e },
+	{	KEY_F,						SDLK_f },
+	{	KEY_G,						SDLK_g },
+	{	KEY_H,						SDLK_h },
+	{	KEY_I,						SDLK_i },
+	{	KEY_J,						SDLK_j },
+	{	KEY_K,						SDLK_k },
+	{	KEY_L,						SDLK_l },
+	{	KEY_M,						SDLK_m },
+	{	KEY_N,						SDLK_n },
+	{	KEY_O,						SDLK_o },
+	{	KEY_P,						SDLK_p },
+	{	KEY_Q,						SDLK_q },
+	{	KEY_R,						SDLK_r },
+	{	KEY_S,						SDLK_s },
+	{	KEY_T,						SDLK_t },
+	{	KEY_U,						SDLK_u },
+	{	KEY_V,						SDLK_v },
+	{	KEY_W,						SDLK_w },
+	{	KEY_X,						SDLK_x },
+	{	KEY_Y,						SDLK_y },
+	{	KEY_Z,						SDLK_z },
+	{	KEY_0,						SDLK_0 },
+	{	KEY_1,						SDLK_1 },
+	{	KEY_2,						SDLK_2 },
+	{	KEY_3,						SDLK_3 },
+	{	KEY_4,						SDLK_4 },
+	{	KEY_5,						SDLK_5 },
+	{	KEY_6,						SDLK_6 },
+	{	KEY_7,						SDLK_7 },
+	{	KEY_8,						SDLK_8 },
+	{	KEY_9,						SDLK_9 },
+	{	KEY_0_PAD,					SDLK_KP0 },
+	{	KEY_1_PAD,					SDLK_KP1 },
+	{	KEY_2_PAD,					SDLK_KP2 },
+	{	KEY_3_PAD,					SDLK_KP3 },
+	{	KEY_4_PAD,					SDLK_KP4 },
+	{	KEY_5_PAD,					SDLK_KP5 },
+	{	KEY_6_PAD,					SDLK_KP6 },
+	{	KEY_7_PAD,					SDLK_KP7 },
+	{	KEY_8_PAD,					SDLK_KP8 },
+	{	KEY_9_PAD,					SDLK_KP9 },
+	{	KEY_F1,						SDLK_F1 },
+	{	KEY_F2,						SDLK_F2 },
+	{	KEY_F3,						SDLK_F3 },
+	{	KEY_F4,						SDLK_F4 },
+	{	KEY_F5,						SDLK_F5 },
+	{	KEY_F6,						SDLK_F6 },
+	{	KEY_F7,						SDLK_F7 },
+	{	KEY_F8,						SDLK_F8 },
+	{	KEY_F9,						SDLK_F9 },
+	{	KEY_F10,					SDLK_F10 },
+	{	KEY_F11,					SDLK_F11 },
+	{	KEY_F12,					SDLK_F12 },
+	{	KEY_ESC,					SDLK_ESCAPE },
+	{	KEY_TILDE,					SDLK_BACKQUOTE },
+	{	KEY_MINUS,		          	SDLK_MINUS },
+	{	KEY_EQUALS,		         	SDLK_EQUALS },
+	{	KEY_BACKSPACE,				SDLK_BACKSPACE },
+	{	KEY_TAB,					SDLK_TAB },
+	{	KEY_OPENBRACE,		      	SDLK_LEFTPAREN },
+	{	KEY_CLOSEBRACE,		     	SDLK_RIGHTPAREN },
+	{	KEY_ENTER,					SDLK_RETURN },
+	{	KEY_COLON,		          	SDLK_COLON },
+	{	KEY_QUOTE,		          	SDLK_QUOTE },
+	{	KEY_BACKSLASH,		      	SDLK_BACKSLASH },
+	{	KEY_COMMA,                  SDLK_COMMA },
+	{	KEY_STOP,		           	SDLK_PERIOD },
+	{	KEY_SLASH,		          	SDLK_SLASH },
+	{	KEY_SPACE,					SDLK_SPACE },
+	{	KEY_INSERT,					SDLK_INSERT },
+	{	KEY_DEL,					SDLK_DELETE },
+	{	KEY_HOME,					SDLK_HOME },
+	{	KEY_END,					SDLK_END },
+	{	KEY_PGUP,					SDLK_PAGEUP },
+	{	KEY_PGDN,					SDLK_PAGEDOWN },
+	{	KEY_LEFT,					SDLK_LEFT },
+	{	KEY_RIGHT,					SDLK_RIGHT },
+	{	KEY_UP,						SDLK_UP },
+	{	KEY_DOWN,					SDLK_DOWN },
+	{  	KEY_SLASH_PAD,		      	SDLK_KP_DIVIDE },
+	{	KEY_ASTERISK,		       	SDLK_KP_MULTIPLY },
+	{	KEY_MINUS_PAD,		      	SDLK_KP_MINUS },
+	{  	KEY_PLUS_PAD,		       	SDLK_KP_PLUS },
+	{ 	KEY_ENTER_PAD,		      	SDLK_KP_ENTER },
+	{	KEY_LSHIFT,					SDLK_LSHIFT },
+	{	KEY_RSHIFT,					SDLK_RSHIFT },
+	{	KEY_LCONTROL,				SDLK_LCTRL },
+	{	KEY_RCONTROL,				SDLK_RCTRL },
+	{	KEY_ALT,					SDLK_LALT },
+	{	KEY_ALTGR,					SDLK_RALT },
 	{ 0, 0 }	/* end of table */
 };
 
@@ -244,7 +244,6 @@ static int key[KEY_MAX];
 //
 void keyprocess(SDLKey inkey, SDL_bool pressed)
 {
-    Uint32 val=0, njoy=0;
 	int i=0;
 
 	while(sdlkeytranslate[i].mamekey)
@@ -255,6 +254,75 @@ void keyprocess(SDLKey inkey, SDL_bool pressed)
 			break;
 		}
 		i++;
+	}
+}
+
+void joyprocess(Uint8 button, SDL_bool pressed, Uint8 njoy)
+{
+    Uint32 val=0;
+	unsigned long *mykey=0;
+
+	if(njoy == 0) mykey = &ExKey1;
+	if(njoy == 1) mykey = &ExKey2;
+	if(njoy == 2) mykey = &ExKey3;
+	if(njoy == 3) mykey = &ExKey4;
+
+    switch(button)
+    {
+        case 0:
+            val=GP2X_LCTRL; break;
+        case 1:
+            val=GP2X_LALT; break;
+        case 2:
+            val=GP2X_SPACE; break;
+        case 3:
+            val=GP2X_LSHIFT; break;
+        case 4:
+            val=GP2X_TAB; break;
+        case 5:
+            val=GP2X_RETURN; break;
+        case 8:
+			key[KEY_ESC] = pressed;
+			break;
+		case 9:
+			if(njoy == 0) key[KEY_1] = pressed;
+			if(njoy == 1) key[KEY_2] = pressed;
+			if(njoy == 2) key[KEY_3] = pressed;
+			if(njoy == 3) key[KEY_4] = pressed;
+			break;
+		case 11:
+			key[KEY_5] = pressed;
+			break;
+        case 129:
+            val=GP2X_DOWN; break;
+        case 130:
+            val=GP2X_LEFT; break;
+        case 131:
+            val=GP2X_UP; break;
+        case 132:
+            val=GP2X_RIGHT; break;
+        default:
+            return;
+    }
+    if (pressed)
+        (*mykey) |= val;
+    else
+        (*mykey) ^= val;
+}
+
+void gp2x_joystick_clear(void)
+{
+	int i;
+
+    SDL_Event event;
+    while(SDL_PollEvent(&event));
+	ExKey1=0;
+	ExKey2=0;
+	ExKey3=0;
+	ExKey4=0;
+
+	for(i=0;i<KEY_MAX;i++) {
+		key[i] = 0;
 	}
 }
 
@@ -487,60 +555,39 @@ static int is_joy_button_pressed (int button, int ExKey)
 #define JOY_UP_PRESSED is_joy_axis_pressed(1,1,ExKey1)
 #define JOY_DOWN_PRESSED is_joy_axis_pressed(1,2,ExKey1)
 
-static int is_joy_axis_pressed (int axis, int dir, int ExKey)
+extern SDL_Joystick* myjoy[4];
+
+static int is_joy_axis_pressed (int axis, int dir, int joynum)
 {
-	extern int rotate_controls;
-	if (!rotate_controls)
+	if (!myjoy[joynum]) return 0;
+
+	/* Normal controls */
+	if (axis==0)
 	{
-		/* Normal controls */
-		if (axis==0)
-		{
-			switch (dir)
-			{
-				case 1: return ExKey & GP2X_LEFT; break;
-				case 2: return ExKey & GP2X_RIGHT; break;
-				default: return 0; break;
-			}
+		if(dir == 1) { //left
+			if(SDL_JoystickGetAxis(myjoy[joynum], 0) < -6000) return true;	
 		}
-		else
-		{
-			switch (dir)
-			{
-				case 1: return ExKey & GP2X_UP; break;
-				case 2: return ExKey & GP2X_DOWN; break;
-				default: return 0; break;
-			}
+		if(dir == 2) { //right
+			if(SDL_JoystickGetAxis(myjoy[joynum], 0) > 6000) return true;	
 		}
 	}
 	else
 	{
-		/* Rotated controls */
-		if (axis==0)
-		{
-			switch (dir)
-			{
-				case 1: return ExKey & GP2X_UP; break;
-				case 2: return ExKey & GP2X_DOWN; break;
-				default: return 0; break;
-			}
+		if(dir == 1) { //up
+			if(SDL_JoystickGetAxis(myjoy[joynum], 1) < -6000) return true;	
 		}
-		else
-		{
-			switch (dir)
-			{
-				case 1: return ExKey & GP2X_RIGHT; break;
-				case 2: return ExKey & GP2X_LEFT; break;
-				default: return 0; break;
-			}
+				
+		if(dir == 2) { //down
+			if(SDL_JoystickGetAxis(myjoy[joynum], 1) > 6000) return true;	
 		}
 	}
+
 	return 0;
 }
 
 int osd_is_joy_pressed(int joycode)
 {
 	int joy_num,stick;
-
 
 //sq	/* special case for mouse buttons */
 //sq	switch (joycode)
@@ -599,10 +646,10 @@ int osd_is_joy_pressed(int joycode)
 
 		switch (joy_num)
 		{
-			case 0: return is_joy_axis_pressed(axis, dir, ExKey1); break;
-			case 1: return is_joy_axis_pressed(axis, dir, ExKey2); break;
-			case 2: return is_joy_axis_pressed(axis, dir, ExKey3); break;
-			case 3: return is_joy_axis_pressed(axis, dir, ExKey4); break;
+			case 0: return is_joy_axis_pressed(axis, dir, joy_num); break;
+			case 1: return is_joy_axis_pressed(axis, dir, joy_num); break;
+			case 2: return is_joy_axis_pressed(axis, dir, joy_num); break;
+			case 3: return is_joy_axis_pressed(axis, dir, joy_num); break;
 			default: break;
 		}
 	}
@@ -619,6 +666,7 @@ void osd_poll_joysticks(void)
 int pos_analog_x=0;
 int pos_analog_y=0;
 
+
 /* return a value in the range -128 .. 128 (yes, 128, not 127) */
 void osd_analogjoy_read(int player,int *analog_x, int *analog_y)
 {
@@ -628,19 +676,11 @@ void osd_analogjoy_read(int player,int *analog_x, int *analog_y)
 	if (player+1 > num_joysticks || joystick == JOY_TYPE_NONE)
 		return;
 
-	if( (!(JOY_LEFT_PRESSED)) && (!(JOY_RIGHT_PRESSED)) ) {
-		pos_analog_x=0;
-	} else {
-		if(JOY_LEFT_PRESSED) pos_analog_x-=5;
-		if(JOY_RIGHT_PRESSED) pos_analog_x+=5;
-	}
-	if( (!(JOY_UP_PRESSED)) && (!(JOY_DOWN_PRESSED)) ) {
-		pos_analog_y=0;
-	} else {
-		if(JOY_UP_PRESSED) pos_analog_y-=5; 
-		if(JOY_DOWN_PRESSED) pos_analog_y+=5;
-	 }
-	
+	if (!myjoy[player]) return;
+
+	pos_analog_x=SDL_JoystickGetAxis(myjoy[player], 0)/256;	
+	pos_analog_y=SDL_JoystickGetAxis(myjoy[player], 1)/256;	
+
 	if (pos_analog_x<-128) pos_analog_x=-128;
 	if (pos_analog_x>128) pos_analog_x=128;
 	if (pos_analog_y<-128) pos_analog_y=-128;
@@ -650,6 +690,36 @@ void osd_analogjoy_read(int player,int *analog_x, int *analog_y)
 	*analog_y = pos_analog_y;
 }
 
+//sq /* return a value in the range -128 .. 128 (yes, 128, not 127) */
+//sq void osd_analogjoy_read(int player,int *analog_x, int *analog_y)
+//sq {
+//sq 	*analog_x = *analog_y = 0;
+//sq 
+//sq 	/* is there an analog joystick at all? */
+//sq 	if (player+1 > num_joysticks || joystick == JOY_TYPE_NONE)
+//sq 		return;
+//sq 
+//sq 	if( (!(JOY_LEFT_PRESSED)) && (!(JOY_RIGHT_PRESSED)) ) {
+//sq 		pos_analog_x=0;
+//sq 	} else {
+//sq 		if(JOY_LEFT_PRESSED) pos_analog_x-=5;
+//sq 		if(JOY_RIGHT_PRESSED) pos_analog_x+=5;
+//sq 	}
+//sq 	if( (!(JOY_UP_PRESSED)) && (!(JOY_DOWN_PRESSED)) ) {
+//sq 		pos_analog_y=0;
+//sq 	} else {
+//sq 		if(JOY_UP_PRESSED) pos_analog_y-=5; 
+//sq 		if(JOY_DOWN_PRESSED) pos_analog_y+=5;
+//sq 	 }
+//sq 	
+//sq 	if (pos_analog_x<-128) pos_analog_x=-128;
+//sq 	if (pos_analog_x>128) pos_analog_x=128;
+//sq 	if (pos_analog_y<-128) pos_analog_y=-128;
+//sq 	if (pos_analog_y>128) pos_analog_y=128;
+//sq 	
+//sq 	*analog_x = pos_analog_x;
+//sq 	*analog_y = pos_analog_y;
+//sq }
 
 int osd_joystick_needs_calibration (void)
 {
@@ -676,16 +746,12 @@ void osd_joystick_end_calibration (void)
 
 void osd_trak_read(int player,int *deltax,int *deltay)
 {
-	if (player != 0 || use_mouse == 0)
-		*deltax = *deltay = 0;
-	else
-	{
-		*deltax = *deltay = 0;
-		if(JOY_LEFT_PRESSED) *deltax=-5;
-	  	if(JOY_RIGHT_PRESSED) *deltax=5;
-	  	if(JOY_UP_PRESSED) *deltay=5; 
-	 	if(JOY_DOWN_PRESSED) *deltay=-5;
-	}
+	*deltax = *deltay = 0;
+
+ 	if (use_mouse == 0 || !myjoy[player]) return;
+
+   	*deltax=SDL_JoystickGetAxis(myjoy[player], 0)/256/4;
+   	*deltay=SDL_JoystickGetAxis(myjoy[player], 1)/256/4;
 }
 
 
@@ -700,12 +766,9 @@ void osd_customize_inputport_defaults(struct ipd *defaults)
 {
 }
 
-
-
-void osd_led_w(int led,int on) {
+void osd_led_w(int led,int on) 
+{
 }
-
-
 
 void msdos_init_input (void)
 {
