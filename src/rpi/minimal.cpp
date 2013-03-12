@@ -59,60 +59,8 @@ unsigned long gp2x_joystick_read()
             case SDL_JOYBUTTONUP:
                 joyprocess(event.jbutton.button, SDL_FALSE, event.jbutton.which);
                 break;
-//sq            case SDL_JOYAXISMOTION:
-//sq                if (event.jaxis.axis==0)
-//sq                {
-//sq                    static int reset_xl[4]={0,0,0,0};
-//sq                    static int reset_xr[4]={0,0,0,0};
-//sq                    if (event.jaxis.value<-6000)
-//sq                    {
-//sq                        if (!reset_xl[event.jaxis.which]){
-//sq                            joyprocess(130, SDL_TRUE, event.jaxis.which);}
-//sq                        reset_xl[event.jaxis.which]=1;
-//sq                    }
-//sq                    else if (event.jaxis.value>6000)
-//sq                    {
-//sq                        if (!reset_xr[event.jaxis.which]){
-//sq                            joyprocess(132, SDL_TRUE, event.jaxis.which);}
-//sq                        reset_xr[event.jaxis.which]=1;
-//sq                    }
-//sq                    else
-//sq                    {
-//sq                        if (reset_xr[event.jaxis.which])
-//sq                            joyprocess(132, SDL_FALSE, event.jaxis.which);
-//sq                        reset_xr[event.jaxis.which]=0;
-//sq                        if (reset_xl[event.jaxis.which])
-//sq                            joyprocess(130, SDL_FALSE, event.jaxis.which);
-//sq                        reset_xl[event.jaxis.which]=0;
-//sq                    }
-//sq                }
-//sq                else if (event.jaxis.axis==1)
-//sq                {
-//sq                    static int reset_yu[4]={0,0,0,0};
-//sq                    static int reset_yd[4]={0,0,0,0};
-//sq                    if (event.jaxis.value<-6000)
-//sq                    {
-//sq                        if (!reset_yu[event.jaxis.which]){
-//sq                            joyprocess(131,SDL_TRUE, event.jaxis.which);}
-//sq                        reset_yu[event.jaxis.which]=1;
-//sq                    }
-//sq                    else if (event.jaxis.value>6000)
-//sq                    {
-//sq                        if (!reset_yd[event.jaxis.which]) {
-//sq                            joyprocess(129,SDL_TRUE, event.jaxis.which);}
-//sq                        reset_yd[event.jaxis.which]=1;
-//sq                    }
-//sq                    else
-//sq                    {
-//sq                        if (reset_yd[event.jaxis.which])
-//sq                            joyprocess(129,SDL_FALSE, event.jaxis.which);
-//sq                        reset_yd[event.jaxis.which]=0;
-//sq                        if (reset_yu[event.jaxis.which])
-//sq                            joyprocess(131,SDL_FALSE, event.jaxis.which);
-//sq                        reset_yu[event.jaxis.which]=0;
-//sq                    }
-//sq                }
-//sq                break;
+			default:
+				break;
 		}
 	}
 }
@@ -169,7 +117,6 @@ int init_SDL(void)
     sdlscreen = SDL_SetVideoMode(0,0, 32, SDL_SWSURFACE);
 
     SDL_JoystickEventState(SDL_ENABLE);
-	num_of_joys=SDL_NumJoysticks();
 	myjoy[0]=SDL_JoystickOpen(0);
 	myjoy[1]=SDL_JoystickOpen(1);
 	myjoy[2]=SDL_JoystickOpen(2);

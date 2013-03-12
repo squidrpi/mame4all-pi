@@ -557,7 +557,7 @@ static int is_joy_button_pressed (int button, int ExKey)
 
 extern SDL_Joystick* myjoy[4];
 
-static int is_joy_axis_pressed (int axis, int dir, int joynum)
+int is_joy_axis_pressed (int axis, int dir, int joynum)
 {
 	if (!myjoy[joynum]) return 0;
 

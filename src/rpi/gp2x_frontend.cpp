@@ -257,15 +257,7 @@ static void gp2x_exit(void)
 extern unsigned long ExKey1;
 
 extern int osd_is_key_pressed(int keycode);
-
-//These are defined in input.cpp
-//#define KEY_LEFT 75
-//#define KEY_RIGHT 77
-//#define KEY_UP 72
-//#define KEY_DOWN 80
-//#define KEY_ENTER 28
-//#define KEY_LCONTROL 29
-//#define KEY_ESC 1
+extern int is_joy_axis_pressed (int axis, int dir, int joynum);
 
 static void select_game(char *emu, char *game)
 {
@@ -283,6 +275,7 @@ static void select_game(char *emu, char *game)
 	{
 		game_list_view(&last_game_selected);
 		gp2x_video_flip();
+       	gp2x_timer_delay(100000);
 
 //sq        if( (gp2x_joystick_read()))
 //sq        	gp2x_timer_delay(100000);
@@ -290,11 +283,15 @@ static void select_game(char *emu, char *game)
 		{
             usleep(10000);
 			gp2x_joystick_read();	
+
+			//Any joy buttons pressed?
 			if (ExKey1)
 			{
 				ExKey=ExKey1;
 				break;
 			}
+
+			//Any keyboard key pressed?
 			if(osd_is_key_pressed(KEY_LEFT) ||
 			   osd_is_key_pressed(KEY_RIGHT) ||
 			   osd_is_key_pressed(KEY_UP) ||
@@ -306,12 +303,30 @@ static void select_game(char *emu, char *game)
 				break;
 			}
 
+			//Any stick direction?
+			if(is_joy_axis_pressed (0, 1, 0) ||
+			   is_joy_axis_pressed (0, 2, 0) ||
+			   is_joy_axis_pressed (1, 1, 0) ||
+			   is_joy_axis_pressed (1, 2, 0))
+			{
+				break;
+			}
+
 		}
 
-		if (ExKey & GP2X_UP) last_game_selected--;
-		if (ExKey & GP2X_DOWN) last_game_selected++;
-		if (ExKey & GP2X_LEFT) last_game_selected-=21;
-		if (ExKey & GP2X_RIGHT) last_game_selected+=21;
+//sq		if (ExKey & GP2X_UP) last_game_selected--;
+//sq		if (ExKey & GP2X_DOWN) last_game_selected++;
+//sq		if (ExKey & GP2X_LEFT) last_game_selected-=21;
+//sq		if (ExKey & GP2X_RIGHT) last_game_selected+=21;
+		int updown=0;
+		if(is_joy_axis_pressed (1, 1, 0)) {last_game_selected--; updown=1;};
+		if(is_joy_axis_pressed (1, 2, 0)) {last_game_selected++; updown=1;};
+
+		if(!updown) {
+			if(is_joy_axis_pressed (0, 1, 0)) last_game_selected-=21;
+			if(is_joy_axis_pressed (0, 2, 0)) last_game_selected+=21;
+		}
+
 		if (ExKey & GP2X_ESCAPE) gp2x_exit();
 
 		if (osd_is_key_pressed(KEY_UP)) last_game_selected--;
@@ -328,7 +343,6 @@ static void select_game(char *emu, char *game)
 
 			break;
 		}
-       	gp2x_timer_delay(100000);
 	}
 }
 
