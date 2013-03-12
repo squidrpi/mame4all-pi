@@ -416,7 +416,7 @@ int frontend_help (int argc, char **argv)
 	{
 		#ifndef MESS
 		printf("M.A.M.E. v%s - Multiple Arcade Machine Emulator\n"
-				"Copyright (C) 1997-2000 by Nicola Salmoria and the MAME Team\n\n",build_version);
+				"Copyright (C) 1997-2013 by Nicola Salmoria and the MAME Team\n\n",build_version);
 		showdisclaimer();
 		printf("Usage:  MAME gamename [options]\n\n"
 				"        MAME -list      for a brief list of supported games\n"
@@ -427,7 +427,14 @@ int frontend_help (int argc, char **argv)
                 "        -listromsize -listcpu -wrongorientation -wrongfps -noclones\n\n"
                 "        Options\n"
                 "        -listroms -listsamples -verifyroms -verifysets\n"
-                "        -vset -verifysamples -vsam -romident -isknown -sourcefile\n");
+                "        -vset -verifysamples -vsam -romident -isknown -sourcefile\n\n"
+                "        Pi Options\n"
+				"        -nodrz80_snd Switch off DrZ80 core for sound (on by default)\n"
+				"        -drz80       Switch  DrZ80 core (may cause instability)\n"
+				"        -nocylcone   Switch off Cyclone core\n"
+				"        -ror -rol    Rotate display\n"
+				"        -nosound     Switch off sound\n"
+			  );
 		#else
 		showmessinfo();
 		#endif
