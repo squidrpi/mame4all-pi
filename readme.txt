@@ -197,8 +197,8 @@ March :
 - Version 1.1: 
 - Added multiple USB joystick support.
 - Full keyboard support.
-- Added DrZ80 cpu core. Enabled by default for sound to improve performance.
-- Fixed slow sound in dkong, williams and rampage games.
+- Added DrZ80 cpu core. Enabled by default for sound to improve performance for many games.
+- Fixed "slow" sound in dkong, williams and rampage games.
 - Slightly higher sound mixer quality.
             
 
@@ -207,8 +207,11 @@ March 01, 2013:
 
 TODO
 ----
-- Add rotation support
-- Add configurables
+- Fix or workaround for black screen crash on SDL_SetVideoMode using Console.
+- Colours are a little too dull on HDMI due to 8 bit web safe palette, I think,
+  used by the Pi's GPU.
+- Add rotation support.
+- Add configuration file.
 
 
 KNOWN PROBLEMS
@@ -258,7 +261,7 @@ MAME LICENSE
 http://www.mame.net
 http://www.mamedev.com
 
-Copyright 1997-2009, Nicola Salmoria and the MAME team. All rights reserved. 
+Copyright 1997-2013, Nicola Salmoria and the MAME team. All rights reserved. 
 
 Redistribution and use of this code or any derivative works are permitted provided
 that the following conditions are met: 
