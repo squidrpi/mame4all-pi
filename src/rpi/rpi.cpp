@@ -184,7 +184,7 @@ int main (int argc, char **argv)
 gui_loop:
     
     if(use_gui) {
-        sleep(1);
+		usleep(1000000/2);
         
         gp2x_joystick_clear();
         
@@ -192,7 +192,7 @@ gui_loop:
         
         first_run=0;
         
-        sleep(1);
+		usleep(1000000/2);
         
         //Clear input queue
         gp2x_joystick_clear();
