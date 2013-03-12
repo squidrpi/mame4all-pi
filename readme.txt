@@ -1,5 +1,5 @@
 =============================================================
-MAME4ALL for Pi 1.0 (01 March, 2013) by Squid
+MAME4ALL for Pi v1.1 by Squid
 =============================================================
 
 
@@ -193,7 +193,7 @@ PORT CREDITS
 DEVELOPMENT
 -----------
 
-March :
+March 12, 2013:
 - Version 1.1: 
 - Added multiple USB joystick support.
 - Full keyboard support.
@@ -207,10 +207,8 @@ March 01, 2013:
 
 TODO
 ----
-- Fix or workaround for black screen crash on SDL_SetVideoMode using Console.
-- Colours are a little too dull on HDMI due to 8 bit web safe palette, I think,
-  used by the Pi's GPU.
-- Add rotation support.
+- Fix or workaround for black screen crash on SDL_SetVideoMode using Console & composite.
+- Add better rotation support.
 - Add configuration file.
 
 
