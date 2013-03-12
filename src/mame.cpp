@@ -600,7 +600,7 @@ int run_machine(void)
 				{
 					/* if there is no saved config, it must be first time we run this game, */
 					/* so show the disclaimer. */
-//sqdebug					if (showcopyright(real_scrbitmap)) goto userquit;
+//sq					if (showcopyright(real_scrbitmap)) goto userquit;
 				}
 
 				if (showgamewarnings(real_scrbitmap) == 0)  /* show info about incorrect behaviour (wrong colors etc.) */
