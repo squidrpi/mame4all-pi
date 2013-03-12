@@ -61,29 +61,6 @@ void blitscreen_dirty1_color8(struct osd_bitmap *bitmap)
     FLIP_VIDEO;
 }
 
-#if 0
-void blitscreen_dirty0_color8(struct osd_bitmap *bitmap)
-{   
-    int x,y;
-    int width=(bitmap->line[1] - bitmap->line[0]);
-    int columns=gfx_display_columns;
-    unsigned char *lb = bitmap->line[skiplines] + skipcolumns;
-    unsigned char *address = SCREEN8 + gfx_xoffset + (gfx_yoffset * gfx_width);
-
-    for (y = 0; y < gfx_display_lines; y++)
-    {   
-        for (x = 0; x < columns; x++)
-        {   
-            address[x] = gp2x_palette[lb[x]];
-        }
-        lb+=width;
-        address+=gfx_width;
-    }
-
-    FLIP_VIDEO;
-}
-#else
-
 void blitscreen_dirty0_color8(struct osd_bitmap *bitmap)
 {   
     int x,y;
@@ -108,7 +85,6 @@ void blitscreen_dirty0_color8(struct osd_bitmap *bitmap)
 
     FLIP_VIDEO;
 }
-#endif
 
 void blitscreen_dirty1_palettized16(struct osd_bitmap *bitmap)
 {
