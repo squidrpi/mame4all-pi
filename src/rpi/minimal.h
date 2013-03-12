@@ -28,7 +28,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <stdarg.h>
-#include "usbjoy_mame.h"
 
 #ifndef __MINIMAL_H__
 #define __MINIMAL_H__
