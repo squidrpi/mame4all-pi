@@ -432,7 +432,7 @@ int frontend_help (int argc, char **argv)
 				"        -nodrz80_snd Switch off DrZ80 core for sound (on by default)\n"
 				"        -drz80       Switch  DrZ80 core (may cause instability)\n"
 				"        -nocylcone   Switch off Cyclone core\n"
-				"        -ror -rol    Rotate display\n"
+//				"        -ror -rol    Rotate display\n"
 				"        -nosound     Switch off sound\n"
 			  );
 		#else
