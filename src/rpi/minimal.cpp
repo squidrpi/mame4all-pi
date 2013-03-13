@@ -114,7 +114,7 @@ int init_SDL(void)
         fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
         return(0);
     }
-    sdlscreen = SDL_SetVideoMode(0,0, 32, SDL_SWSURFACE);
+    sdlscreen = SDL_SetVideoMode(0,0, 16, SDL_SWSURFACE);
 
     SDL_JoystickEventState(SDL_ENABLE);
 	myjoy[0]=SDL_JoystickOpen(0);
