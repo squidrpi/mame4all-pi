@@ -270,6 +270,8 @@ static void select_game(char *emu, char *game)
 	/* Clean screen */
 	gp2x_video_flip();
 
+	gp2x_joystick_clear();	
+
 	/* Wait until user selects a game */
 	while(1)
 	{
