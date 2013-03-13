@@ -35,6 +35,7 @@ CFLAGS = -g -fsigned-char $(DEVLIBS) \
 	-Isrc -Isrc/$(MAMEOS) -Isrc/zlib \
 	-I/usr/include/SDL \
 	-I$(SDKSTAGE)/opt/vc/include -I$(SDKSTAGE)/opt/vc/include/interface/vcos/pthreads \
+	-I$(SDKSTAGE)/opt/vc/include/interface/vmcs_host/linux \
 	-march=armv6 -mfpu=vfp -mfloat-abi=hard \
 	-ffast-math -fomit-frame-pointer -fstrict-aliasing \
 	-mstructure-size-boundary=32 -fexpensive-optimizations \
