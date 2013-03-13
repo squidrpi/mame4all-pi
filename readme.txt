@@ -55,7 +55,11 @@ arm_freq=950
 core_freq=350
 sdram_freq=500
 
-NOTE: This is with a recent 512MB Model B.
+NOTE: The latest versions of the firmware appears to disable overclocking, check
+"cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor", which should say "ondemand",
+mine defaults to "powersave" which means overclocking won't work. A solution is to force 
+this at boot by adding the following to /etc/rc.local:
+echo ondemand > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 
 I'd also recommend a minimum of 64MB for the GPU RAM allocation (gpu_mem=64).
 
