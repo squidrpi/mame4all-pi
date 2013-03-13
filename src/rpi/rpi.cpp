@@ -101,8 +101,10 @@ int main (int argc, char **argv)
     char *playbackname = NULL;
     char gamenameselection[32];
     int use_cyclone=1;
-    int use_drz80=0;
-   	int use_drz80_snd=1;
+    int use_drz80_save=0;
+   	int use_drz80_snd_save=1;
+    int use_drz80;
+   	int use_drz80_snd;
     extern int video_scale;
 	extern int video_border;
 	extern int video_aspect;
@@ -134,9 +136,9 @@ int main (int argc, char **argv)
 		if (strcasecmp(argv[i],"-nocyclone") == 0)
 			use_cyclone=0;
 		if (strcasecmp(argv[i],"-drz80") == 0)
-			use_drz80=1;
+			use_drz80_save=1;
 		if (strcasecmp(argv[i],"-nodrz80_snd") == 0)
-			use_drz80_snd=0;
+			use_drz80_snd_save=0;
 		if (strcasecmp(argv[i],"-scale") == 0)
 			video_scale=1;
 		if (strcasecmp(argv[i],"-border") == 0)
@@ -349,6 +351,9 @@ gui_loop:
 			}
 		}
 	}
+
+	use_drz80_snd = use_drz80_snd_save;
+	use_drz80 = use_drz80_save;	
 
 	// Do not use the DrZ80 core for games that are listed as not compatible
 	// in the frontend list
