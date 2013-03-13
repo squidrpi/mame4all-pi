@@ -27,42 +27,76 @@ int gp2x_cpu_cores=1;
 int gp2x_ramtweaks=1;
 int gp2x_cheat=0;
 
-static unsigned char *gp2xmenu_bmp;
-static unsigned char *gp2xsplash_bmp;
+static unsigned short *gp2xmenu_bmp;
+static unsigned short *gp2xsplash_bmp;
 
 static void gp2x_exit(void);
 
-static void load_bmp_8bpp(unsigned char *out, unsigned char *in)
+#define gp2x_color15(R,G,B)  ((R >> 3) << 11) | (( G >> 2) << 5 ) | (( B >> 3 ) << 0 )
+
+//sq static void load_bmp_8bpp(unsigned char *out, unsigned char *in)
+//sq {
+//sq 	int i,x,y;
+//sq 	unsigned char r,g,b,c;
+//sq 	in+=14; /* Skip HEADER */
+//sq 	in+=40; /* Skip INFOHD */
+//sq 	/* Set Palette */
+//sq 	for (i=0;i<256;i++) {
+//sq 		b=*in++;
+//sq 		g=*in++;
+//sq 		r=*in++;
+//sq 		c=*in++;
+//sq 		gp2x_video_color8(i,r,g,b);
+//sq 	}
+//sq 	gp2x_video_setpalette();
+//sq 	/* Set Bitmap */	
+//sq 	for (y=479;y!=-1;y--) {
+//sq 		for (x=0;x<640;x++) {
+//sq 			*out++=gp2x_palette[in[x+y*640]];
+//sq 		}
+//sq 	}
+//sq }
+
+static void load_bmp_16bpp(unsigned short *out, unsigned short *in)
 {
-	int i,x,y;
-	unsigned char r,g,b,c;
-	in+=14; /* Skip HEADER */
-	in+=40; /* Skip INFOHD */
-	/* Set Palette */
-	for (i=0;i<256;i++) {
-		b=*in++;
-		g=*in++;
-		r=*in++;
-		c=*in++;
-		gp2x_video_color8(i,r,g,b);
-	}
-	gp2x_video_setpalette();
-	/* Set Bitmap */	
-	for (y=479;y!=-1;y--) {
-		for (x=0;x<640;x++) {
-			*out++=gp2x_palette[in[x+y*640]];
-		}
+ 	int i,x,y;
+
+	in+=(640*480)-1;
+ 	for (y=479;y!=-1;y--) {
+		memcpy(out, in, 640*2);
+		out+=640;
+		in-=640;
 	}
 }
 
+#pragma pack(2) // Align
+typedef struct                       /**** BMP file header structure ****/
+{
+    unsigned short bfType;           /* Magic number for file */
+    unsigned int   bfSize;           /* Size of file */
+    unsigned short bfReserved1;      /* Reserved */
+    unsigned short bfReserved2;      /* ... */
+    unsigned int   bfOffBits;        /* Offset to bitmap data */
+} BITMAPFILEHEADER;
+#pragma pack()
+
 static void gp2x_intro_screen(int first_run) {
 	char name[256];
+	int offset=0;
 	FILE *f;
-	gp2x_video_flip();
-	sprintf(name,"skins/rpisplash.bmp");
+	BITMAPFILEHEADER h;
+
+	DisplayScreen16();
+
+	sprintf(name,"skins/rpisplash16.bmp");
+
 	f=fopen(name,"rb");
 	if (f) {
-		fread(gp2xsplash_bmp,1,350000,f);
+		//Read header to find where to skip to for bitmap
+        fread(&h, sizeof(BITMAPFILEHEADER), 1, f); //reading the FILEHEADER
+		fseek(f, h.bfOffBits, SEEK_SET);
+
+		fread(gp2xsplash_bmp,1,1000000,f);
 		fclose(f);
 	} 	
 	else {
@@ -71,15 +105,19 @@ static void gp2x_intro_screen(int first_run) {
 	}
 
 	if(first_run) {
-		load_bmp_8bpp(gp2x_screen8,gp2xsplash_bmp);
-		gp2x_video_flip();
+		load_bmp_16bpp(gp2x_screen15,gp2xsplash_bmp);
+		DisplayScreen16();
 		sleep(1);
 	}
 	
-	sprintf(name,"skins/rpimenu.bmp");
+	sprintf(name,"skins/rpimenu16.bmp");
 	f=fopen(name,"rb");
 	if (f) {
-		fread(gp2xmenu_bmp,1,328017,f);
+		//Read header to find where to skip to for bitmap
+        fread(&h, sizeof(BITMAPFILEHEADER), 1, f); //reading the FILEHEADER
+		fseek(f, h.bfOffBits+sizeof(h), SEEK_SET);
+
+		fread(gp2xmenu_bmp,1,1000000,f);
 		fclose(f);
 	} 
 	else {
@@ -170,7 +208,7 @@ static void game_list_view(int *pos) {
 	int screen_x = 38;
 
 	/* Draw background image */
-	load_bmp_8bpp(gp2x_screen8,gp2xmenu_bmp);
+	load_bmp_16bpp(gp2x_screen15,gp2xmenu_bmp);
 
 	/* Check Limits */
 	if (*pos<0)
@@ -195,12 +233,12 @@ static void game_list_view(int *pos) {
 		if (fe_drivers[i].available==1) {
 			if (aux_pos>=view_pos && aux_pos<=view_pos+20) {
 				if (aux_pos==*pos) {
-					gp2x_gamelist_text_out( screen_x, screen_y, fe_drivers[i].description, 29);
-					gp2x_gamelist_text_out( screen_x-10, screen_y,">",255 );
-					gp2x_gamelist_text_out( screen_x-13, screen_y-1,"-",255 );
+					gp2x_gamelist_text_out( screen_x, screen_y, fe_drivers[i].description, gp2x_color15(0,150,255));
+					gp2x_gamelist_text_out( screen_x-10, screen_y,">",gp2x_color15(255,255,255) );
+					gp2x_gamelist_text_out( screen_x-13, screen_y-1,"-",gp2x_color15(255,255,255) );
 				}
 				else {
-					gp2x_gamelist_text_out( screen_x, screen_y, fe_drivers[i].description, 255);
+					gp2x_gamelist_text_out( screen_x, screen_y, fe_drivers[i].description, gp2x_color15(255,255,255));
 				}
 				
 				screen_y+=8;
@@ -268,7 +306,7 @@ static void select_game(char *emu, char *game)
 	strcpy(game,"builtinn");
 
 	/* Clean screen */
-	gp2x_video_flip();
+	DisplayScreen16();
 
 	gp2x_joystick_clear();	
 
@@ -276,7 +314,7 @@ static void select_game(char *emu, char *game)
 	while(1)
 	{
 		game_list_view(&last_game_selected);
-		gp2x_video_flip();
+		DisplayScreen16();
        	gp2x_timer_delay(100000);
 
 //sq        if( (gp2x_joystick_read()))
@@ -316,14 +354,11 @@ static void select_game(char *emu, char *game)
 
 		}
 
-//sq		if (ExKey & GP2X_UP) last_game_selected--;
-//sq		if (ExKey & GP2X_DOWN) last_game_selected++;
-//sq		if (ExKey & GP2X_LEFT) last_game_selected-=21;
-//sq		if (ExKey & GP2X_RIGHT) last_game_selected+=21;
 		int updown=0;
 		if(is_joy_axis_pressed (1, 1, 0)) {last_game_selected--; updown=1;};
 		if(is_joy_axis_pressed (1, 2, 0)) {last_game_selected++; updown=1;};
 
+		// Stop diagonals on game selection
 		if(!updown) {
 			if(is_joy_axis_pressed (0, 1, 0)) last_game_selected-=21;
 			if(is_joy_axis_pressed (0, 2, 0)) last_game_selected+=21;
@@ -355,8 +390,8 @@ void frontend_gui (char *gamename, int first_run)
 	/* GP2X Initialization */
 	gp2x_frontend_init();
 
-	gp2xmenu_bmp = (unsigned char*)calloc(1, 400000);
-	gp2xsplash_bmp = (unsigned char*)calloc(1, 400000);
+	gp2xmenu_bmp = (unsigned short*)calloc(1, 1000000);
+	gp2xsplash_bmp = (unsigned short*)calloc(1, 1000000);
 
 	/* Show load bitmaps and show intro screen */
     gp2x_intro_screen(first_run);
@@ -366,9 +401,9 @@ void frontend_gui (char *gamename, int first_run)
 	if (game_num_avail==0)
 	{
 		/* Draw background image */
-    	load_bmp_8bpp(gp2x_screen8,gp2xmenu_bmp);
-		gp2x_gamelist_text_out(35, 110, "ERROR: NO AVAILABLE GAMES FOUND",255);
-		gp2x_video_flip();
+    	load_bmp_16bpp(gp2x_screen15,gp2xmenu_bmp);
+		gp2x_gamelist_text_out(35, 110, "ERROR: NO AVAILABLE GAMES FOUND",gp2x_color15(255,255,255));
+		DisplayScreen16();
 		sleep(5);
 		gp2x_exit();
 	}
