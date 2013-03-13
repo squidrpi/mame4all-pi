@@ -44,8 +44,8 @@ These are the standard MAME key definitions as follows. All MAME keys are also a
 NOTE: To type OK when MAME requires it with the joystick, press LEFT and then RIGHT.
 
 
-Pi EMULATION SPEED AND SOUND
-----------------------------
+Pi CONFIGURATION
+----------------
 
 I highly recommend overclocking your Raspberry Pi to gain maximum performance
 as MAME is very CPU intensive and overclocking will make most games run at full speed.
@@ -69,6 +69,10 @@ If you're having problems with HDMI audio then it is likely PulseAudio
 is causing the issues as it has problems with the ALSA drivers. To fix
 this simply remove PulseAudio:
 sudo apt-get --purge remove pulseaudio
+
+If you're getting a black screen when running in Console mode with 
+Composite output, try removing the "overscan_" parameters from
+/boot/config.txt
 
 
 INSTALLATION
@@ -207,7 +211,6 @@ March 01, 2013:
 
 TODO
 ----
-- Fix or workaround for black screen crash on SDL_SetVideoMode using Console & composite.
 - Add better rotation support.
 - Add configuration file.
 
