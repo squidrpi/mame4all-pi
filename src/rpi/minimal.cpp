@@ -12,7 +12,6 @@ static SDL_Surface* sdlscreen = NULL;
 unsigned long 			gp2x_dev[3];
 unsigned char 			*gp2x_screen8;
 unsigned short 			*gp2x_screen15;
-unsigned int			gp2x_nflip;
 volatile unsigned short 	gp2x_palette[512];
 int 				rotate_controls=0;
 
@@ -165,10 +164,8 @@ void gp2x_deinit(void)
 	ret = vc_dispmanx_resource_delete( resource_bg );
 	ret = vc_dispmanx_display_close( dispman_display );
 
-    free(gp2x_screen8);
-	if(gp2x_screen15)
-		free(gp2x_screen15);
-
+    if(gp2x_screen8) free(gp2x_screen8);
+    if(gp2x_screen15) free(gp2x_screen15);
 }
 
 void gp2x_set_video_mode(int bpp,int width,int height)
@@ -188,7 +185,6 @@ void gp2x_set_video_mode(int bpp,int width,int height)
 
 	gp2x_screen8=(unsigned char *) calloc(1, width*height);
 	gp2x_screen15=0;
-	gp2x_nflip=0;
 	
 	graphics_get_display_size(0 /* LCD */, &display_width, &display_height);
 
@@ -309,9 +305,8 @@ void gp2x_frontend_init(void)
 	surface_width = 640;
 	surface_height = 480;
     
-	gp2x_screen8=(unsigned char *) calloc(1, 640*480);
-	gp2x_screen15=0;
-	gp2x_nflip=0;
+	gp2x_screen8=0;
+	gp2x_screen15=(unsigned short *) calloc(1, 640*480*2);
 	
 	graphics_get_display_size(0 /* LCD */, &display_width, &display_height);
     
@@ -325,8 +320,8 @@ void gp2x_frontend_init(void)
 	//Create two surfaces for flipping between
 	//Make sure bitmap type matches the source for better performance
     uint32_t crap;
-    resource0 = vc_dispmanx_resource_create(VC_IMAGE_8BPP, 640, 480, &crap);
-    resource1 = vc_dispmanx_resource_create(VC_IMAGE_8BPP, 640, 480, &crap);
+    resource0 = vc_dispmanx_resource_create(VC_IMAGE_RGB565, 640, 480, &crap);
+    resource1 = vc_dispmanx_resource_create(VC_IMAGE_RGB565, 640, 480, &crap);
     
 	vc_dispmanx_rect_set( &dst_rect, display_border, display_border,
                          display_width, display_height);
@@ -355,6 +350,33 @@ void gp2x_frontend_init(void)
     
 }
 
+void DisplayScreen16(void)
+{
+	VC_RECT_T dst_rect;
+
+	vc_dispmanx_rect_set( &dst_rect, 0, 0, surface_width, surface_height );
+
+	// blit image to the current resource
+	vc_dispmanx_resource_write_data( cur_res, VC_IMAGE_RGB565, surface_width*2, gp2x_screen15, &dst_rect );
+
+	// begin display update
+	dispman_update = vc_dispmanx_update_start( 0 );
+
+	// change element source to be the current resource
+	vc_dispmanx_element_change_source( dispman_update, dispman_element, cur_res );
+
+	// finish display update, vsync is handled by software throttling
+	// dispmanx avoids any tearing. vsync here would be limited to 30fps
+	// on a CRT TV.
+	vc_dispmanx_update_submit( dispman_update, 0, 0 );
+
+	// swap current resource
+	tmp_res = cur_res;
+	cur_res = prev_res;
+	prev_res = tmp_res;
+
+}
+
 void gp2x_frontend_deinit(void)
 {
 	int ret;
@@ -366,7 +388,8 @@ void gp2x_frontend_deinit(void)
 	ret = vc_dispmanx_resource_delete( resource1 );
 	ret = vc_dispmanx_display_close( dispman_display );
     
-    free(gp2x_screen8);
+    if(gp2x_screen8) free(gp2x_screen8);
+    if(gp2x_screen15) free(gp2x_screen15);
     
 }
 
@@ -440,7 +463,9 @@ static unsigned char fontdata8x8[] =
 	0x00,0x00,0x76,0xDC,0x00,0x00,0x00,0x00,0x10,0x28,0x10,0x54,0xAA,0x44,0x00,0x00,
 };
 
-static void gp2x_text(unsigned char *screen, int x, int y, char *text, int color)
+#define gp2x_video_color15(R,G,B)  ((R >> 3) << 11) | (( G >> 2) << 5 ) | (( B >> 3 ) << 0 )
+
+static void gp2x_text(unsigned short *screen, int x, int y, char *text, int color)
 {
 	unsigned int i,l;
 	screen=screen+(x*2)+(y*2)*640;
@@ -448,54 +473,54 @@ static void gp2x_text(unsigned char *screen, int x, int y, char *text, int color
 	for (i=0;i<strlen(text);i++) {
 		
 		for (l=0;l<16;l=l+2) {
-			screen[l*640+0]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x80)?color:screen[l*640+0]];
-			screen[l*640+1]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x80)?color:screen[l*640+1]];
+			screen[l*640+0]=(fontdata8x8[((text[i])*8)+l/2]&0x80)?color:screen[l*640+0];
+			screen[l*640+1]=(fontdata8x8[((text[i])*8)+l/2]&0x80)?color:screen[l*640+1];
 
-			screen[l*640+2]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x40)?color:screen[l*640+2]];
-			screen[l*640+3]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x40)?color:screen[l*640+3]];
+			screen[l*640+2]=(fontdata8x8[((text[i])*8)+l/2]&0x40)?color:screen[l*640+2];
+			screen[l*640+3]=(fontdata8x8[((text[i])*8)+l/2]&0x40)?color:screen[l*640+3];
 
-			screen[l*640+4]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x20)?color:screen[l*640+4]];
-			screen[l*640+5]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x20)?color:screen[l*640+5]];
+			screen[l*640+4]=(fontdata8x8[((text[i])*8)+l/2]&0x20)?color:screen[l*640+4];
+			screen[l*640+5]=(fontdata8x8[((text[i])*8)+l/2]&0x20)?color:screen[l*640+5];
 
-			screen[l*640+6]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x10)?color:screen[l*640+6]];
-			screen[l*640+7]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x10)?color:screen[l*640+7]];
+			screen[l*640+6]=(fontdata8x8[((text[i])*8)+l/2]&0x10)?color:screen[l*640+6];
+			screen[l*640+7]=(fontdata8x8[((text[i])*8)+l/2]&0x10)?color:screen[l*640+7];
 
-			screen[l*640+8]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x08)?color:screen[l*640+8]];
-			screen[l*640+9]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x08)?color:screen[l*640+9]];
+			screen[l*640+8]=(fontdata8x8[((text[i])*8)+l/2]&0x08)?color:screen[l*640+8];
+			screen[l*640+9]=(fontdata8x8[((text[i])*8)+l/2]&0x08)?color:screen[l*640+9];
 
-			screen[l*640+10]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x04)?color:screen[l*640+10]];
-			screen[l*640+11]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x04)?color:screen[l*640+11]];
+			screen[l*640+10]=(fontdata8x8[((text[i])*8)+l/2]&0x04)?color:screen[l*640+10];
+			screen[l*640+11]=(fontdata8x8[((text[i])*8)+l/2]&0x04)?color:screen[l*640+11];
 
-			screen[l*640+12]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x02)?color:screen[l*640+12]];
-			screen[l*640+13]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x02)?color:screen[l*640+13]];
+			screen[l*640+12]=(fontdata8x8[((text[i])*8)+l/2]&0x02)?color:screen[l*640+12];
+			screen[l*640+13]=(fontdata8x8[((text[i])*8)+l/2]&0x02)?color:screen[l*640+13];
 
-			screen[l*640+14]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x01)?color:screen[l*640+14]];
-			screen[l*640+15]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x01)?color:screen[l*640+15]];
+			screen[l*640+14]=(fontdata8x8[((text[i])*8)+l/2]&0x01)?color:screen[l*640+14];
+			screen[l*640+15]=(fontdata8x8[((text[i])*8)+l/2]&0x01)?color:screen[l*640+15];
 		}
 		for (l=1;l<16;l=l+2) {
-			screen[l*640+0]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x80)?color:screen[l*640+0]];
-			screen[l*640+1]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x80)?color:screen[l*640+1]];
+			screen[l*640+0]=(fontdata8x8[((text[i])*8)+l/2]&0x80)?color:screen[l*640+0];
+			screen[l*640+1]=(fontdata8x8[((text[i])*8)+l/2]&0x80)?color:screen[l*640+1];
 
-			screen[l*640+2]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x40)?color:screen[l*640+2]];
-			screen[l*640+3]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x40)?color:screen[l*640+3]];
+			screen[l*640+2]=(fontdata8x8[((text[i])*8)+l/2]&0x40)?color:screen[l*640+2];
+			screen[l*640+3]=(fontdata8x8[((text[i])*8)+l/2]&0x40)?color:screen[l*640+3];
 
-			screen[l*640+4]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x20)?color:screen[l*640+4]];
-			screen[l*640+5]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x20)?color:screen[l*640+5]];
+			screen[l*640+4]=(fontdata8x8[((text[i])*8)+l/2]&0x20)?color:screen[l*640+4];
+			screen[l*640+5]=(fontdata8x8[((text[i])*8)+l/2]&0x20)?color:screen[l*640+5];
 
-			screen[l*640+6]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x10)?color:screen[l*640+6]];
-			screen[l*640+7]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x10)?color:screen[l*640+7]];
+			screen[l*640+6]=(fontdata8x8[((text[i])*8)+l/2]&0x10)?color:screen[l*640+6];
+			screen[l*640+7]=(fontdata8x8[((text[i])*8)+l/2]&0x10)?color:screen[l*640+7];
 
-			screen[l*640+8]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x08)?color:screen[l*640+8]];
-			screen[l*640+9]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x08)?color:screen[l*640+9]];
+			screen[l*640+8]=(fontdata8x8[((text[i])*8)+l/2]&0x08)?color:screen[l*640+8];
+			screen[l*640+9]=(fontdata8x8[((text[i])*8)+l/2]&0x08)?color:screen[l*640+9];
 
-			screen[l*640+10]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x04)?color:screen[l*640+10]];
-			screen[l*640+11]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x04)?color:screen[l*640+11]];
+			screen[l*640+10]=(fontdata8x8[((text[i])*8)+l/2]&0x04)?color:screen[l*640+10];
+			screen[l*640+11]=(fontdata8x8[((text[i])*8)+l/2]&0x04)?color:screen[l*640+11];
 
-			screen[l*640+12]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x02)?color:screen[l*640+12]];
-			screen[l*640+13]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x02)?color:screen[l*640+13]];
+			screen[l*640+12]=(fontdata8x8[((text[i])*8)+l/2]&0x02)?color:screen[l*640+12];
+			screen[l*640+13]=(fontdata8x8[((text[i])*8)+l/2]&0x02)?color:screen[l*640+13];
 
-			screen[l*640+14]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x01)?color:screen[l*640+14]];
-			screen[l*640+15]=gp2x_palette[(fontdata8x8[((text[i])*8)+l/2]&0x01)?color:screen[l*640+15]];
+			screen[l*640+14]=(fontdata8x8[((text[i])*8)+l/2]&0x01)?color:screen[l*640+14];
+			screen[l*640+15]=(fontdata8x8[((text[i])*8)+l/2]&0x01)?color:screen[l*640+15];
 		}
 		screen+=16;
 	} 
@@ -506,12 +531,9 @@ void gp2x_gamelist_text_out(int x, int y, char *eltexto, int color)
 	char texto[33];
 	strncpy(texto,eltexto,32);
 	texto[32]=0;
-//sq	if (texto[0]!='-')
-//sq		gp2x_text(gp2x_screen8,x+1,y+1,texto,color);
-	gp2x_text(gp2x_screen8,x,y,texto,color);
+	gp2x_text(gp2x_screen15,x,y,texto,color);
 }
 
-/* Variadic functions guide found at http://www.unixpapa.com/incnote/variadic.html */
 void gp2x_gamelist_text_out_fmt(int x, int y, char* fmt, ...)
 {
 	char strOut[128];
@@ -531,49 +553,49 @@ void gp2x_printf_init(void)
 	log=0;
 }
 
-static void gp2x_text_log(char *texto)
-{
-	if (!log)
-	{
-		memset(gp2x_screen8,0,320*240);
-	}
-	gp2x_text(gp2x_screen8,0,log,texto,255);
-	log+=8;
-	if(log>239) log=0;
-}
-
-/* Variadic functions guide found at http://www.unixpapa.com/incnote/variadic.html */
-void gp2x_printf(char* fmt, ...)
-{
-	int i,c;
-	char strOut[4096];
-	char str[41];
-	va_list marker;
-	
-	va_start(marker, fmt);
-	vsprintf(strOut, fmt, marker);
-	va_end(marker);	
-
-	c=0;
-	for (i=0;i<strlen(strOut);i++)
-	{
-		str[c]=strOut[i];
-		if (str[c]=='\n')
-		{
-			str[c]=0;
-			gp2x_text_log(str);
-			c=0;
-		}
-		else if (c==39)
-		{
-			str[40]=0;
-			gp2x_text_log(str);
-			c=0;
-		}		
-		else
-		{
-			c++;
-		}
-	}
-}
-
+//sq static void gp2x_text_log(char *texto)
+//sq {
+//sq 	if (!log)
+//sq 	{
+//sq 		memset(gp2x_screen8,0,320*240);
+//sq 	}
+//sq 	gp2x_text(gp2x_screen8,0,log,texto,255);
+//sq 	log+=8;
+//sq 	if(log>239) log=0;
+//sq }
+//sq 
+//sq /* Variadic functions guide found at http://www.unixpapa.com/incnote/variadic.html */
+//sq void gp2x_printf(char* fmt, ...)
+//sq {
+//sq 	int i,c;
+//sq 	char strOut[4096];
+//sq 	char str[41];
+//sq 	va_list marker;
+//sq 	
+//sq 	va_start(marker, fmt);
+//sq 	vsprintf(strOut, fmt, marker);
+//sq 	va_end(marker);	
+//sq 
+//sq 	c=0;
+//sq 	for (i=0;i<strlen(strOut);i++)
+//sq 	{
+//sq 		str[c]=strOut[i];
+//sq 		if (str[c]=='\n')
+//sq 		{
+//sq 			str[c]=0;
+//sq 			gp2x_text_log(str);
+//sq 			c=0;
+//sq 		}
+//sq 		else if (c==39)
+//sq 		{
+//sq 			str[40]=0;
+//sq 			gp2x_text_log(str);
+//sq 			c=0;
+//sq 		}		
+//sq 		else
+//sq 		{
+//sq 			c++;
+//sq 		}
+//sq 	}
+//sq }
+//sq 
