@@ -207,6 +207,7 @@ March 12, 2013:
 - Full keyboard support.
 - Added DrZ80 cpu core. Enabled by default for sound to improve performance for many games.
 - Fixed "slow" sound in dkong, williams and rampage games.
+- Frontend is now 16bit colours.
 - Slightly higher sound mixer quality.
             
 
