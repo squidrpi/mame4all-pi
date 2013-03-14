@@ -565,20 +565,20 @@ int is_joy_axis_pressed (int axis, int dir, int joynum)
 	if (axis==0)
 	{
 		if(dir == 1) { //left
-			if(SDL_JoystickGetAxis(myjoy[joynum], 0) < -6000) return true;	
+			if(SDL_JoystickGetAxis(myjoy[joynum], 0) < -12000) return true;	
 		}
 		if(dir == 2) { //right
-			if(SDL_JoystickGetAxis(myjoy[joynum], 0) > 6000) return true;	
+			if(SDL_JoystickGetAxis(myjoy[joynum], 0) > 12000) return true;	
 		}
 	}
 	else
 	{
 		if(dir == 1) { //up
-			if(SDL_JoystickGetAxis(myjoy[joynum], 1) < -6000) return true;	
+			if(SDL_JoystickGetAxis(myjoy[joynum], 1) < -12000) return true;	
 		}
 				
 		if(dir == 2) { //down
-			if(SDL_JoystickGetAxis(myjoy[joynum], 1) > 6000) return true;	
+			if(SDL_JoystickGetAxis(myjoy[joynum], 1) > 12000) return true;	
 		}
 	}
 
@@ -689,37 +689,6 @@ void osd_analogjoy_read(int player,int *analog_x, int *analog_y)
 	*analog_x = pos_analog_x;
 	*analog_y = pos_analog_y;
 }
-
-//sq /* return a value in the range -128 .. 128 (yes, 128, not 127) */
-//sq void osd_analogjoy_read(int player,int *analog_x, int *analog_y)
-//sq {
-//sq 	*analog_x = *analog_y = 0;
-//sq 
-//sq 	/* is there an analog joystick at all? */
-//sq 	if (player+1 > num_joysticks || joystick == JOY_TYPE_NONE)
-//sq 		return;
-//sq 
-//sq 	if( (!(JOY_LEFT_PRESSED)) && (!(JOY_RIGHT_PRESSED)) ) {
-//sq 		pos_analog_x=0;
-//sq 	} else {
-//sq 		if(JOY_LEFT_PRESSED) pos_analog_x-=5;
-//sq 		if(JOY_RIGHT_PRESSED) pos_analog_x+=5;
-//sq 	}
-//sq 	if( (!(JOY_UP_PRESSED)) && (!(JOY_DOWN_PRESSED)) ) {
-//sq 		pos_analog_y=0;
-//sq 	} else {
-//sq 		if(JOY_UP_PRESSED) pos_analog_y-=5; 
-//sq 		if(JOY_DOWN_PRESSED) pos_analog_y+=5;
-//sq 	 }
-//sq 	
-//sq 	if (pos_analog_x<-128) pos_analog_x=-128;
-//sq 	if (pos_analog_x>128) pos_analog_x=128;
-//sq 	if (pos_analog_y<-128) pos_analog_y=-128;
-//sq 	if (pos_analog_y>128) pos_analog_y=128;
-//sq 	
-//sq 	*analog_x = pos_analog_x;
-//sq 	*analog_y = pos_analog_y;
-//sq }
 
 int osd_joystick_needs_calibration (void)
 {

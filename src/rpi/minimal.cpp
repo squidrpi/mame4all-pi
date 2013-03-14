@@ -109,17 +109,27 @@ SDL_Joystick* myjoy[4];
 
 int init_SDL(void)
 {
+	myjoy[0]=0;
+	myjoy[1]=0;
+	myjoy[2]=0;
+	myjoy[3]=0;
+
     if (SDL_Init(SDL_INIT_JOYSTICK) < 0) {
         fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
         return(0);
     }
     sdlscreen = SDL_SetVideoMode(0,0, 16, SDL_SWSURFACE);
 
-    SDL_JoystickEventState(SDL_ENABLE);
-	myjoy[0]=SDL_JoystickOpen(0);
-	myjoy[1]=SDL_JoystickOpen(1);
-	myjoy[2]=SDL_JoystickOpen(2);
-	myjoy[3]=SDL_JoystickOpen(3);
+	//We handle up to four joysticks
+	if(SDL_NumJoysticks()) 
+	{
+		int i;
+    	SDL_JoystickEventState(SDL_ENABLE);
+		
+		for(i=0;i<SDL_NumJoysticks();i++) {	
+			myjoy[i]=SDL_JoystickOpen(i);
+		}
+	}
 	SDL_EventState(SDL_ACTIVEEVENT,SDL_IGNORE);
 	SDL_EventState(SDL_MOUSEMOTION,SDL_IGNORE);
 	SDL_EventState(SDL_MOUSEBUTTONDOWN,SDL_IGNORE);
