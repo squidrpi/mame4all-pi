@@ -2,6 +2,7 @@
 */
 
 #include "minimal.h"
+#include "driver.h"
 
 #include <bcm_host.h>
 #include <SDL.h>
@@ -25,19 +26,17 @@ void gp2x_video_flip(void)
     DisplayScreen();
 }
 
-
 void gp2x_video_flip_single(void)
 {
     DisplayScreen();
 }
-
 
 void gp2x_video_setpalette(void)
 {
 }
 
 extern void keyprocess(SDLKey inkey, SDL_bool pressed);
-void joyprocess(Uint8 button, SDL_bool pressed, Uint8 njoy);
+extern void joyprocess(Uint8 button, SDL_bool pressed, Uint8 njoy);
 
 unsigned long gp2x_joystick_read()
 {
@@ -129,6 +128,7 @@ int init_SDL(void)
 		for(i=0;i<SDL_NumJoysticks();i++) {	
 			myjoy[i]=SDL_JoystickOpen(i);
 		}
+		logerror("Found %d joysticks\n",SDL_NumJoysticks());
 	}
 	SDL_EventState(SDL_ACTIVEEVENT,SDL_IGNORE);
 	SDL_EventState(SDL_MOUSEMOTION,SDL_IGNORE);
@@ -472,8 +472,6 @@ static unsigned char fontdata8x8[] =
 	0x18,0x18,0x18,0x00,0x18,0x18,0x18,0x00,0x70,0x18,0x30,0x1C,0x30,0x18,0x70,0x00,
 	0x00,0x00,0x76,0xDC,0x00,0x00,0x00,0x00,0x10,0x28,0x10,0x54,0xAA,0x44,0x00,0x00,
 };
-
-#define gp2x_video_color15(R,G,B)  ((R >> 3) << 11) | (( G >> 2) << 5 ) | (( B >> 3 ) << 0 )
 
 static void gp2x_text(unsigned short *screen, int x, int y, char *text, int color)
 {
