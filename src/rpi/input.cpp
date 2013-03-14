@@ -270,37 +270,27 @@ void joyprocess(Uint8 button, SDL_bool pressed, Uint8 njoy)
     switch(button)
     {
         case 0:
-            val=GP2X_LCTRL; break;
+            val=GP2X_1; break;
         case 1:
-            val=GP2X_LALT; break;
+            val=GP2X_2; break;
         case 2:
-            val=GP2X_SPACE; break;
+            val=GP2X_3; break;
         case 3:
-            val=GP2X_LSHIFT; break;
+            val=GP2X_4; break;
         case 4:
-            val=GP2X_TAB; break;
+            val=GP2X_5; break;
         case 5:
-            val=GP2X_RETURN; break;
+            val=GP2X_6; break;
+        case 6:
+            val=GP2X_7; break;
+        case 7:
+            val=GP2X_8; break;
         case 8:
-			key[KEY_ESC] = pressed;
+            val=GP2X_9; break;
 			break;
 		case 9:
-			if(njoy == 0) key[KEY_1] = pressed;
-			if(njoy == 1) key[KEY_2] = pressed;
-			if(njoy == 2) key[KEY_3] = pressed;
-			if(njoy == 3) key[KEY_4] = pressed;
+            val=GP2X_10; break;
 			break;
-		case 11:
-			key[KEY_5] = pressed;
-			break;
-        case 129:
-            val=GP2X_DOWN; break;
-        case 130:
-            val=GP2X_LEFT; break;
-        case 131:
-            val=GP2X_UP; break;
-        case 132:
-            val=GP2X_RIGHT; break;
         default:
             return;
     }
@@ -399,6 +389,7 @@ int osd_readkey_unicode(int flush)
 
 #define MAX_JOY 256
 #define MAX_JOY_NAME_LEN 40
+#define MAX_BUTTONS 10
 
 static struct JoystickInfo joylist[MAX_JOY] =
 {
@@ -421,6 +412,10 @@ static int joyequiv[][2] =
 	{ JOYCODE(1,0,4,0),	JOYCODE_1_BUTTON4 },
 	{ JOYCODE(1,0,5,0),	JOYCODE_1_BUTTON5 },
 	{ JOYCODE(1,0,6,0),	JOYCODE_1_BUTTON6 },
+	{ JOYCODE(1,0,7,0),	JOYCODE_1_BUTTON7 },
+	{ JOYCODE(1,0,8,0),	JOYCODE_1_BUTTON8 },
+	{ JOYCODE(1,0,9,0),	JOYCODE_1_BUTTON9 },
+	{ JOYCODE(1,0,10,0),JOYCODE_1_BUTTON10 },
 	{ JOYCODE(2,1,1,1),	JOYCODE_2_LEFT },
 	{ JOYCODE(2,1,1,2),	JOYCODE_2_RIGHT },
 	{ JOYCODE(2,1,2,1),	JOYCODE_2_UP },
@@ -431,6 +426,10 @@ static int joyequiv[][2] =
 	{ JOYCODE(2,0,4,0),	JOYCODE_2_BUTTON4 },
 	{ JOYCODE(2,0,5,0),	JOYCODE_2_BUTTON5 },
 	{ JOYCODE(2,0,6,0),	JOYCODE_2_BUTTON6 },
+	{ JOYCODE(2,0,7,0),	JOYCODE_2_BUTTON7 },
+	{ JOYCODE(2,0,8,0),	JOYCODE_2_BUTTON8 },
+	{ JOYCODE(2,0,9,0),	JOYCODE_2_BUTTON9 },
+	{ JOYCODE(2,0,10,0),JOYCODE_2_BUTTON10 },
 	{ JOYCODE(3,1,1,1),	JOYCODE_3_LEFT },
 	{ JOYCODE(3,1,1,2),	JOYCODE_3_RIGHT },
 	{ JOYCODE(3,1,2,1),	JOYCODE_3_UP },
@@ -441,6 +440,10 @@ static int joyequiv[][2] =
 	{ JOYCODE(3,0,4,0),	JOYCODE_3_BUTTON4 },
 	{ JOYCODE(3,0,5,0),	JOYCODE_3_BUTTON5 },
 	{ JOYCODE(3,0,6,0),	JOYCODE_3_BUTTON6 },
+	{ JOYCODE(3,0,7,0),	JOYCODE_3_BUTTON7 },
+	{ JOYCODE(3,0,8,0),	JOYCODE_3_BUTTON8 },
+	{ JOYCODE(3,0,9,0),	JOYCODE_3_BUTTON9 },
+	{ JOYCODE(3,0,10,0),JOYCODE_3_BUTTON10 },
 	{ JOYCODE(4,1,1,1),	JOYCODE_4_LEFT },
 	{ JOYCODE(4,1,1,2),	JOYCODE_4_RIGHT },
 	{ JOYCODE(4,1,2,1),	JOYCODE_4_UP },
@@ -451,6 +454,10 @@ static int joyequiv[][2] =
 	{ JOYCODE(4,0,4,0),	JOYCODE_4_BUTTON4 },
 	{ JOYCODE(4,0,5,0),	JOYCODE_4_BUTTON5 },
 	{ JOYCODE(4,0,6,0),	JOYCODE_4_BUTTON6 },
+	{ JOYCODE(4,0,7,0),	JOYCODE_4_BUTTON7 },
+	{ JOYCODE(4,0,8,0),	JOYCODE_4_BUTTON8 },
+	{ JOYCODE(4,0,9,0),	JOYCODE_4_BUTTON9 },
+	{ JOYCODE(4,0,10,0),JOYCODE_4_BUTTON10 },
 	{ 0,0 }
 };
 
@@ -494,7 +501,7 @@ static void init_joy_list(void)
 				tot++;
 			}
 		}
-		for (j = 0;j < 6;j++)
+		for (j = 0;j < MAX_BUTTONS;j++)
 		{
 			sprintf(buf,"J%d %s",i+1,"JoystickButton");
 			strncpy(joynames[tot],buf,MAX_JOY_NAME_LEN);
@@ -539,12 +546,16 @@ static int is_joy_button_pressed (int button, int ExKey)
 {
 	switch (button)
 	{
-		case 0: return ExKey & GP2X_LCTRL; break;
-		case 1: return ExKey & GP2X_LALT; break;
-		case 2: return ExKey & GP2X_LSHIFT; break;
-		case 3: return ExKey & GP2X_SPACE; break;
-		case 4: return ExKey & GP2X_TAB; break;
-		case 5: return ExKey & GP2X_RETURN; break;
+		case 0: return ExKey & GP2X_1; break;
+		case 1: return ExKey & GP2X_2; break;
+		case 2: return ExKey & GP2X_3; break;
+		case 3: return ExKey & GP2X_4; break;
+		case 4: return ExKey & GP2X_5; break;
+		case 5: return ExKey & GP2X_6; break;
+		case 6: return ExKey & GP2X_7; break;
+		case 7: return ExKey & GP2X_8; break;
+		case 8: return ExKey & GP2X_9; break;
+		case 9: return ExKey & GP2X_10; break;
 		default: break;
 	}
 	return 0; 
@@ -615,7 +626,7 @@ int osd_is_joy_pressed(int joycode)
 		int button;
 
 		button = GET_JOYCODE_BUTTON(joycode);
-		if (button == 0 || button > 6)
+		if (button == 0 || button > MAX_BUTTONS)
 			return 0;
 		button--;
 

@@ -364,16 +364,15 @@ static void select_game(char *emu, char *game)
 			if(is_joy_axis_pressed (0, 2, 0)) last_game_selected+=21;
 		}
 
-		if (ExKey & GP2X_ESCAPE) gp2x_exit();
+		if (ExKey & GP2X_8) gp2x_exit();
 
 		if (osd_is_key_pressed(KEY_UP)) last_game_selected--;
 		if (osd_is_key_pressed(KEY_DOWN)) last_game_selected++;
 		if (osd_is_key_pressed(KEY_LEFT)) last_game_selected-=21;
 		if (osd_is_key_pressed(KEY_RIGHT)) last_game_selected+=21;
-		if (osd_is_key_pressed(KEY_ESC)) gp2x_exit();
+		if (osd_is_key_pressed(KEY_ESC) || (ExKey & GP2X_9)) gp2x_exit();
 
-		if ((ExKey & GP2X_LCTRL) || (ExKey & GP2X_RETURN) || 
-			osd_is_key_pressed(KEY_LCONTROL) || osd_is_key_pressed(KEY_ENTER))
+		if ((ExKey & GP2X_1) || osd_is_key_pressed(KEY_LCONTROL) || osd_is_key_pressed(KEY_ENTER))
 		{
 			/* Select the game */
 			game_list_select(last_game_selected, game, emu);
