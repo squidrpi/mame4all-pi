@@ -9,6 +9,7 @@
 #include "driver.h"
 #include <ctype.h>
 #include "allegro.h"
+#include <glib.h>
 
 /* from video.c */
 extern int frameskip,autoframeskip;
@@ -82,6 +83,27 @@ static struct { char *name; int id; } joy_table[] =
 	{ 0, 0 }
 } ;
 
+static GKeyFile *gkeyfile;
+
+void open_config_file(void)
+{
+	GKeyFileFlags flags;
+	GError *error = NULL;
+
+	flags=G_KEY_FILE_NONE;
+
+    gkeyfile = g_key_file_new ();
+    if (!(int)g_key_file_load_from_file (gkeyfile, "mame.cfg", flags, &error))
+    {
+        gkeyfile=0;
+    }
+}
+
+void close_config_file(void)
+{
+	g_key_file_free(g_key_file_free);
+}
+
 /*
  * gets some boolean config value.
  * 0 = false, >0 = true, <0 = auto
@@ -89,9 +111,23 @@ static struct { char *name; int id; } joy_table[] =
  */
 static int get_bool (char *section, char *option, char *shortcut, int def)
 {
+	GError *error=NULL;
+	char *yesnoauto;
 	int res, i;
 
 	res = def;
+
+    /* look into mame.cfg, [section] */
+    yesnoauto = g_key_file_get_string(gkeyfile, section, option, &error);
+
+    /* also take numerical values instead of "yes", "no" and "auto" */
+	if (!error) //return value if not found is null
+	{
+	    if      (strcasecmp(yesnoauto, "no"  ) == 0) res = 0;
+	    else if (strcasecmp(yesnoauto, "yes" ) == 0) res = 1;
+	    else if (strcasecmp(yesnoauto, "auto") == 0) res = -1;
+	    else    res = atoi (yesnoauto);
+	}
 
 	/* check the commandline */
 	for (i = 1; i < mame_argc; i++)
@@ -126,8 +162,18 @@ static int get_bool (char *section, char *option, char *shortcut, int def)
 static int get_int (char *section, char *option, char *shortcut, int def)
 {
 	int res,i;
+	GError *error=NULL;
+
+	int tempint;
 
 	res = def;
+
+	/* look into mame.cfg, [section] */
+	tempint = g_key_file_get_integer(gkeyfile, section, option, &error);
+	if (!error)
+	{
+		res = tempint;
+	}
 
 	/* get it from the commandline */
 	for (i = 1; i < mame_argc; i++)
@@ -146,10 +192,19 @@ static int get_int (char *section, char *option, char *shortcut, int def)
 
 static float get_float (char *section, char *option, char *shortcut, float def)
 {
+	GError *error=NULL;
 	int i;
 	float res;
+	double tempdouble=0;
 
 	res = def;
+
+	/* look into mame.cfg, [section] */
+    tempdouble = g_key_file_get_double(gkeyfile, section, option, &error);
+    if (!error)
+    {
+        res = (float)tempdouble;
+    }
 
 	/* get it from the commandline */
 	for (i = 1; i < mame_argc; i++)
@@ -168,10 +223,18 @@ static float get_float (char *section, char *option, char *shortcut, float def)
 
 static char *get_string (char *section, char *option, char *shortcut, char *def)
 {
+	GError *error=NULL;
 	char *res;
+	char *tempstr;
 	int i;
 
 	res = def;
+
+    tempstr = g_key_file_get_string(gkeyfile, section, option, &error);
+	if (!error)
+    {
+        res = tempstr;
+    }
 
 	/* get it from the commandline */
 	for (i = 1; i < mame_argc; i++)
@@ -235,6 +298,9 @@ void parse_cmdline (int argc, char **argv, int game_index)
 	mame_argv = argv;
 	game = game_index;
 
+	//Open mame.cfg file for scanning options
+	open_config_file();
+
 	/* read graphic configuration */
 	options.use_artwork = get_bool   ("config", "artwork",	NULL,  1);
 	options.use_samples = get_bool   ("config", "samples",	NULL,  1);
@@ -244,9 +310,9 @@ void parse_cmdline (int argc, char **argv, int game_index)
 	options.antialias   = get_bool   ("config", "antialias",    NULL,  1);
 	options.translucency = get_bool    ("config", "translucency", NULL, 1);
 
-	tmpstr             = get_string ("config", "depth", NULL, "auto");
-	options.color_depth = atoi(tmpstr);
-	if (options.color_depth != 8 && options.color_depth != 16) options.color_depth = 0;	/* auto */
+	//sq tmpstr             = get_string ("config", "depth", NULL, "auto");
+	//sq options.color_depth = atoi(tmpstr);
+	//sq if (options.color_depth != 8 && options.color_depth != 16) options.color_depth = 0;	/* auto */
 
 	//SQ Force 8 bit only
 	options.color_depth=8;	
@@ -308,6 +374,10 @@ void parse_cmdline (int argc, char **argv, int game_index)
 	/* get resolution */
 	resolution  = get_string ("config", "resolution", NULL, "auto");
 
+	//vector games
+	options.vector_width = get_int ("config", "vector_width", NULL, 640);
+	options.vector_height = get_int ("config", "vector_height", NULL, 480);
+
 	/* set default subdirectories */
 	nvdir      = get_string ("directory", "nvram",   NULL, "nvram");
 	hidir      = get_string ("directory", "hi",      NULL, "hi");
@@ -348,10 +418,6 @@ void parse_cmdline (int argc, char **argv, int game_index)
 				(strstr(argv[i],"x") || strstr(argv[i],"X")))
 			resolution = &argv[i][1];
 	}
-
-	//SQ force this size for vector games
-	options.vector_width = 640;
-    options.vector_height = 480;
 
 	/* break up resolution into gfx_width and gfx_height */
 	gfx_height = gfx_width = 0;
@@ -399,4 +465,6 @@ void parse_cmdline (int argc, char **argv, int game_index)
 
 	/* Rotate controls */
 	rotate_controls       = get_bool("config", "rotatecontrols", NULL, 0);
+
+	close_config_file();
 }

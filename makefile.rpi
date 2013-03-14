@@ -35,6 +35,7 @@ CFLAGS = -fsigned-char $(DEVLIBS) \
 	-I/usr/include/SDL \
 	-I$(SDKSTAGE)/opt/vc/include -I$(SDKSTAGE)/opt/vc/include/interface/vcos/pthreads \
 	-I$(SDKSTAGE)/opt/vc/include/interface/vmcs_host/linux \
+	-I/usr/include/glib-2.0 -I/usr/lib/arm-linux-gnueabihf/glib-2.0/include
 	-march=armv6 -mfpu=vfp -mfloat-abi=hard \
 	-O3 -ffast-math -fomit-frame-pointer -fstrict-aliasing \
 	-mstructure-size-boundary=32 -fexpensive-optimizations \
@@ -44,7 +45,7 @@ CFLAGS = -fsigned-char $(DEVLIBS) \
 
 LDFLAGS = $(CFLAGS)
 
-LIBS = -lm -lpthread -lSDL -L$(SDKSTAGE)/opt/vc/lib -lGLESv2 -lEGL
+LIBS = -lm -lpthread -lSDL -L$(SDKSTAGE)/opt/vc/lib -lGLESv2 -lEGL -lglib-2.0
 
 OBJ = obj_$(TARGET)_$(MAMEOS)
 OBJDIRS = $(OBJ) $(OBJ)/cpu $(OBJ)/sound $(OBJ)/$(MAMEOS) \
