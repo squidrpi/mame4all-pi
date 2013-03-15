@@ -48,7 +48,7 @@ core_freq=350
 sdram_freq=500
 }}}
 
-NOTE: This is with a recent 512MB Model B.
+NOTE: Make sure overclocking is actually working by checking "cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor" should be "ondemand". Later kernels appear to set it to "powersave" by default.
 
 I'd also recommend a minimum of 64MB for the GPU RAM allocation (gpu_mem=64).
 
@@ -172,7 +172,7 @@ _March 12, 2013 Version 1.1:_
   * Full keyboard support.
   * Added DrZ80 cpu core. Enabled by default for sound to improve performance for many games.
   * Fixed "slow" sound in dkong, williams and rampage games.
-  * Frontend is now 16bit colours. 
+  * Frontend GUI now uses 16bit bitmaps. 
   * Slightly higher sound mixer quality.
 
 _March 01, 2013:_
