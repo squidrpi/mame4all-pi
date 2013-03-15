@@ -87,13 +87,10 @@ static GKeyFile *gkeyfile;
 
 void open_config_file(void)
 {
-	GKeyFileFlags flags;
 	GError *error = NULL;
 
-	flags=G_KEY_FILE_NONE;
-
     gkeyfile = g_key_file_new ();
-    if (!(int)g_key_file_load_from_file (gkeyfile, "mame.cfg", flags, &error))
+    if (!(int)g_key_file_load_from_file (gkeyfile, "mame.cfg", G_KEY_FILE_NONE, &error))
     {
         gkeyfile=0;
     }
@@ -101,7 +98,7 @@ void open_config_file(void)
 
 void close_config_file(void)
 {
-	g_key_file_free(g_key_file_free);
+	g_key_file_free(gkeyfile);
 }
 
 /*
