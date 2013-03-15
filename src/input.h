@@ -63,7 +63,7 @@ enum
 	JOYCODE_4_BUTTON4,JOYCODE_4_BUTTON5,JOYCODE_4_BUTTON6,
 	JOYCODE_4_BUTTON7,JOYCODE_4_BUTTON8,JOYCODE_4_BUTTON9,JOYCODE_4_BUTTON10,
 #define __code_joy_first JOYCODE_1_LEFT
-#define __code_joy_last JOYCODE_4_BUTTON6
+#define __code_joy_last JOYCODE_4_BUTTON10
 
 	__code_max, /* Temination of standard code */
 
