@@ -167,6 +167,11 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
 *DEVELOPMENT*
 
+_March 16, 2013 Version 1.2:_
+  * Fixed the funky colour palette problems.
+  * Now supports ten (previously six) joystick buttons.
+  * Added configuration file (mame.cfg) support.
+
 _March 12, 2013 Version 1.1:_
   * Added multiple USB joystick support.
   * Full keyboard support.
@@ -181,7 +186,6 @@ _March 01, 2013:_
 *TODO*
 
   * Add better rotation support.
-  * Add configuration file.
 
 *KNOWN PROBLEMS*
 
