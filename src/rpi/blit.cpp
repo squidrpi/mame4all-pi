@@ -26,7 +26,7 @@ void blitscreen_dirty1_color8(struct osd_bitmap *bitmap)
 	int x, y, m;
 	int width=(bitmap->line[1] - bitmap->line[0]);
 	unsigned char *lb=bitmap->line[skiplines] + skipcolumns;
-	unsigned char *address=SCREEN8 + gfx_xoffset + (gfx_yoffset * gfx_width);
+	unsigned short *address=SCREEN16 + gfx_xoffset + (gfx_yoffset * gfx_width);
 
 	for (y = 0; y < gfx_display_lines; y += 16)
 	{
@@ -37,7 +37,7 @@ void blitscreen_dirty1_color8(struct osd_bitmap *bitmap)
 			{
 				int h;
 				unsigned char *lb0 = lb + x;
-				unsigned char *address0 = address + x;
+				unsigned short *address0 = address + x;
 				while (x + w < gfx_display_columns && ISDIRTY(x+w,y))
                     			w += 16;
 				if (x + w > gfx_display_columns)
@@ -47,7 +47,6 @@ void blitscreen_dirty1_color8(struct osd_bitmap *bitmap)
 					for(m=0;m<w;m++) {
 						address0[m] = gp2x_palette[lb0[m]];
 					}
-					//sq memcpy(address0,lb0,w);
 					lb0 += width;
 					address0 += gfx_width;
 				}
@@ -67,8 +66,8 @@ void blitscreen_dirty0_color8(struct osd_bitmap *bitmap)
     int width=(bitmap->line[1] - bitmap->line[0]);
     int columns=gfx_display_columns;
     unsigned char *lb = bitmap->line[skiplines] + skipcolumns;
-    unsigned char *address = SCREEN8 + gfx_xoffset + (gfx_yoffset * gfx_width);
-	unsigned char *dest;
+    unsigned short *address = SCREEN16 + gfx_xoffset + (gfx_yoffset * gfx_width);
+	unsigned short *dest;
 	unsigned char *src;
 
     for (y = 0; y < gfx_display_lines; y++)

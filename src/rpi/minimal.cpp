@@ -193,8 +193,8 @@ void gp2x_set_video_mode(int bpp,int width,int height)
 	surface_width = width;
 	surface_height = height;
 
-	gp2x_screen8=(unsigned char *) calloc(1, width*height);
-	gp2x_screen15=0;
+	gp2x_screen8=0;
+	gp2x_screen15=(unsigned short *) calloc(1, width*height*2);
 	
 	graphics_get_display_size(0 /* LCD */, &display_width, &display_height);
 
@@ -211,11 +211,10 @@ void gp2x_set_video_mode(int bpp,int width,int height)
 	//Create two surfaces for flipping between
 	//Make sure bitmap type matches the source for better performance
     uint32_t crap;
-    resource0 = vc_dispmanx_resource_create(VC_IMAGE_8BPP, width, height, &crap);
-    resource1 = vc_dispmanx_resource_create(VC_IMAGE_8BPP, width, height, &crap);
+    resource0 = vc_dispmanx_resource_create(VC_IMAGE_RGB565, width, height, &crap);
+    resource1 = vc_dispmanx_resource_create(VC_IMAGE_RGB565, width, height, &crap);
 
 	//Create a blank background for the whole screen, make sure width is divisible by 32!
-    //Make sure the resource is cleared by writing to it
     resource_bg = vc_dispmanx_resource_create(VC_IMAGE_RGB565, 128, 128, &crap);
     
  	// Work out the position and size on the display
@@ -282,7 +281,7 @@ void DisplayScreen(void)
 	vc_dispmanx_rect_set( &dst_rect, 0, 0, surface_width, surface_height );
 
 	// blit image to the current resource
-	vc_dispmanx_resource_write_data( cur_res, VC_IMAGE_8BPP, surface_width, gp2x_screen8, &dst_rect );
+	vc_dispmanx_resource_write_data( cur_res, VC_IMAGE_RGB565, surface_width*2, gp2x_screen15, &dst_rect );
 
 	// begin display update
 	dispman_update = vc_dispmanx_update_start( 0 );
@@ -360,33 +359,6 @@ void gp2x_frontend_init(void)
     
 }
 
-void DisplayScreen16(void)
-{
-	VC_RECT_T dst_rect;
-
-	vc_dispmanx_rect_set( &dst_rect, 0, 0, surface_width, surface_height );
-
-	// blit image to the current resource
-	vc_dispmanx_resource_write_data( cur_res, VC_IMAGE_RGB565, surface_width*2, gp2x_screen15, &dst_rect );
-
-	// begin display update
-	dispman_update = vc_dispmanx_update_start( 0 );
-
-	// change element source to be the current resource
-	vc_dispmanx_element_change_source( dispman_update, dispman_element, cur_res );
-
-	// finish display update, vsync is handled by software throttling
-	// dispmanx avoids any tearing. vsync here would be limited to 30fps
-	// on a CRT TV.
-	vc_dispmanx_update_submit( dispman_update, 0, 0 );
-
-	// swap current resource
-	tmp_res = cur_res;
-	cur_res = prev_res;
-	prev_res = tmp_res;
-
-}
-
 void gp2x_frontend_deinit(void)
 {
 	int ret;
@@ -402,7 +374,6 @@ void gp2x_frontend_deinit(void)
     if(gp2x_screen15) free(gp2x_screen15);
     
 }
-
 
 
 static unsigned char fontdata8x8[] =
@@ -560,50 +531,3 @@ void gp2x_printf_init(void)
 {
 	log=0;
 }
-
-//sq static void gp2x_text_log(char *texto)
-//sq {
-//sq 	if (!log)
-//sq 	{
-//sq 		memset(gp2x_screen8,0,320*240);
-//sq 	}
-//sq 	gp2x_text(gp2x_screen8,0,log,texto,255);
-//sq 	log+=8;
-//sq 	if(log>239) log=0;
-//sq }
-//sq 
-//sq /* Variadic functions guide found at http://www.unixpapa.com/incnote/variadic.html */
-//sq void gp2x_printf(char* fmt, ...)
-//sq {
-//sq 	int i,c;
-//sq 	char strOut[4096];
-//sq 	char str[41];
-//sq 	va_list marker;
-//sq 	
-//sq 	va_start(marker, fmt);
-//sq 	vsprintf(strOut, fmt, marker);
-//sq 	va_end(marker);	
-//sq 
-//sq 	c=0;
-//sq 	for (i=0;i<strlen(strOut);i++)
-//sq 	{
-//sq 		str[c]=strOut[i];
-//sq 		if (str[c]=='\n')
-//sq 		{
-//sq 			str[c]=0;
-//sq 			gp2x_text_log(str);
-//sq 			c=0;
-//sq 		}
-//sq 		else if (c==39)
-//sq 		{
-//sq 			str[40]=0;
-//sq 			gp2x_text_log(str);
-//sq 			c=0;
-//sq 		}		
-//sq 		else
-//sq 		{
-//sq 			c++;
-//sq 		}
-//sq 	}
-//sq }
-//sq 
