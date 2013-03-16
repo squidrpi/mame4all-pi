@@ -83,17 +83,17 @@ static struct { char *name; int id; } joy_table[] =
 	{ 0, 0 }
 } ;
 
-static GKeyFile *gkeyfile;
+static GKeyFile *gkeyfile=0;
 
 void open_config_file(void)
 {
 	GError *error = NULL;
 
-    gkeyfile = g_key_file_new ();
-    if (!(int)g_key_file_load_from_file (gkeyfile, "mame.cfg", G_KEY_FILE_NONE, &error))
-    {
-        gkeyfile=0;
-    }
+	gkeyfile = g_key_file_new ();
+	if (!(int)g_key_file_load_from_file (gkeyfile, "mame.cfg", G_KEY_FILE_NONE, &error))
+	{
+	    gkeyfile=0;
+	}
 }
 
 void close_config_file(void)
@@ -114,16 +114,19 @@ static int get_bool (char *section, char *option, char *shortcut, int def)
 
 	res = def;
 
-    /* look into mame.cfg, [section] */
-    yesnoauto = g_key_file_get_string(gkeyfile, section, option, &error);
-
-    /* also take numerical values instead of "yes", "no" and "auto" */
-	if (!error) //return value if not found is null
+	/* look into mame.cfg, [section] */
+	if(gkeyfile) 
 	{
-	    if      (strcasecmp(yesnoauto, "no"  ) == 0) res = 0;
-	    else if (strcasecmp(yesnoauto, "yes" ) == 0) res = 1;
-	    else if (strcasecmp(yesnoauto, "auto") == 0) res = -1;
-	    else    res = atoi (yesnoauto);
+		yesnoauto = g_key_file_get_string(gkeyfile, section, option, &error);
+
+		/* also take numerical values instead of "yes", "no" and "auto" */
+		if (!error) //return value if not found is null
+		{
+		    if      (strcasecmp(yesnoauto, "no"  ) == 0) res = 0;
+		    else if (strcasecmp(yesnoauto, "yes" ) == 0) res = 1;
+		    else if (strcasecmp(yesnoauto, "auto") == 0) res = -1;
+		    else    res = atoi (yesnoauto);
+		}
 	}
 
 	/* check the commandline */
@@ -166,10 +169,13 @@ static int get_int (char *section, char *option, char *shortcut, int def)
 	res = def;
 
 	/* look into mame.cfg, [section] */
-	tempint = g_key_file_get_integer(gkeyfile, section, option, &error);
-	if (!error)
+	if(gkeyfile) 
 	{
-		res = tempint;
+		tempint = g_key_file_get_integer(gkeyfile, section, option, &error);
+		if (!error)
+		{
+			res = tempint;
+		}
 	}
 
 	/* get it from the commandline */
@@ -197,11 +203,14 @@ static float get_float (char *section, char *option, char *shortcut, float def)
 	res = def;
 
 	/* look into mame.cfg, [section] */
-    tempdouble = g_key_file_get_double(gkeyfile, section, option, &error);
-    if (!error)
-    {
-        res = (float)tempdouble;
-    }
+	if(gkeyfile) 
+	{
+		tempdouble = g_key_file_get_double(gkeyfile, section, option, &error);
+		if (!error)
+		{
+		    res = (float)tempdouble;
+		}
+	}
 
 	/* get it from the commandline */
 	for (i = 1; i < mame_argc; i++)
@@ -227,11 +236,14 @@ static char *get_string (char *section, char *option, char *shortcut, char *def)
 
 	res = def;
 
-    tempstr = g_key_file_get_string(gkeyfile, section, option, &error);
-	if (!error)
-    {
-        res = tempstr;
-    }
+	if(gkeyfile) 
+	{
+		tempstr = g_key_file_get_string(gkeyfile, section, option, &error);
+		if (!error)
+		{
+		    res = tempstr;
+		}
+	}
 
 	/* get it from the commandline */
 	for (i = 1; i < mame_argc; i++)
@@ -279,7 +291,7 @@ void get_rom_sample_path (int argc, char **argv, int game_index)
 /* for playback of .inp files */
 void init_inpdir(void)
 {
-    inpdir = get_string ("directory", "inp",     NULL, "inp");
+	inpdir = get_string ("directory", "inp",     NULL, "inp");
 }
 
 void parse_cmdline (int argc, char **argv, int game_index)
