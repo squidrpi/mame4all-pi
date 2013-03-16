@@ -34,33 +34,11 @@ static void gp2x_exit(void);
 
 #define gp2x_color15(R,G,B)  ((R >> 3) << 11) | (( G >> 2) << 5 ) | (( B >> 3 ) << 0 )
 
-//sq static void load_bmp_8bpp(unsigned char *out, unsigned char *in)
-//sq {
-//sq 	int i,x,y;
-//sq 	unsigned char r,g,b,c;
-//sq 	in+=14; /* Skip HEADER */
-//sq 	in+=40; /* Skip INFOHD */
-//sq 	/* Set Palette */
-//sq 	for (i=0;i<256;i++) {
-//sq 		b=*in++;
-//sq 		g=*in++;
-//sq 		r=*in++;
-//sq 		c=*in++;
-//sq 		gp2x_video_color8(i,r,g,b);
-//sq 	}
-//sq 	gp2x_video_setpalette();
-//sq 	/* Set Bitmap */	
-//sq 	for (y=479;y!=-1;y--) {
-//sq 		for (x=0;x<640;x++) {
-//sq 			*out++=gp2x_palette[in[x+y*640]];
-//sq 		}
-//sq 	}
-//sq }
-
 static void load_bmp_16bpp(unsigned short *out, unsigned short *in)
 {
  	int i,x,y;
 
+	//Load bitmap, file will be flipped y so invert
 	in+=(640*480)-1;
  	for (y=479;y!=-1;y--) {
 		memcpy(out, in, 640*2);
@@ -86,7 +64,7 @@ static void gp2x_intro_screen(int first_run) {
 	FILE *f;
 	BITMAPFILEHEADER h;
 
-	DisplayScreen16();
+	gp2x_video_flip();
 
 	sprintf(name,"skins/rpisplash16.bmp");
 
@@ -106,7 +84,7 @@ static void gp2x_intro_screen(int first_run) {
 
 	if(first_run) {
 		load_bmp_16bpp(gp2x_screen15,gp2xsplash_bmp);
-		DisplayScreen16();
+		gp2x_video_flip();
 		sleep(1);
 	}
 	
@@ -306,7 +284,7 @@ static void select_game(char *emu, char *game)
 	strcpy(game,"builtinn");
 
 	/* Clean screen */
-	DisplayScreen16();
+	gp2x_video_flip();
 
 	gp2x_joystick_clear();	
 
@@ -314,7 +292,7 @@ static void select_game(char *emu, char *game)
 	while(1)
 	{
 		game_list_view(&last_game_selected);
-		DisplayScreen16();
+		gp2x_video_flip();
        	gp2x_timer_delay(100000);
 
 //sq        if( (gp2x_joystick_read()))
@@ -402,7 +380,7 @@ void frontend_gui (char *gamename, int first_run)
 		/* Draw background image */
     	load_bmp_16bpp(gp2x_screen15,gp2xmenu_bmp);
 		gp2x_gamelist_text_out(35, 110, "ERROR: NO AVAILABLE GAMES FOUND",gp2x_color15(255,255,255));
-		DisplayScreen16();
+		gp2x_video_flip();
 		sleep(5);
 		gp2x_exit();
 	}
