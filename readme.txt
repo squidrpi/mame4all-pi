@@ -79,6 +79,7 @@ Composite output, try removing/commenting out the "overscan_" parameters from "/
 *INSTALLATION*
 {{{
 mame        -> MAME and frontend.
+mame.cfg    -> MAME configuration file, limited support to only the options in the supplied file (not the full MAME settings).
 cheat.dat   -> Cheats definition file
 hiscore.dat -> High Scores definition file
 artwork/    -> Artwork directory
