@@ -70,7 +70,6 @@ static int frameskip_counter;
 #include "minimal.h"
 #define TICKER unsigned long
 #define ticker() gp2x_timer_read() 
-#define TICKS_PER_SEC 1000000
 #define vsync() gp2x_video_wait_vsync()
 #define makecol(r,g,b) gp2x_video_color15(r,g,b,0)
 #define getr(c) gp2x_video_getr15(c)
