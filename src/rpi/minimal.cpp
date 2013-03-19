@@ -127,8 +127,22 @@ int init_SDL(void)
 		
 		for(i=0;i<SDL_NumJoysticks();i++) {	
 			myjoy[i]=SDL_JoystickOpen(i);
+
+			//Check for valid joystick, some keyboards
+			//aren't SDL compatible
+			if(myjoy[i])
+			{
+				if (SDL_JoystickNumAxes(myjoy[i]) > 6)
+				{
+					SDL_JoystickClose(myjoy[i]);
+					myjoy[i]=0;
+					logerror("Error detected invalid joystick/keyboard\n");
+					break;
+				}
+			}
 		}
-		logerror("Found %d joysticks\n",SDL_NumJoysticks());
+		if(myjoy[0]) 
+			logerror("Found %d joysticks\n",SDL_NumJoysticks());
 	}
 	SDL_EventState(SDL_ACTIVEEVENT,SDL_IGNORE);
 	SDL_EventState(SDL_MOUSEMOTION,SDL_IGNORE);
