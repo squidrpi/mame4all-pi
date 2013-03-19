@@ -36,7 +36,7 @@ static void gp2x_exit(void);
 
 static void load_bmp_16bpp(unsigned short *out, unsigned short *in)
 {
- 	int i,x,y;
+ 	int y;
 
 	//Load bitmap, file will be flipped y so invert
 	in+=(640*480)-1;
@@ -60,7 +60,6 @@ typedef struct                       /**** BMP file header structure ****/
 
 static void gp2x_intro_screen(int first_run) {
 	char name[256];
-	int offset=0;
 	FILE *f;
 	BITMAPFILEHEADER h;
 
@@ -277,8 +276,12 @@ extern int is_joy_axis_pressed (int axis, int dir, int joynum);
 
 static void select_game(char *emu, char *game)
 {
+	extern int kiosk_mode;
 
 	unsigned long ExKey=0;
+
+	unsigned long keytimer=0;
+	int keydirection=0, last_keydirection=0;
 
 	/* No Selected game */
 	strcpy(game,"builtinn");
@@ -295,12 +298,35 @@ static void select_game(char *emu, char *game)
 		gp2x_video_flip();
        	gp2x_timer_delay(100000);
 
-//sq        if( (gp2x_joystick_read()))
-//sq        	gp2x_timer_delay(100000);
 		while(1)
 		{
-            usleep(10000);
+            usleep(1000);
 			gp2x_joystick_read();	
+
+			last_keydirection=keydirection;
+			keydirection=0;
+
+			//Any keyboard key pressed?
+			if(osd_is_key_pressed(KEY_LEFT) || osd_is_key_pressed(KEY_RIGHT) ||
+			   osd_is_key_pressed(KEY_UP) || osd_is_key_pressed(KEY_DOWN) )
+			{
+				keydirection=1;
+				break;
+			}
+
+			if(osd_is_key_pressed(KEY_ENTER) || osd_is_key_pressed(KEY_LCONTROL) ||
+			   osd_is_key_pressed(KEY_ESC)) 
+			{
+				break;
+			}
+
+			//Any stick direction?
+			if(is_joy_axis_pressed (0, 1, 0) || is_joy_axis_pressed (0, 2, 0) ||
+			   is_joy_axis_pressed (1, 1, 0) || is_joy_axis_pressed (1, 2, 0))
+			{
+				keydirection=1;
+				break;
+			}
 
 			//Any joy buttons pressed?
 			if (ExKey1)
@@ -309,27 +335,15 @@ static void select_game(char *emu, char *game)
 				break;
 			}
 
-			//Any keyboard key pressed?
-			if(osd_is_key_pressed(KEY_LEFT) ||
-			   osd_is_key_pressed(KEY_RIGHT) ||
-			   osd_is_key_pressed(KEY_UP) ||
-			   osd_is_key_pressed(KEY_DOWN) ||
-			   osd_is_key_pressed(KEY_ENTER) ||
-			   osd_is_key_pressed(KEY_LCONTROL) ||
-			   osd_is_key_pressed(KEY_ESC)) 
-			{
-				break;
-			}
+			//Used to delay the initial key press, but 
+			//once pressed and held the delay will clear
+			keytimer = gp2x_timer_read() + (TICKS_PER_SEC/2);
 
-			//Any stick direction?
-			if(is_joy_axis_pressed (0, 1, 0) ||
-			   is_joy_axis_pressed (0, 2, 0) ||
-			   is_joy_axis_pressed (1, 1, 0) ||
-			   is_joy_axis_pressed (1, 2, 0))
-			{
-				break;
-			}
+		}
 
+		//Key delay
+		if(keydirection && last_keydirection && gp2x_timer_read() < keytimer) {
+			continue;
 		}
 
 		int updown=0;
@@ -342,13 +356,12 @@ static void select_game(char *emu, char *game)
 			if(is_joy_axis_pressed (0, 2, 0)) last_game_selected+=21;
 		}
 
-		if (ExKey & GP2X_8) gp2x_exit();
-
 		if (osd_is_key_pressed(KEY_UP)) last_game_selected--;
 		if (osd_is_key_pressed(KEY_DOWN)) last_game_selected++;
 		if (osd_is_key_pressed(KEY_LEFT)) last_game_selected-=21;
 		if (osd_is_key_pressed(KEY_RIGHT)) last_game_selected+=21;
-		if (osd_is_key_pressed(KEY_ESC) || (ExKey & GP2X_9)) gp2x_exit();
+
+		if ((osd_is_key_pressed(KEY_ESC) || (ExKey & GP2X_9)) && !kiosk_mode) gp2x_exit();
 
 		if ((ExKey & GP2X_1) || osd_is_key_pressed(KEY_LCONTROL) || osd_is_key_pressed(KEY_ENTER))
 		{
