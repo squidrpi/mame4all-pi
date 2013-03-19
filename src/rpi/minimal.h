@@ -55,6 +55,8 @@ enum  { GP2X_UP=1<<0,   GP2X_LEFT=1<<1, GP2X_DOWN=1<<2, GP2X_RIGHT=1<<3,
         GP2X_1=1<<4,    GP2X_2=1<<5, 	GP2X_3=1<<6, 	GP2X_4=1<<7,
 		GP2X_5=1<<8,	GP2X_6=1<<9, 	GP2X_7=1<<10,	GP2X_8=1<<11, GP2X_9=1<<12,
         GP2X_10=1<<13	};
+
+#define TICKS_PER_SEC 1000000
                                             
 extern volatile unsigned short 	gp2x_palette[512];
 extern unsigned char 		*gp2x_screen8;
