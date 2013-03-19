@@ -37,6 +37,8 @@ void init_inpdir(void);
 
 void frontend_gui (char *gamename, int first_run);
 
+int kiosk_mode;
+
 static FILE *errorlog;
 
 /* put here anything you need to do when the program is started. Return 0 if */
@@ -95,6 +97,7 @@ int fuzzycmp (const char *s, const char *l)
 	return gaps;
 }
 
+
 int main (int argc, char **argv)
 {
 	int res, i, j = 0, game_index;
@@ -114,6 +117,8 @@ int main (int argc, char **argv)
     int first_run=1;
 
     char abspath[1000];
+
+	kiosk_mode=0;
 
     realpath(argv[0], abspath);
     char *dirsep = strrchr(abspath, '/');
