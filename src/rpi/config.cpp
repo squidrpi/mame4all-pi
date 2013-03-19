@@ -303,6 +303,8 @@ void parse_cmdline (int argc, char **argv, int game_index)
 	int i;
 	char *tmpstr;
 
+	extern int kiosk_mode;
+
 	mame_argc = argc;
 	mame_argv = argv;
 	game = game_index;
@@ -473,7 +475,9 @@ void parse_cmdline (int argc, char **argv, int game_index)
 	fast_sound       = get_bool("config", "fastsound", NULL, 0);
 
 	/* Rotate controls */
-	rotate_controls       = get_bool("config", "rotatecontrols", NULL, 0);
+	rotate_controls  = get_bool("config", "rotatecontrols", NULL, 0);
+
+	kiosk_mode = get_bool("config", "kioskmode", NULL, 0);
 
 	close_config_file();
 }

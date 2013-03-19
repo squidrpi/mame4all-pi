@@ -416,7 +416,8 @@ int frontend_help (int argc, char **argv)
 	{
 		#ifndef MESS
 		printf("M.A.M.E. v%s - Multiple Arcade Machine Emulator\n"
-				"Copyright (C) 1997-2013 by Nicola Salmoria and the MAME Team\n\n",build_version);
+				"Copyright (C) 1997-2013 by Nicola Salmoria and the MAME Team\n"
+				"MAME4ALL v1.2\n\n" ,build_version);
 		showdisclaimer();
 		printf("Usage:  MAME gamename [options]\n\n"
 				"        MAME -list      for a brief list of supported games\n"
@@ -434,6 +435,7 @@ int frontend_help (int argc, char **argv)
 				"        -nocylcone   Switch off Cyclone core\n"
 //				"        -ror -rol    Rotate display\n"
 				"        -nosound     Switch off sound\n"
+				"        -kioskmode   Don't exit from the frontend\n"
 			  );
 		#else
 		showmessinfo();
