@@ -1,18 +1,3 @@
-/*  RetroArch - A frontend for libretro.
- *  Copyright (C) 2010-2013 - Hans-Kristian Arntzen
- *  Copyright (C) 2012-2013 - Michael Lelli
- * 
- *  RetroArch is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
- *
- *  RetroArch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with RetroArch.
- *  If not, see <http://www.gnu.org/licenses/>.
- */
 
 #include "driver.h"
 #include "minimal.h"
@@ -29,15 +14,12 @@ int soundcard,usestereo;
 int master_volume = 100;
 
 static INT16 *stream_cache_data;
-static int stream_cache_len;
 static int stream_cache_channels;
 static int samples_per_frame;
 
 //============================================================
 //      LOCAL VARIABLES
 //============================================================
-
-#define TICKS_PER_SEC 1000000
 
 int attenuation = 0;
 
@@ -48,19 +30,19 @@ static int snd_underrun;
 
 typedef struct alsa
 {
-    snd_pcm_t *pcm;
-    bool has_float;
-    volatile bool thread_dead;
-    
-    size_t buffer_size_bytes;
-    size_t period_size_bytes;
-    snd_pcm_uframes_t period_size_frames;
-    
-    fifo_buffer_t *buffer;
-    sthread_t *worker_thread;
-    slock_t *fifo_lock;
-    scond_t *cond;
-    slock_t *cond_lock;
+	snd_pcm_t *pcm;
+	bool has_float;
+	volatile bool thread_dead;
+	
+	size_t buffer_size_bytes;
+	size_t period_size_bytes;
+	snd_pcm_uframes_t period_size_frames;
+	
+	fifo_buffer_t *buffer;
+	sthread_t *worker_thread;
+	slock_t *fifo_lock;
+	scond_t *cond;
+	slock_t *cond_lock;
 } alsa_t;
 
 static alsa_t *g_alsa;
@@ -84,7 +66,6 @@ int msdos_init_sound(void)
 	}
 
 	stream_cache_data = 0;
-	stream_cache_len = 0;
 	stream_cache_channels = 0;
 
 	logerror("set sample rate: %d\n",Machine->sample_rate);
@@ -120,21 +101,21 @@ int osd_start_audio_stream(int stereo)
 	if (Machine->sample_rate == 0)
 		return samples_per_frame;
 
-    // attempt to initialize SDL
-    g_alsa = alsa_init();
+	// attempt to initialize SDL
+	g_alsa = alsa_init();
 
 	return samples_per_frame;
 }
 
 void osd_stop_audio_stream(void)
 {
-    // if nothing to do, don't do it
-    if (Machine->sample_rate == 0)
-        return;
-    
+	// if nothing to do, don't do it
+	if (Machine->sample_rate == 0)
+		return;
+	
 	alsa_free(g_alsa);
-    
-    // print out over/underflow stats
+	
+	// print out over/underflow stats
 	logerror("Sound buffer: fifo_overrun=%d fifo_underrun=%d snd_underrun=%d\n", fifo_overrun, fifo_underrun, snd_underrun);	
 
 }
@@ -143,20 +124,20 @@ void osd_stop_audio_stream(void)
 
 static void alsa_worker_thread(void *data)
 {
-    alsa_t *alsa = (alsa_t*)data;
+	alsa_t *alsa = (alsa_t*)data;
 	int wait_on_buffer=1;
-    
-    UINT8 *buf = (UINT8 *)calloc(1, alsa->period_size_bytes);
-    if (!buf)
-    {
-        logerror("failed to allocate audio buffer");
-        goto end;
-    }
-    
-    while (!alsa->thread_dead)
-    {
-        slock_lock(alsa->fifo_lock);
-        size_t avail = fifo_read_avail(alsa->buffer);
+	
+	UINT8 *buf = (UINT8 *)calloc(1, alsa->period_size_bytes);
+	if (!buf)
+	{
+		logerror("failed to allocate audio buffer");
+		goto end;
+	}
+	
+	while (!alsa->thread_dead)
+	{
+		slock_lock(alsa->fifo_lock);
+		size_t avail = fifo_read_avail(alsa->buffer);
 
 		//First run wait until the buffer is filled with a few frames
 		if(avail < alsa->period_size_bytes*3 && wait_on_buffer)
@@ -165,53 +146,53 @@ static void alsa_worker_thread(void *data)
 			continue;
 		}
 		wait_on_buffer=0;
-        size_t fifo_size = min(alsa->period_size_bytes, avail);
-        fifo_read(alsa->buffer, buf, fifo_size);
-        scond_signal(alsa->cond);
-        slock_unlock(alsa->fifo_lock);
-        
-        // If underrun, fill rest with silence.
+		size_t fifo_size = min(alsa->period_size_bytes, avail);
+		fifo_read(alsa->buffer, buf, fifo_size);
+		scond_signal(alsa->cond);
+		slock_unlock(alsa->fifo_lock);
+	    
+		// If underrun, fill rest with silence.
  		if(alsa->period_size_bytes != fifo_size) {
-        	memset(buf + fifo_size, 0, alsa->period_size_bytes - fifo_size);
+			memset(buf + fifo_size, 0, alsa->period_size_bytes - fifo_size);
  			fifo_underrun++;
  		}
-        
-        snd_pcm_sframes_t frames = snd_pcm_writei(alsa->pcm, buf, alsa->period_size_frames);
-        
-        if (frames == -EPIPE || frames == -EINTR || frames == -ESTRPIPE)
-        {
+
+		snd_pcm_sframes_t frames = snd_pcm_writei(alsa->pcm, buf, alsa->period_size_frames);
+
+		if (frames == -EPIPE || frames == -EINTR || frames == -ESTRPIPE)
+		{
 			snd_underrun++;
-            if (snd_pcm_recover(alsa->pcm, frames, 1) < 0)
-            {
-                logerror("[ALSA]: (#2) Failed to recover from error (%s)\n",
-                          snd_strerror(frames));
-                break;
-            }
-            
-            continue;
-        }
-        else if (frames < 0)
-        {
-            logerror("[ALSA]: Unknown error occured (%s).\n", snd_strerror(frames));
-            break;
-        }
-    }
-    
+			if (snd_pcm_recover(alsa->pcm, frames, 1) < 0)
+			{
+				logerror("[ALSA]: (#2) Failed to recover from error (%s)\n",
+					snd_strerror(frames));
+				break;
+			}
+
+			continue;
+		}
+		else if (frames < 0)
+		{
+			logerror("[ALSA]: Unknown error occured (%s).\n", snd_strerror(frames));
+			break;
+		}
+	}
+	
 end:
-    slock_lock(alsa->cond_lock);
-    alsa->thread_dead = true;
-    scond_signal(alsa->cond);
-    slock_unlock(alsa->cond_lock);
-    free(buf);
+	slock_lock(alsa->cond_lock);
+	alsa->thread_dead = true;
+	scond_signal(alsa->cond);
+	slock_unlock(alsa->cond_lock);
+	free(buf);
 }
 
 static ssize_t alsa_write(void *data, const void *buf, size_t size)
 {
-    alsa_t *alsa = (alsa_t*)data;
-    
-    if (alsa->thread_dead)
-        return -1;
-    
+	alsa_t *alsa = (alsa_t*)data;
+	
+	if (alsa->thread_dead)
+		return -1;
+	
 	slock_lock(alsa->fifo_lock);
 	size_t avail = fifo_write_avail(alsa->buffer);
 	size_t write_amt = min(avail, size);
@@ -225,18 +206,15 @@ static ssize_t alsa_write(void *data, const void *buf, size_t size)
 	return write_amt;
 }
 
-static int counter=0;
-
 int osd_update_audio_stream(INT16 *buffer)
 {
 	//Soundcard switch off?
 	if (Machine->sample_rate == 0) return samples_per_frame;
 
 	stream_cache_data = buffer;
-	stream_cache_len = samples_per_frame;
-    
+	
 	profiler_mark(PROFILER_USER1);
-    alsa_write(g_alsa, buffer, (samples_per_frame*stream_cache_channels*sizeof(signed short)));
+	alsa_write(g_alsa, buffer, (samples_per_frame * stream_cache_channels * sizeof(signed short)) );
 	profiler_mark(PROFILER_END);
 
 	return samples_per_frame;
@@ -271,46 +249,46 @@ goto error; \
 
 static alsa_t *alsa_init(void)
 {
-    
-    alsa_t *alsa = (alsa_t*)calloc(1, sizeof(alsa_t));
-    if (!alsa)
-        return NULL;
+	
+	alsa_t *alsa = (alsa_t*)calloc(1, sizeof(alsa_t));
+	if (!alsa)
+		return NULL;
 
 	fifo_underrun=0;
 	fifo_overrun=0;
 	snd_underrun=0;
-    
-    snd_pcm_hw_params_t *params = NULL;
-    
-    const char *alsa_dev = "default";
-    
-    snd_pcm_uframes_t buffer_size_frames;
-    
-    TRY_ALSA(snd_pcm_open(&alsa->pcm, alsa_dev, SND_PCM_STREAM_PLAYBACK, 0));
+	
+	snd_pcm_hw_params_t *params = NULL;
+	
+	const char *alsa_dev = "default";
+	
+	snd_pcm_uframes_t buffer_size_frames;
+	
+	TRY_ALSA(snd_pcm_open(&alsa->pcm, alsa_dev, SND_PCM_STREAM_PLAYBACK, 0));
 
 	//latency is one frame times by a multiplier (higher improves crackling?)
 	TRY_ALSA(snd_pcm_set_params(alsa->pcm,
-                                SND_PCM_FORMAT_S16,
-                                SND_PCM_ACCESS_RW_INTERLEAVED,
-                                stream_cache_channels,
-                                Machine->sample_rate,
-                                0,
-                                ((float)TICKS_PER_SEC / (float)Machine->drv->frames_per_second) * 4)) ;
+								SND_PCM_FORMAT_S16,
+								SND_PCM_ACCESS_RW_INTERLEAVED,
+								stream_cache_channels,
+								Machine->sample_rate,
+								0,
+								((float)TICKS_PER_SEC / (float)Machine->drv->frames_per_second) * 4)) ;
 
 	TRY_ALSA(snd_pcm_get_params ( alsa->pcm, &buffer_size_frames, &alsa->period_size_frames ));
 
-    logerror("ALSA: Period size: %d frames\n", (int)alsa->period_size_frames);
-    logerror("ALSA: Buffer size: %d frames\n", (int)buffer_size_frames);
+	logerror("ALSA: Period size: %d frames\n", (int)alsa->period_size_frames);
+	logerror("ALSA: Buffer size: %d frames\n", (int)buffer_size_frames);
 
-    alsa->buffer_size_bytes = snd_pcm_frames_to_bytes(alsa->pcm, buffer_size_frames);
-    alsa->period_size_bytes = snd_pcm_frames_to_bytes(alsa->pcm, alsa->period_size_frames);
+	alsa->buffer_size_bytes = snd_pcm_frames_to_bytes(alsa->pcm, buffer_size_frames);
+	alsa->period_size_bytes = snd_pcm_frames_to_bytes(alsa->pcm, alsa->period_size_frames);
 
-    logerror("ALSA: Period size: %d bytes\n", (int)alsa->period_size_bytes);
-    logerror("ALSA: Buffer size: %d bytes\n", (int)alsa->buffer_size_bytes);
+	logerror("ALSA: Period size: %d bytes\n", (int)alsa->period_size_bytes);
+	logerror("ALSA: Buffer size: %d bytes\n", (int)alsa->buffer_size_bytes);
 
 	TRY_ALSA(snd_pcm_prepare(alsa->pcm));
 
-    snd_pcm_hw_params_free(params);
+	snd_pcm_hw_params_free(params);
 
 	//Write initial blank sound to stop underruns?
 	{
@@ -320,91 +298,91 @@ static alsa_t *alsa_init(void)
 		free(tempbuf);
 	}
 
-    alsa->fifo_lock = slock_new();
-    alsa->cond_lock = slock_new();
-    alsa->cond = scond_new();
-    alsa->buffer = fifo_new(alsa->buffer_size_bytes*3);
-    if (!alsa->fifo_lock || !alsa->cond_lock || !alsa->cond || !alsa->buffer)
-        goto error;
-    
-    alsa->worker_thread = sthread_create(alsa_worker_thread, alsa);
-    if (!alsa->worker_thread)
-    {
-        logerror("error initializing worker thread\n");
-        goto error;
-    }
-    
-    return alsa;
-    
+	alsa->fifo_lock = slock_new();
+	alsa->cond_lock = slock_new();
+	alsa->cond = scond_new();
+	alsa->buffer = fifo_new(alsa->buffer_size_bytes*3);
+	if (!alsa->fifo_lock || !alsa->cond_lock || !alsa->cond || !alsa->buffer)
+		goto error;
+	
+	alsa->worker_thread = sthread_create(alsa_worker_thread, alsa);
+	if (!alsa->worker_thread)
+	{
+		logerror("error initializing worker thread\n");
+		goto error;
+	}
+	
+	return alsa;
+	
 error:
-    logerror("ALSA: Failed to initialize...\n");
-    if (params)
-        snd_pcm_hw_params_free(params);
-    
-    alsa_free(alsa);
-    
-    return NULL;
+	logerror("ALSA: Failed to initialize...\n");
+	if (params)
+		snd_pcm_hw_params_free(params);
+	
+	alsa_free(alsa);
+	
+	return NULL;
 
 }
 
 
 static void alsa_free(void *data)
 {
-    alsa_t *alsa = (alsa_t*)data;
-    
-    if (alsa)
-    {
-        if (alsa->worker_thread)
-        {
-            alsa->thread_dead = true;
-            sthread_join(alsa->worker_thread);
-        }
-        if (alsa->buffer)
-            fifo_free(alsa->buffer);
-        if (alsa->cond)
-            scond_free(alsa->cond);
-        if (alsa->fifo_lock)
-            slock_free(alsa->fifo_lock);
-        if (alsa->cond_lock)
-            slock_free(alsa->cond_lock);
-        if (alsa->pcm)
-        {
-            snd_pcm_drop(alsa->pcm);
-            snd_pcm_close(alsa->pcm);
-        }
-        free(alsa);
-    }
+	alsa_t *alsa = (alsa_t*)data;
+	
+	if (alsa)
+	{
+		if (alsa->worker_thread)
+		{
+			alsa->thread_dead = true;
+			sthread_join(alsa->worker_thread);
+		}
+		if (alsa->buffer)
+			fifo_free(alsa->buffer);
+		if (alsa->cond)
+			scond_free(alsa->cond);
+		if (alsa->fifo_lock)
+			slock_free(alsa->fifo_lock);
+		if (alsa->cond_lock)
+			slock_free(alsa->cond_lock);
+		if (alsa->pcm)
+		{
+			snd_pcm_drop(alsa->pcm);
+			snd_pcm_close(alsa->pcm);
+		}
+		free(alsa);
+	}
 }
 
 
 static bool alsa_stop(void *data)
 {
-    (void)data;
-    return true;
+	(void)data;
+	return true;
 }
 
 static bool alsa_start(void *data)
 {
-    (void)data;
-    return true;
+	(void)data;
+	return true;
 }
 
 static size_t alsa_write_avail(void *data)
 {
-    alsa_t *alsa = (alsa_t*)data;
-    
-    if (alsa->thread_dead)
-        return 0;
-    slock_lock(alsa->fifo_lock);
-    size_t val = fifo_write_avail(alsa->buffer);
-    slock_unlock(alsa->fifo_lock);
-    return val;
+	alsa_t *alsa = (alsa_t*)data;
+	
+	if (alsa->thread_dead)
+		return 0;
+	slock_lock(alsa->fifo_lock);
+	size_t val = fifo_write_avail(alsa->buffer);
+	slock_unlock(alsa->fifo_lock);
+	return val;
 }
 
 static size_t alsa_buffer_size(void *data)
 {
-    alsa_t *alsa = (alsa_t*)data;
-    return alsa->buffer_size_bytes;
+	alsa_t *alsa = (alsa_t*)data;
+	return alsa->buffer_size_bytes;
 }
 
 
