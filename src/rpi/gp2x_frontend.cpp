@@ -300,7 +300,7 @@ static void select_game(char *emu, char *game)
 
 		while(1)
 		{
-            usleep(1000);
+            usleep(10000);
 			gp2x_joystick_read();	
 
 			last_keydirection=keydirection;
