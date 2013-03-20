@@ -417,7 +417,7 @@ int frontend_help (int argc, char **argv)
 		#ifndef MESS
 		printf("M.A.M.E. v%s - Multiple Arcade Machine Emulator\n"
 				"Copyright (C) 1997-2013 by Nicola Salmoria and the MAME Team\n"
-				"MAME4ALL v1.2\n\n" ,build_version);
+				"MAME4ALL v1.3\n\n" ,build_version);
 		showdisclaimer();
 		printf("Usage:  MAME gamename [options]\n\n"
 				"        MAME -list      for a brief list of supported games\n"
