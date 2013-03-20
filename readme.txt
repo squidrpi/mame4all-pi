@@ -168,7 +168,7 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
 *CHANGE LOG*
 
-_March ??, 2013 Version 1.3:_
+_March 20, 2013 Version 1.3:_
   * Reduced or eliminated sound static.
   * Fixed the sound in the galaxian group of games.
   * Workaround for SDL incompatible keyboards detected as joysticks.
@@ -198,7 +198,7 @@ _March 01, 2013:_
 *KNOWN PROBLEMS*
 
   * Not perfect sound or incomplete in some games. Sometimes simply quiting a game and restarting can fix the sound - believe this is due to ALSA Pi driver bugs. Additionally try removing pulseaudio to improve sound problems.
-  * Make sure nothing is running in the background. Best to run in the console instead of X-Windows. But if experiencing black screen in the console, try running in X-Windows or downgrading to an earlier version of Raspbian.
+  * Make sure nothing is running in the background. For best performance run in the console instead of X-Windows. But if experiencing black screen in the console, try running in X-Windows or use the console overscan settings above.
   * The SDL input drivers are a little buggy, if input suddenly stops, reboot the Pi.
   * Slow playability in modern games.
   * Memory leaks. In case of errors/crashes reboot your Pi.
