@@ -166,7 +166,14 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
   * ALSA sound code is borrowed from RetroArch (http://themaister.net/retroarch.html)
 
 
-*DEVELOPMENT*
+*CHANGE LOG*
+
+_March ??, 2013 Version 1.3:_
+  * Reduced or eliminated sound static.
+  * Fixed the sound in the galaxian group of games.
+  * Workaround for SDL incompatible keyboards detected as joysticks.
+  * Added key delay to frontend for easier selection.
+  * Added "kiosk" mode option, stops MAME4ALL exiting from the game selection frontend.
 
 _March 16, 2013 Version 1.2:_
   * Fixed the funky colour palette problems.
