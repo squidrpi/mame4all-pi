@@ -296,7 +296,7 @@ static void select_game(char *emu, char *game)
 	{
 		game_list_view(&last_game_selected);
 		gp2x_video_flip();
-       	gp2x_timer_delay(100000);
+       	gp2x_timer_delay(70000);
 
 		while(1)
 		{
