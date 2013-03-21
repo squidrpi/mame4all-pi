@@ -171,6 +171,7 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 _March 20, 2013 Version 1.3:_
   * Reduced or eliminated sound static.
   * Fixed the sound in the galaxian group of games.
+  * Fixed Neogeo crackling fix.
   * Workaround for SDL incompatible keyboards detected as joysticks.
   * Added key delay to frontend for easier selection.
   * Added "kiosk" mode option, stops MAME4ALL exiting from the game selection frontend.
