@@ -30,6 +30,9 @@ int gp2x_cheat=0;
 static unsigned short *gp2xmenu_bmp;
 static unsigned short *gp2xsplash_bmp;
 
+#define MAXFAVS 1000
+static char favarray[MAXFAVS][9];
+
 static void gp2x_exit(void);
 
 #define gp2x_color15(R,G,B)  ((R >> 3) << 11) | (( G >> 2) << 5 ) | (( B >> 3 ) << 0 )
@@ -103,10 +106,99 @@ static void gp2x_intro_screen(int first_run) {
 	}
 }
 
+static void favorites_read(void)
+{
+    //SQ: Read the favorites list from the favorites.ini file
+    FILE *file;
+    int counter=0;
+
+    favarray[0][0] = '\0';
+
+    file = fopen ("folders/Favorites.ini", "r");
+    if ( file != NULL )
+    {
+        char line[256]; /* or other suitable maximum line size */
+
+        while ( fgets(line, sizeof line, file) != NULL ) /* read a line */
+        {
+            if (line[strlen(line) - 1] == '\n') line[strlen(line) - 1] = '\0';
+            if (line[strlen(line) - 1] == '\r') line[strlen(line) - 1] = '\0';
+
+            if (line[0] == '[' || line[0] == '\0' || strlen(line) > 8) continue;
+
+            //Everything checks out so stick the line in the array
+            strcpy(favarray[counter++], line);
+            if(counter == MAXFAVS-2) break;
+        }
+        fclose ( file );
+        favarray[counter][0] = '\0';
+    }
+}
+
+static void favorites_remove(char *game)
+{
+    //SQ: Scan through the favorites file and remove
+    //the requested line, creating a new file.
+    FILE *file, *file2;
+
+    file = fopen ("folders/Favorites.ini", "r");
+    file2 = fopen ("folders/Favorites.ini.new", "w");
+    if ( file != NULL && file2 != NULL) {
+        char line[256];
+        char line2[256];
+
+        while ( fgets(line, sizeof line, file) != NULL ) { /* read a line */
+            strcpy(line2, line);
+
+            if (line[strlen(line) - 1] == '\n') line[strlen(line) - 1] = '\0';
+            if (line[strlen(line) - 1] == '\r') line[strlen(line) - 1] = '\0';
+
+            if (line[0] != '[' && line[0] != '\0' && strlen(line) <= 8) {
+                if (strcmp(line, game) == 0) {
+                    continue;
+                }
+            }
+            fputs(line2, file2);
+
+        }
+        fclose (file);
+        fclose (file2);
+
+        //Move the new file over the old one.
+        rename("folders/Favorites.ini.new", "folders/Favorites.ini");
+    }
+   
+    //SQ:All done so re-read the favorites array
+    favorites_read();
+}
+
+static void favorites_add(char *game)
+{
+    //SQ:Add the game to the favorites file
+    FILE *file;
+
+    //SQ:Make sure the directory exists before creating a new file
+    mkdir("folders", 0777);
+
+    file = fopen("folders/Favorites.ini", "a");
+    if (file != NULL) {
+        fputs(game, file);
+        fputc('\n', file);
+        fclose(file);
+    }
+
+    //SQ:All done so re-read the favorites array
+    favorites_read();
+}
+
 static void game_list_init_nocache(void)
 {
 	int i;
 	FILE *f;
+
+	//SQ: read the favorites
+	favorites_read();
+
 	DIR *d=opendir("roms");
 	char game[32];
 	if (d)
@@ -153,6 +245,10 @@ static void game_list_init_cache(void)
 {
 	FILE *f;
 	int i;
+
+	//SQ: read the favorites
+	favorites_read();
+
 	f=fopen("frontend/mame.lst","r");
 	if (f)
 	{
@@ -209,13 +305,31 @@ static void game_list_view(int *pos) {
 	for (i=0;i<NUMGAMES;i++) {
 		if (fe_drivers[i].available==1) {
 			if (aux_pos>=view_pos && aux_pos<=view_pos+20) {
+                //Check if the game is a favorite
+                int foundfav=0;
+                int counter=0;
+                while(true) {
+                    if (favarray[counter][0] == '\0') break;    //Null is the array terminator
+                    if (strcasecmp(favarray[counter], fe_drivers[i].name) == 0) {
+                        foundfav=1;
+                        break;
+                    }
+                    counter++;
+                }
+
 				if (aux_pos==*pos) {
-					gp2x_gamelist_text_out( screen_x, screen_y, fe_drivers[i].description, gp2x_color15(0,150,255));
+					if(foundfav) 
+						gp2x_gamelist_text_out( screen_x, screen_y, fe_drivers[i].description, gp2x_color15(50,255,50));
+					else
+						gp2x_gamelist_text_out( screen_x, screen_y, fe_drivers[i].description, gp2x_color15(0,150,255));
 					gp2x_gamelist_text_out( screen_x-10, screen_y,">",gp2x_color15(255,255,255) );
 					gp2x_gamelist_text_out( screen_x-13, screen_y-1,"-",gp2x_color15(255,255,255) );
 				}
 				else {
-					gp2x_gamelist_text_out( screen_x, screen_y, fe_drivers[i].description, gp2x_color15(255,255,255));
+					if(foundfav) 
+						gp2x_gamelist_text_out( screen_x, screen_y, fe_drivers[i].description, gp2x_color15(50,255,50));
+					else
+						gp2x_gamelist_text_out( screen_x, screen_y, fe_drivers[i].description, gp2x_color15(255,255,255));
 				}
 				
 				screen_y+=8;
@@ -278,8 +392,6 @@ static void select_game(char *emu, char *game)
 {
 	extern int kiosk_mode;
 
-	unsigned long ExKey=0;
-
 	unsigned long keytimer=0;
 	int keydirection=0, last_keydirection=0;
 
@@ -315,7 +427,7 @@ static void select_game(char *emu, char *game)
 			}
 
 			if(osd_is_key_pressed(KEY_ENTER) || osd_is_key_pressed(KEY_LCONTROL) ||
-			   osd_is_key_pressed(KEY_ESC)) 
+			   osd_is_key_pressed(KEY_ESC) || osd_is_key_pressed(KEY_5) )
 			{
 				break;
 			}
@@ -331,7 +443,6 @@ static void select_game(char *emu, char *game)
 			//Any joy buttons pressed?
 			if (ExKey1)
 			{
-				ExKey=ExKey1;
 				break;
 			}
 
@@ -361,14 +472,44 @@ static void select_game(char *emu, char *game)
 		if (osd_is_key_pressed(KEY_LEFT)) last_game_selected-=21;
 		if (osd_is_key_pressed(KEY_RIGHT)) last_game_selected+=21;
 
-		if ((osd_is_key_pressed(KEY_ESC) || (ExKey & GP2X_9)) && !kiosk_mode) gp2x_exit();
+		if ((osd_is_key_pressed(KEY_ESC) || (ExKey1 & GP2X_9)) && !kiosk_mode) gp2x_exit();
 
-		if ((ExKey & GP2X_1) || osd_is_key_pressed(KEY_LCONTROL) || osd_is_key_pressed(KEY_ENTER))
+		if ((ExKey1 & GP2X_1) || osd_is_key_pressed(KEY_LCONTROL) || osd_is_key_pressed(KEY_ENTER))
 		{
 			/* Select the game */
 			game_list_select(last_game_selected, game, emu);
 
 			break;
+		}
+
+		if ((ExKey1 & GP2X_7) || osd_is_key_pressed(KEY_5) )
+		{
+           //Check if the game is already a favorite
+            game_list_select(last_game_selected, game, emu);
+
+            int foundfav=0;
+            int counter=0;
+            while(true) {
+                if (favarray[counter][0] == '\0') break;    //Null is the array terminator
+                if (strcasecmp(favarray[counter], game) == 0) {
+                    foundfav=1;
+                    break;
+                }
+                counter++;
+            }
+
+            if(foundfav) {
+                favorites_remove(game);
+            } else {
+                favorites_add(game);
+            }
+
+			//Redraw and pause slightly
+	        game_list_view(&last_game_selected);
+			gp2x_video_flip();
+			usleep(300000);
+			gp2x_joystick_clear();
+
 		}
 	}
 }
