@@ -435,7 +435,6 @@ int frontend_help (int argc, char **argv)
 				"        -nocylcone   Switch off Cyclone core\n"
 //				"        -ror -rol    Rotate display\n"
 				"        -nosound     Switch off sound\n"
-				"        -kioskmode   Don't exit from the frontend\n"
 			  );
 		#else
 		showmessinfo();
