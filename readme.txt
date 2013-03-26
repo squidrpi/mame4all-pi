@@ -168,7 +168,10 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
 *CHANGE LOG*
 
-_March 20, 2013 Version 1.3:_
+_March 26, 2013:_
+  * Added favourites selection, press Coin 1 (or joystick button 6) to toggle favourites. File Favorites.ini goes in folders directory.
+
+_March 20, 2013:_
   * Reduced or eliminated sound static.
   * Fixed the sound in the galaxian group of games.
   * Fixed Neogeo crackling sound.
@@ -176,12 +179,12 @@ _March 20, 2013 Version 1.3:_
   * Added key delay to frontend for easier selection.
   * Added "kiosk" mode option, stops MAME4ALL exiting from the game selection frontend.
 
-_March 16, 2013 Version 1.2:_
+_March 16, 2013:_
   * Fixed the funky colour palette problems.
   * Now supports ten (previously six) joystick buttons.
   * Added configuration file (mame.cfg) support.
 
-_March 12, 2013 Version 1.1:_
+_March 12, 2013:_
   * Added multiple USB joystick support.
   * Full keyboard support.
   * Added DrZ80 cpu core. Enabled by default for sound to improve performance for many games.
@@ -190,7 +193,7 @@ _March 12, 2013 Version 1.1:_
   * Slightly higher sound mixer quality.
 
 _March 01, 2013:_
-  * Version 1.0: First release
+  * First release
 
 *TODO*
 
