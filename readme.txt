@@ -168,6 +168,9 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
 *CHANGE LOG*
 
+_April 01, 2013:_
+  * Display ROM errors and invalid games messages.
+
 _March 26, 2013:_
   * Added favourites selection, press Coin 1 (or joystick button 6) to toggle favourites. File Favorites.ini goes in folders directory.
 
