@@ -459,20 +459,20 @@ gui_loop:
 	if (options.record)   osd_fclose (options.record);
 	if (options.language_file) osd_fclose (options.language_file);
 
-	if (res!=0)
-	{
-		/* wait a key press */
-		gp2x_video_flip_single();
-		sleep(5);
-	}
+//sq	if (res!=0)
+//sq	{
+//sq		/* wait a key press */
+//sq		gp2x_video_flip_single();
+//sq		sleep(5);
+//sq	}
 
-    gp2x_deinit();
+	gp2x_deinit();
     
-    game_index = -1;
+	game_index = -1;
 
-    if(use_gui) goto gui_loop;
+	if(use_gui) goto gui_loop;
     
-    deinit_SDL();
+	deinit_SDL();
     
 	exit (res);
 }

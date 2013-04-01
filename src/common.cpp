@@ -42,6 +42,8 @@ void showdisclaimer(void)   /* MAURY_BEGIN: dichiarazione */
 
 ***************************************************************************/
 
+void gp2x_printf(char* fmt, ...);
+
 int readroms(void)
 {
 	int region;
@@ -93,14 +95,14 @@ int readroms(void)
 
 		if (romp->name || romp->length)
 		{
-			printf("Error in RomModule definition: expecting ROM_REGION\n");
+			gp2x_printf("Error in RomModule definition: expecting ROM_REGION\n");
 			goto getout;
 		}
 
 		region_size = romp->offset;
 		if ((Machine->memory_region[region] = (unsigned char *) malloc(region_size)) == 0)
 		{
-			printf("readroms():  Unable to allocate %d bytes of RAM\n",region_size);
+			gp2x_printf("readroms():  Unable to allocate %d bytes of RAM\n",region_size);
 			goto getout;
 		}
 		Machine->memory_region_length[region] = region_size;
@@ -121,12 +123,12 @@ int readroms(void)
 
 			if (romp->name == 0)
 			{
-				printf("Error in RomModule definition: ROM_CONTINUE not preceded by ROM_LOAD\n");
+				gp2x_printf("Error in RomModule definition: ROM_CONTINUE not preceded by ROM_LOAD\n");
 				goto getout;
 			}
 			else if (romp->name == (char *)-1)
 			{
-				printf("Error in RomModule definition: ROM_RELOAD not preceded by ROM_LOAD\n");
+				gp2x_printf("Error in RomModule definition: ROM_RELOAD not preceded by ROM_LOAD\n");
 				goto getout;
 			}
 
@@ -179,7 +181,7 @@ int readroms(void)
 						(!(romp->length & ROMFLAG_NIBBLE) && (romp->length & ROMFLAG_ALTERNATE)
 								&& (romp->offset&~1) + 2*length > region_size))
 					{
-						printf("Error in RomModule definition: %s out of memory region space\n",name);
+						gp2x_printf("Error in RomModule definition: %s out of memory region space\n",name);
 						osd_fclose(f);
 						goto getout;
 					}
@@ -193,7 +195,7 @@ int readroms(void)
 
 						if (!temp)
 						{
-							printf("Out of memory reading ROM %s\n",name);
+							gp2x_printf("Out of memory reading ROM %s\n",name);
 							osd_fclose(f);
 							goto getout;
 						}
@@ -388,10 +390,8 @@ int readroms(void)
 		}
 		else
 			strcat (buf, "WARNING: the game might not run correctly.\n");
-		printf ("%s", buf);
 
-//sq
-		exit(1);
+		gp2x_printf ("%s", buf);
 
 //sq		if (!options.gui_host && !bailing)
 //sq		{
@@ -404,7 +404,6 @@ int readroms(void)
 
 	if (fatalerror) return 1;
 	else return 0;
-
 
 getout:
 	/* final status display */

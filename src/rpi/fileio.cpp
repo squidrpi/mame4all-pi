@@ -1406,14 +1406,14 @@ int osd_ftell(void *file)
 /* return non-zero to abort loading */
 int osd_display_loading_rom_message (const char *name, int current, int total)
 {
-	if( name )
-		printf ("loading %-12s\n", name);
-	else
-		printf ("             \n");
-	fflush (stdout);
-
-	if( keyboard_pressed (KEYCODE_LCONTROL) && keyboard_pressed (KEYCODE_C) )
-		return 1;
-
+//sq	if( name )
+//sq		printf ("loading %-12s\n", name);
+//sq	else
+//sq		printf ("             \n");
+//sq	fflush (stdout);
+//sq
+//sq	if( keyboard_pressed (KEYCODE_LCONTROL) && keyboard_pressed (KEYCODE_C) )
+//sq		return 1;
+//sq
 	return 0;
 }
