@@ -180,16 +180,18 @@ void gp2x_deinit(void)
 	int ret;
 
 	dispman_update = vc_dispmanx_update_start( 0 );
-    ret = vc_dispmanx_element_remove( dispman_update, dispman_element );
-    ret = vc_dispmanx_element_remove( dispman_update, dispman_element_bg );
-    ret = vc_dispmanx_update_submit_sync( dispman_update );
+	ret = vc_dispmanx_element_remove( dispman_update, dispman_element );
+	ret = vc_dispmanx_element_remove( dispman_update, dispman_element_bg );
+	ret = vc_dispmanx_update_submit_sync( dispman_update );
 	ret = vc_dispmanx_resource_delete( resource0 );
 	ret = vc_dispmanx_resource_delete( resource1 );
 	ret = vc_dispmanx_resource_delete( resource_bg );
 	ret = vc_dispmanx_display_close( dispman_display );
 
-    if(gp2x_screen8) free(gp2x_screen8);
-    if(gp2x_screen15) free(gp2x_screen15);
+	if(gp2x_screen8) free(gp2x_screen8);
+	if(gp2x_screen15) free(gp2x_screen15);
+	gp2x_screen8=0;
+	gp2x_screen15=0;
 }
 
 void gp2x_set_video_mode(int bpp,int width,int height)
@@ -333,7 +335,7 @@ void gp2x_frontend_init(void)
 	
 	graphics_get_display_size(0 /* LCD */, &display_width, &display_height);
     
-    dispman_display = vc_dispmanx_display_open( 0 );
+	dispman_display = vc_dispmanx_display_open( 0 );
 	assert( dispman_display != 0 );
         
 	// Add border around bitmap for TV
@@ -342,9 +344,9 @@ void gp2x_frontend_init(void)
     
 	//Create two surfaces for flipping between
 	//Make sure bitmap type matches the source for better performance
-    uint32_t crap;
-    resource0 = vc_dispmanx_resource_create(VC_IMAGE_RGB565, 640, 480, &crap);
-    resource1 = vc_dispmanx_resource_create(VC_IMAGE_RGB565, 640, 480, &crap);
+	uint32_t crap;
+	resource0 = vc_dispmanx_resource_create(VC_IMAGE_RGB565, 640, 480, &crap);
+	resource1 = vc_dispmanx_resource_create(VC_IMAGE_RGB565, 640, 480, &crap);
     
 	vc_dispmanx_rect_set( &dst_rect, display_border, display_border,
                          display_width, display_height);
@@ -353,8 +355,8 @@ void gp2x_frontend_init(void)
 	//Make sure mame and background overlay the menu program
 	dispman_update = vc_dispmanx_update_start( 0 );
     
-    // create the 'window' element - based on the first buffer resource (resource0)
-    dispman_element = vc_dispmanx_element_add(  dispman_update,
+	// create the 'window' element - based on the first buffer resource (resource0)
+	dispman_element = vc_dispmanx_element_add(  dispman_update,
                                               dispman_display,
                                               1,
                                               &dst_rect,
@@ -365,7 +367,7 @@ void gp2x_frontend_init(void)
                                               0,
                                               (DISPMANX_TRANSFORM_T) 0 );
     
-    ret = vc_dispmanx_update_submit_sync( dispman_update );
+	ret = vc_dispmanx_update_submit_sync( dispman_update );
     
 	// setup swapping of double buffers
 	cur_res = resource1;
@@ -378,14 +380,16 @@ void gp2x_frontend_deinit(void)
 	int ret;
     
 	dispman_update = vc_dispmanx_update_start( 0 );
-    ret = vc_dispmanx_element_remove( dispman_update, dispman_element );
-    ret = vc_dispmanx_update_submit_sync( dispman_update );
+	ret = vc_dispmanx_element_remove( dispman_update, dispman_element );
+	ret = vc_dispmanx_update_submit_sync( dispman_update );
 	ret = vc_dispmanx_resource_delete( resource0 );
 	ret = vc_dispmanx_resource_delete( resource1 );
 	ret = vc_dispmanx_display_close( dispman_display );
     
-    if(gp2x_screen8) free(gp2x_screen8);
-    if(gp2x_screen15) free(gp2x_screen15);
+	if(gp2x_screen8) free(gp2x_screen8);
+	if(gp2x_screen15) free(gp2x_screen15);
+	gp2x_screen8=0;
+	gp2x_screen15=0;
     
 }
 
@@ -539,9 +543,66 @@ void gp2x_gamelist_text_out_fmt(int x, int y, char* fmt, ...)
 	gp2x_gamelist_text_out(x, y, strOut, 255);
 }
 
-static int log=0;
+static int pflog=0;
 
 void gp2x_printf_init(void)
 {
-	log=0;
+	pflog=0;
+}
+
+#define gp2x_color15(R,G,B)  ((R >> 3) << 11) | (( G >> 2) << 5 ) | (( B >> 3 ) << 0 )
+
+void gp2x_text_log(char *texto)
+{
+    if (!pflog)
+    {
+        memset(gp2x_screen15,0,320*240*2);
+    }
+    gp2x_text(gp2x_screen15,0,pflog,texto,gp2x_color15(255,255,255));
+    pflog+=8;
+    if(pflog>239) pflog=0;
+}
+
+/* Variadic functions guide found at http://www.unixpapa.com/incnote/variadic.html */
+void gp2x_printf(char* fmt, ...)
+{
+	int i,c;
+	char strOut[4096];
+	char str[41];
+	va_list marker;
+
+	va_start(marker, fmt);
+	vsprintf(strOut, fmt, marker);
+	va_end(marker);
+
+	gp2x_frontend_init();
+
+	c=0;
+	for (i=0;i<strlen(strOut);i++)
+	{
+	    str[c]=strOut[i];
+	    if (str[c]=='\n')
+	    {
+	        str[c]=0;
+	        gp2x_text_log(str);
+	        c=0;
+	    }
+	    else if (c==39)
+	    {
+	        str[40]=0;
+	        gp2x_text_log(str);
+	        c=0;
+	    }
+	    else
+	    {
+	        c++;
+	    }
+	}
+
+	DisplayScreen();
+	sleep(6);	
+	gp2x_frontend_deinit();
+
+	pflog=0;
+
 }
