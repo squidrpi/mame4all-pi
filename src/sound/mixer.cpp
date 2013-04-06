@@ -205,6 +205,9 @@ void mixer_sh_update(void)
 
 			/* store and zero out behind us */
 			*mix++ = sample;
+			//SQ Force stereo for mono sound so just copy left to both channels (interleaved)
+			if (options.force_stereo)
+				*mix++ = sample;
 			left_accum[accum_pos] = 0;
 
 			/* advance to the next sample */

@@ -86,6 +86,8 @@ int osd_start_audio_stream(int stereo)
 
 	stream_cache_channels = (stereo?2:1);
 
+	if (options.force_stereo) stream_cache_channels=2;
+
 	/* determine the number of samples per frame */
 	//Fix for games like galaxian that have fractional fps
 	if(Machine->drv->frames_per_second > 60) 
