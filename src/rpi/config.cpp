@@ -368,6 +368,8 @@ void parse_cmdline (int argc, char **argv, int game_index)
 	if (attenuation < -32) attenuation = -32;
 	if (attenuation > 0) attenuation = 0;
 
+	options.force_stereo = get_bool ("config", "force_stereo",  NULL,  0);
+
 	/* read input configuration */
 	use_mouse = get_bool   ("config", "mouse",   NULL,  1);
 	joyname   = get_string ("config", "joystick", "joy", "standard");

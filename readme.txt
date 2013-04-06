@@ -67,6 +67,8 @@ this simply remove PulseAudio:
 sudo apt-get --purge remove pulseaudio
 }}}
 
+Additionally some TVs have problems with mono sound through HDMI, to fix this try setting the "force_stereo" to "yes" in mame.cfg.
+
 If you're getting a black screen when running in Console mode with
 Composite output, try removing/commenting out the "overscan_" parameters from "/boot/config.txt" as follows (using disable_overscan doesn't appear to fix it):
 {{{
@@ -167,6 +169,10 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
 
 *CHANGE LOG*
+
+
+_April 06, 2013:_
+  * HDMI audio option to force stereo for TVs that don't support mono properly. Configured using the "force_stereo" in mame.cfg.
 
 _April 01, 2013:_
   * Display ROM errors and invalid games messages.

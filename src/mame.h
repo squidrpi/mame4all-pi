@@ -100,6 +100,8 @@ struct GameOptions {
 	struct ImageFile image_files[MAX_IMAGES];
 	int image_count;
 	#endif
+
+	int force_stereo;
 };
 
 extern struct GameOptions options;
