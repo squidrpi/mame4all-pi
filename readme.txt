@@ -115,14 +115,14 @@ Please use "clrmame.dat" file to convert romsets from other MAME versions to the
 
 http://mamedev.emulab.it/clrmamepro/
 
-NOTE: File and directory names in Linux are case-sensitive. Put all file and directory names using lower case!.
+NOTE: File and directory names in Linux are case-sensitive. Put all file and directory names using lower case!
 
 
 *SOUND SAMPLES*
 
 The sound samples are used to get complete sound in some of the oldest games.
 They are placed into the 'samples' directory compressed into ZIP files.
-The directory and the ZIP files are named using low case!.
+The directory and the ZIP files are named using low case!
 
 The sound samples collection can be downloaded in the following link:
 http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2511
@@ -170,6 +170,10 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
 *CHANGE LOG*
 
+_April ??, 2013:+
+  * Added Mouse support (joysticks override mouse).
+  * Fixed kiosk mode.
+  * Fixed shinobi crashing (disabled drz80 audio).
 
 _April 06, 2013:_
   * HDMI audio option to force stereo for TVs that don't support mono properly. Configured using the "force_stereo" in mame.cfg.
@@ -213,7 +217,8 @@ _March 01, 2013:_
   * Not perfect sound or incomplete in some games. Sometimes simply quiting a game and restarting can fix the sound - believe this is due to ALSA Pi driver bugs. Additionally try removing pulseaudio to improve sound problems.
   * Make sure nothing is running in the background. For best performance run in the console instead of X-Windows. But if experiencing black screen in the console, try running in X-Windows or use the console overscan settings above.
   * The SDL input drivers are a little buggy, if input suddenly stops, reboot the Pi.
-  * Slow playability in modern games.
+  * If a game crashes either during play or on exit try disabling the DrZ80 core (-nodrz80_snd) on the command line.
+  * Slow playability in modern games. Most games run at full speed on an overclocked Pi.
   * Memory leaks. In case of errors/crashes reboot your Pi.
 
 *THANKS TO*
