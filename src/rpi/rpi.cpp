@@ -194,6 +194,10 @@ gui_loop:
 		usleep(1000000/2);
         
         gp2x_joystick_clear();
+
+		//Normally read in the game start but we need some vars
+		//setting for the frontend.
+		parse_cmdline (argc, argv, 1);
         
         frontend_gui(gamenameselection, first_run);
         
