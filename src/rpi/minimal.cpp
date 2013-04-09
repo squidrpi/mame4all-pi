@@ -37,13 +37,18 @@ void gp2x_video_setpalette(void)
 
 extern void keyprocess(SDLKey inkey, SDL_bool pressed);
 extern void joyprocess(Uint8 button, SDL_bool pressed, Uint8 njoy);
+extern void mouse_motion_process(int x, int y);
+extern void mouse_button_process(Uint8 button, SDL_bool pressed);
 
 unsigned long gp2x_joystick_read()
 {
     SDL_Event event;
 
+	//Reset mouse incase there is no motion
+	mouse_motion_process(0,0);
+
 	while(SDL_PollEvent(&event)) {
-        switch(event.type)
+		switch(event.type)
 		{
 			case SDL_KEYDOWN:
 				keyprocess(event.key.keysym.sym, SDL_TRUE);
@@ -51,12 +56,22 @@ unsigned long gp2x_joystick_read()
 			case SDL_KEYUP:
 				keyprocess(event.key.keysym.sym, SDL_FALSE);
 				break;
-            case SDL_JOYBUTTONDOWN:
-                joyprocess(event.jbutton.button, SDL_TRUE, event.jbutton.which);
-                break;
-            case SDL_JOYBUTTONUP:
-                joyprocess(event.jbutton.button, SDL_FALSE, event.jbutton.which);
-                break;
+			case SDL_JOYBUTTONDOWN:
+				joyprocess(event.jbutton.button, SDL_TRUE, event.jbutton.which);
+				break;
+			case SDL_JOYBUTTONUP:
+				joyprocess(event.jbutton.button, SDL_FALSE, event.jbutton.which);
+				break;
+			case SDL_MOUSEMOTION:
+				mouse_motion_process(event.motion.xrel, event.motion.yrel);
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+				mouse_button_process(event.button.button, SDL_TRUE);
+				break;
+			case SDL_MOUSEBUTTONUP:
+				mouse_button_process(event.button.button, SDL_FALSE);
+				break;
+
 			default:
 				break;
 		}
@@ -145,9 +160,6 @@ int init_SDL(void)
 			logerror("Found %d joysticks\n",SDL_NumJoysticks());
 	}
 	SDL_EventState(SDL_ACTIVEEVENT,SDL_IGNORE);
-	SDL_EventState(SDL_MOUSEMOTION,SDL_IGNORE);
-	SDL_EventState(SDL_MOUSEBUTTONDOWN,SDL_IGNORE);
-	SDL_EventState(SDL_MOUSEBUTTONUP,SDL_IGNORE);
 	SDL_EventState(SDL_SYSWMEVENT,SDL_IGNORE);
 	SDL_EventState(SDL_VIDEORESIZE,SDL_IGNORE);
 	SDL_EventState(SDL_USEREVENT,SDL_IGNORE);
