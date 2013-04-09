@@ -11,6 +11,11 @@ unsigned long ExKey3=0;
 unsigned long ExKey4=0;
 unsigned long ExKeyKB=0;
 int num_joysticks=4;
+
+int mouse_xrel=0;
+int mouse_yrel=0;
+Uint8 mouse_button=0;
+
 #include "minimal.h"
 
 static struct KeyboardInfo keylist[] =
@@ -300,6 +305,34 @@ void joyprocess(Uint8 button, SDL_bool pressed, Uint8 njoy)
         (*mykey) ^= val;
 }
 
+void mouse_motion_process(int x, int y)
+{
+	mouse_xrel = x;
+	mouse_yrel = y;	
+}
+
+void mouse_button_process(Uint8 button, SDL_bool pressed)
+{
+	Uint8 val=0;
+
+	switch(button)
+	{
+		case SDL_BUTTON_LEFT:
+			val=1<<0; break;
+		case SDL_BUTTON_RIGHT:
+			val=1<<1; break;
+		case SDL_BUTTON_MIDDLE:
+			val=1<<2; break;
+		default:
+			return;
+	}
+	if (pressed)
+		mouse_button |= val;	
+	else
+		mouse_button ^= val;	
+}
+	
+
 void gp2x_joystick_clear(void)
 {
 	int i;
@@ -415,6 +448,9 @@ static int joyequiv[][2] =
 	{ JOYCODE(1,0,7,0),	JOYCODE_1_BUTTON7 },
 	{ JOYCODE(1,0,8,0),	JOYCODE_1_BUTTON8 },
 	{ JOYCODE(1,0,9,0),	JOYCODE_1_BUTTON9 },
+	{ JOYCODE(1,0,1,1),	JOYCODE_1_MOUSE1 },
+	{ JOYCODE(1,0,2,1),	JOYCODE_1_MOUSE2 },
+	{ JOYCODE(1,0,3,1),	JOYCODE_1_MOUSE3 },
 	{ JOYCODE(1,0,10,0),JOYCODE_1_BUTTON10 },
 	{ JOYCODE(2,1,1,1),	JOYCODE_2_LEFT },
 	{ JOYCODE(2,1,1,2),	JOYCODE_2_RIGHT },
@@ -469,16 +505,16 @@ static void init_joy_list(void)
 
 	tot = 0;
 
-//sq 	/* first of all, map mouse buttons */
-//sq 	for (j = 0;j < 3;j++)
-//sq 	{
-//sq 		sprintf(buf,"MOUSE B%d",j+1);
-//sq 		strncpy(joynames[tot],buf,MAX_JOY_NAME_LEN);
-//sq 		joynames[tot][MAX_JOY_NAME_LEN] = 0;
-//sq 		joylist[tot].name = joynames[tot];
-//sq 		joylist[tot].code = MOUSE_BUTTON(j+1);
-//sq 		tot++;
-//sq 	}
+ 	/* first of all, map mouse buttons */
+ 	for (j = 0;j < 3;j++)
+ 	{
+ 		sprintf(buf,"MOUSE B%d",j+1);
+ 		strncpy(joynames[tot],buf,MAX_JOY_NAME_LEN);
+ 		joynames[tot][MAX_JOY_NAME_LEN] = 0;
+ 		joylist[tot].name = joynames[tot];
+ 		joylist[tot].code = MOUSE_BUTTON(j+1);
+ 		tot++;
+ 	}
 
 	for (i = 0;i < num_joysticks;i++)
 	{
@@ -600,16 +636,16 @@ int osd_is_joy_pressed(int joycode)
 {
 	int joy_num,stick;
 
-//sq	/* special case for mouse buttons */
-//sq	switch (joycode)
-//sq	{
-//sq		case MOUSE_BUTTON(1):
-//sq			return ExKey1 & GP2X_LCTRL; break;
-//sq		case MOUSE_BUTTON(2):
-//sq			return ExKey1 & GP2X_LALT; break;
-//sq		case MOUSE_BUTTON(3):
-//sq			return ExKey1 & GP2X_LSHIFT; break;
-//sq	}
+	/* special case for mouse buttons */
+	switch (joycode)
+	{
+		case MOUSE_BUTTON(1):
+			return mouse_button & 1<<0; break;
+		case MOUSE_BUTTON(2):
+			return mouse_button & 1<<1; break;
+		case MOUSE_BUTTON(3):
+			return mouse_button & 1<<2; break;
+	}
 
 	joy_num = GET_JOYCODE_JOY(joycode);
 
@@ -728,7 +764,14 @@ void osd_trak_read(int player,int *deltax,int *deltay)
 {
 	*deltax = *deltay = 0;
 
- 	if (use_mouse == 0 || !myjoy[player]) return;
+	if (use_mouse && !myjoy[player] && player == 0) 
+	{
+		*deltax = mouse_xrel*2;
+		*deltay = mouse_yrel*2;
+		return;
+	}
+
+ 	if (!myjoy[player]) return;
 
    	*deltax=SDL_JoystickGetAxis(myjoy[player], 0)/256/4;
    	*deltay=SDL_JoystickGetAxis(myjoy[player], 1)/256/4;
