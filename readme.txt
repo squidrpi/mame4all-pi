@@ -170,10 +170,10 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
 *CHANGE LOG*
 
-_April ??, 2013:+
+_April 10, 2013:_
   * Added Mouse support (joysticks override mouse).
   * Fixed kiosk mode.
-  * Fixed shinobi crashing (disabled drz80 audio).
+  * Fixed shinobi crashing (disabled drz80 audio for the rom).
 
 _April 06, 2013:_
   * HDMI audio option to force stereo for TVs that don't support mono properly. Configured using the "force_stereo" in mame.cfg.
