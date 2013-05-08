@@ -479,6 +479,10 @@ void parse_cmdline (int argc, char **argv, int game_index)
 	/* Rotate controls */
 	rotate_controls  = get_bool("config", "rotatecontrols", NULL, 0);
 
+	/* Display configuration */
+	options.display_border = get_int ("config", "display_border", NULL, 24);
+	options.stretch_display = get_bool ("config", "stretch_display", NULL, 1);
+
 	kiosk_mode = get_bool("config", "kioskmode", NULL, 0);
 
 	close_config_file();
