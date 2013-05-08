@@ -193,35 +193,44 @@ static void favorites_add(char *game)
 
 static void game_list_init_nocache(void)
 {
-	int i;
+	int i, indx;
 	FILE *f;
+
+	extern char **rompathv;
+	extern int rompathc;
 
 	//SQ: read the favorites
 	favorites_read();
 
-	DIR *d=opendir("roms");
-	char game[32];
-	if (d)
-	{
-		struct dirent *actual=readdir(d);
-		while(actual)
+    for( indx = 0; indx < rompathc ; ++indx )
+    {
+        const char *dir_name = rompathv[indx];
+
+		//sq DIR *d=opendir("roms");
+		DIR *d=opendir(dir_name);
+		char game[32];
+		if (d)
 		{
-			for (i=0;i<NUMGAMES;i++)
+			struct dirent *actual=readdir(d);
+			while(actual)
 			{
-				if (fe_drivers[i].available==0)
+				for (i=0;i<NUMGAMES;i++)
 				{
-					sprintf(game,"%s.zip",fe_drivers[i].name);
-					if (strcmp(actual->d_name,game)==0)
+					if (fe_drivers[i].available==0)
 					{
-						fe_drivers[i].available=1;
-						game_num_avail++;
-						break;
+						sprintf(game,"%s.zip",fe_drivers[i].name);
+						if (strcmp(actual->d_name,game)==0)
+						{
+							fe_drivers[i].available=1;
+							game_num_avail++;
+							break;
+						}
 					}
 				}
+				actual=readdir(d);
 			}
-			actual=readdir(d);
+			closedir(d);
 		}
-		closedir(d);
 	}
 	
 	if (game_num_avail)
