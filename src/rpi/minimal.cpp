@@ -212,7 +212,6 @@ void gp2x_set_video_mode(int bpp,int width,int height)
 	uint32_t display_width, display_height;
 	uint32_t display_width_save, display_height_save;
 	uint32_t display_x=0, display_y=0;
-	uint32_t display_border=24;
 	float display_ratio,game_ratio;
 
 	VC_RECT_T dst_rect;
@@ -233,8 +232,8 @@ void gp2x_set_video_mode(int bpp,int width,int height)
 	display_height_save = display_height;
 
 	// Add border around bitmap for TV
-	display_width -= display_border*2;
-	display_height -= display_border*2;
+	display_width -= options.display_border * 2;
+	display_height -= options.display_border * 2;
 
 	//Create two surfaces for flipping between
 	//Make sure bitmap type matches the source for better performance
@@ -262,7 +261,14 @@ void gp2x_set_video_mode(int bpp,int width,int height)
  	display_x = (display_x - display_width) / 2;
  	display_y = (display_y - display_height) / 2;
 
-	vc_dispmanx_rect_set( &dst_rect, display_x + display_border, display_y + display_border, 
+	if(!options.stretch_display) {
+		display_width = width + options.display_border;
+		display_height = height + options.display_border;
+		display_x = (display_width_save - display_width - options.display_border*2) / 2;
+		display_y = (display_height_save - display_height - options.display_border*2) / 2;
+    }
+
+	vc_dispmanx_rect_set( &dst_rect, display_x + options.display_border, display_y + options.display_border, 
 								display_width, display_height);
 	vc_dispmanx_rect_set( &src_rect, 0, 0, width << 16, height << 16);
 
@@ -334,7 +340,6 @@ void gp2x_frontend_init(void)
 	int ret;
         
 	uint32_t display_width, display_height;
-	uint32_t display_border=24;
     
 	VC_RECT_T dst_rect;
 	VC_RECT_T src_rect;
@@ -351,8 +356,8 @@ void gp2x_frontend_init(void)
 	assert( dispman_display != 0 );
         
 	// Add border around bitmap for TV
-	display_width -= display_border*2;
-	display_height -= display_border*2;
+	display_width -= options.display_border * 2;
+	display_height -= options.display_border * 2;
     
 	//Create two surfaces for flipping between
 	//Make sure bitmap type matches the source for better performance
@@ -360,7 +365,7 @@ void gp2x_frontend_init(void)
 	resource0 = vc_dispmanx_resource_create(VC_IMAGE_RGB565, 640, 480, &crap);
 	resource1 = vc_dispmanx_resource_create(VC_IMAGE_RGB565, 640, 480, &crap);
     
-	vc_dispmanx_rect_set( &dst_rect, display_border, display_border,
+	vc_dispmanx_rect_set( &dst_rect, options.display_border, options.display_border,
                          display_width, display_height);
 	vc_dispmanx_rect_set( &src_rect, 0, 0, 640 << 16, 480 << 16);
     

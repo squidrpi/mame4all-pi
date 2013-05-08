@@ -102,6 +102,8 @@ struct GameOptions {
 	#endif
 
 	int force_stereo;
+	int display_border;
+	int stretch_display;
 };
 
 extern struct GameOptions options;

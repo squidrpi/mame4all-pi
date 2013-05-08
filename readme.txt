@@ -78,6 +78,8 @@ Composite output, try removing/commenting out the "overscan_" parameters from "/
 #overscan_bottom=16
 }}}
 
+If the image goes of your TV screen then you can change the border width by setting "display_border" in mame.cfg. By default this is set to 24 to cater for most TVs. If you want to remove the border simply set it to 0.
+
 *INSTALLATION*
 {{{
 mame        -> MAME and frontend.
@@ -169,6 +171,10 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
 
 *CHANGE LOG*
+
+_May 08, 2013:_
+  * Fix for "roms" configuration not read in the frontend.
+  * Added graphics options to the config file for display border, display stretch disable.
 
 _April 10, 2013:_
   * Added Mouse support (joysticks override mouse).
