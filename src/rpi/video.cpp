@@ -76,6 +76,8 @@ static int frameskip_counter;
 #define getg(c) gp2x_video_getg15(c)
 #define getb(c) gp2x_video_getb15(c)
 
+static struct osd_bitmap *mybitmap;
+
 int video_scale=0;
 int video_border=0;
 int video_aspect=0;
@@ -145,6 +147,8 @@ struct osd_bitmap *osd_alloc_bitmap(int width,int height,int depth)
 
 		osd_clearbitmap(bitmap);
 	}
+
+	mybitmap = bitmap;
 
 	return bitmap;
 }
@@ -424,7 +428,7 @@ int osd_set_display(int width,int height,int depth,int attributes,int orientatio
 	}
 
 	/* Set video mode */
-	gp2x_set_video_mode(depth,gfx_width,gfx_height);
+	gp2x_set_video_mode(mybitmap, depth, gfx_width, gfx_height);
 
 	vsync_frame_rate = video_fps;
 
