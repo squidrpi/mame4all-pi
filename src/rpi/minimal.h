@@ -32,17 +32,14 @@
 #ifndef __MINIMAL_H__
 #define __MINIMAL_H__
 
-//SQ Pi uses web safe 8 bit palette
-//sq #define gp2x_video_color8(C,R,G,B) (gp2x_palette[C]=(36*(R/51)+6*(G/51)+(B/51)))
-
 #define gp2x_video_color8(C,R,G,B) gp2x_palette[C]=gp2x_video_color15(R,G,B,0)
-
-//sq #define gp2x_video_color15(R,G,B,A) ((((R)&0xF8)<<8)|(((G)&0xF8)<<3)|(((B)&0xF8)>>3)|((A)<<5))
-
-//sq #define gp2x_video_color15(R,G,B,A) ((R >> 3) << 11) | (( G >> 2) << 5 ) | (( B >> 3 ) << 0 );
-
 #define gp2x_video_color15(R,G,B,A) (((R>>3)&0x1f) << 11) | (((G>>2)&0x3f) << 5 ) | (((B>>3)&0x1f) << 0 );
 
+//SQ Pi uses web safe 8 bit palette
+//sq #define gp2x_video_color8(C,R,G,B) (gp2x_palette[C]=(36*(R/51)+6*(G/51)+(B/51)))
+//sq #define gp2x_video_color15(R,G,B,A) ((((R)&0xF8)<<8)|(((G)&0xF8)<<3)|(((B)&0xF8)>>3)|((A)<<5))
+//sq #define gp2x_video_color15(R,G,B,A) ((R >> 3) << 11) | (( G >> 2) << 5 ) | (( B >> 3 ) << 0 );
+//sq #define gp2x_video_color15(R,G,B,A) ((R&~7) << 8)|((G&~3) << 3)|(B >> 3);
 //sq #define gp2x_video_color15(R,G,B,A) (safe_render_path  ? ((R >> 3) << 10) | (( G >> 3) << 5 ) | (( B >> 3 ) << 0 ) : ((R >> 3) << 11) | (( G >> 2) << 5 ) | (( B >> 3 ) << 0 ))
 
 //sqdebug #define gp2x_video_color8(C,R,G,B) (gp2x_palette[((C)<<1)+0]=((G)<<8)|(B),gp2x_palette[((C)<<1)+1]=(R))
@@ -65,14 +62,14 @@ extern unsigned short 		*gp2x_screen15;
 extern void gp2x_init(int tickspersecond, int bpp, int rate, int bits, int stereo, int hz, int caller);
 extern void gp2x_deinit(void);
 extern void gp2x_timer_delay(unsigned long ticks);
-extern void gp2x_video_flip(void);
+extern void gp2x_video_flip(struct osd_bitmap *bitmap);
 extern void gp2x_video_flip_single(void);
 extern void gp2x_video_setpalette(void);
 extern void gp2x_joystick_clear(void);
 extern unsigned long gp2x_joystick_read(void);
 extern unsigned long gp2x_timer_read(void);
 
-extern void gp2x_set_video_mode(int bpp,int width,int height);
+extern void gp2x_set_video_mode(struct osd_bitmap *bitmap, int bpp,int width,int height);
 extern void gp2x_set_clock(int mhz);
 
 extern void gp2x_printf(char* fmt, ...);
@@ -80,7 +77,7 @@ extern void gp2x_printf_init(void);
 extern void gp2x_gamelist_text_out(int x, int y, char *eltexto, int color);
 extern void gp2x_gamelist_text_out_fmt(int x, int y, char* fmt, ...);
 
-extern void DisplayScreen(void);
+extern void DisplayScreen(struct osd_bitmap *bitmap);
 extern void DisplayScreen16(void);
 
 extern void gp2x_frontend_init(void);

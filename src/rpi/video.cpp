@@ -963,6 +963,7 @@ void osd_update_video_and_audio(struct osd_bitmap *bitmap)
 						palette_16bit_lookup[i] = makecol(r,g,b);
 					}
 				}
+				gp2x_video_setpalette();
 			}
 		}
 

@@ -103,7 +103,9 @@ struct GameOptions {
 
 	int force_stereo;
 	int display_border;
-	int stretch_display;
+	int display_stretch;
+	int display_smooth_stretch;
+	int display_effect;
 };
 
 extern struct GameOptions options;

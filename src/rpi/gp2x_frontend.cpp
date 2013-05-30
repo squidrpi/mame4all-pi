@@ -66,7 +66,7 @@ static void gp2x_intro_screen(int first_run) {
 	FILE *f;
 	BITMAPFILEHEADER h;
 
-	gp2x_video_flip();
+	gp2x_video_flip(NULL);
 
 	sprintf(name,"skins/rpisplash16.bmp");
 
@@ -86,7 +86,7 @@ static void gp2x_intro_screen(int first_run) {
 
 	if(first_run) {
 		load_bmp_16bpp(gp2x_screen15,gp2xsplash_bmp);
-		gp2x_video_flip();
+		gp2x_video_flip(NULL);
 		sleep(1);
 	}
 	
@@ -408,7 +408,7 @@ static void select_game(char *emu, char *game)
 	strcpy(game,"builtinn");
 
 	/* Clean screen */
-	gp2x_video_flip();
+	gp2x_video_flip(NULL);
 
 	gp2x_joystick_clear();	
 
@@ -416,7 +416,7 @@ static void select_game(char *emu, char *game)
 	while(1)
 	{
 		game_list_view(&last_game_selected);
-		gp2x_video_flip();
+		gp2x_video_flip(NULL);
        	gp2x_timer_delay(70000);
 
 		while(1)
@@ -515,7 +515,7 @@ static void select_game(char *emu, char *game)
 
 			//Redraw and pause slightly
 	        game_list_view(&last_game_selected);
-			gp2x_video_flip();
+			gp2x_video_flip(NULL);
 			usleep(300000);
 			gp2x_joystick_clear();
 
@@ -543,7 +543,7 @@ void frontend_gui (char *gamename, int first_run)
 		/* Draw background image */
     	load_bmp_16bpp(gp2x_screen15,gp2xmenu_bmp);
 		gp2x_gamelist_text_out(35, 110, "ERROR: NO AVAILABLE GAMES FOUND",gp2x_color15(255,255,255));
-		gp2x_video_flip();
+		gp2x_video_flip(NULL);
 		sleep(5);
 		gp2x_exit();
 	}

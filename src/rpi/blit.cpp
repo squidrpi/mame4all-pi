@@ -93,7 +93,7 @@ void blitscreen_dirty0_color8(struct osd_bitmap *bitmap)
                 address+=gfx_width;
                 y--;
         }
-        while (y); */
+        while (y);  */
 
     gp2x_video_flip(bitmap);
 }
