@@ -38,7 +38,7 @@
 //as it has a big performance impact!
 #define	SHOW_ERROR	//gles_show_error();
 
-static const char* vertex_shader =
+static const char* vertex_shader_prg =
     "uniform mat4 u_vp_matrix;                              \n"
     "attribute vec4 a_position;                             \n"
     "attribute vec2 a_texcoord;                             \n"
@@ -57,8 +57,18 @@ static const char* fragment_shader_none =
     "{                                                                          \n"
 	"	// u_texture is the index bitmap, u_palette is the palette for it		\n"
     "	vec4 index = texture2D(u_texture, v_texcoord);                          \n"
-    "	gl_FragColor = texture2D(u_palette, vec2(index.r, 0));  				\n"
+    "	//gl_FragColor = texture2D(u_palette, vec2(index.r, 0));  				\n"
+    "	gl_FragColor = texture2D(u_palette, index.xy);  				\n"
     "}                                                                          \n";
+
+static const char* fragment_shader_none_16bit =
+    "varying mediump vec2 v_texcoord;                       \n"
+    "uniform sampler2D u_texture;                           \n"
+    "uniform sampler2D u_palette;                           \n"
+    "void main()                                            \n"
+    "{                                                      \n"
+	"	gl_FragColor = texture2D(u_texture, v_texcoord);	\n"
+    "}                                                      \n";
 
 // Bilinear smoothing, required when using palette as
 // automatic smoothing won't work.
@@ -292,7 +302,7 @@ extern int skiplines;
 extern int skipcolumns;
 
 //sq void gles2_create(struct osd_bitmap *bitmap, int display_width, int display_height, int bitmap_width, int bitmap_height)
-void gles2_create(struct osd_bitmap *bitmap, int display_width, int display_height, int bitmap_width, int bitmap_height)
+void gles2_create(struct osd_bitmap *bitmap, int display_width, int display_height, int bitmap_width, int bitmap_height, int depth)
 {
 	//sq tex_width = (float)bitmap_width;
 	tex_width = (bitmap->line[1] - bitmap->line[0]);
@@ -311,15 +321,17 @@ void gles2_create(struct osd_bitmap *bitmap, int display_width, int display_heig
 	
 	memset(&shader, 0, sizeof(ShaderInfo));
 
-	if(options.display_effect == 0)
-		shader.program = CreateProgram(vertex_shader, fragment_shader_none);
-//sq		shader.program = CreateProgram(vertex_shader, fragment_shader_smooth);
-	else if (options.display_effect == 1)
-		shader.program = CreateProgram(vertex_shader, fragment_shader_scanline);
-	else if (options.display_effect == 2)
-		shader.program = CreateProgram(vertex_shader, fragment_shader_phospher);
+//sq	if(options.display_effect == 0)
+	if(depth == 8)
+		shader.program = CreateProgram(vertex_shader_prg, fragment_shader_none);
 	else
-		shader.program = CreateProgram(vertex_shader, fragment_shader_none);
+		shader.program = CreateProgram(vertex_shader_prg, fragment_shader_none_16bit);
+
+//sq		shader.program = CreateProgram(vertex_shader_prg, fragment_shader_smooth);
+//sq	else if (options.display_effect == 1)
+//sq		shader.program = CreateProgram(vertex_shader_prg, fragment_shader_scanline);
+//sq	else
+//sq		shader.program = CreateProgram(vertex_shader_prg, fragment_shader_none);
 	
 	if(shader.program)
 	{
@@ -336,7 +348,10 @@ void gles2_create(struct osd_bitmap *bitmap, int display_width, int display_heig
 
 	//create bitmap texture
 	glBindTexture(GL_TEXTURE_2D, textures[0]); SHOW_ERROR
+if (depth == 8)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, tex_width, tex_height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL); SHOW_ERROR
+else
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL); SHOW_ERROR
 
 	//create palette texture
 	glBindTexture(GL_TEXTURE_2D, textures[1]); SHOW_ERROR	// color palette
@@ -395,7 +410,7 @@ void gles2_destroy()
 	glDeleteTextures(2, textures); SHOW_ERROR
 }
 
-static void gles2_DrawQuad(const ShaderInfo *sh, GLuint p_textures[2])
+static void gles2_DrawQuad_8(const ShaderInfo *sh, GLuint p_textures[2])
 {
 	glUniform1i(sh->u_texture, 0); SHOW_ERROR
 
@@ -430,12 +445,34 @@ static void gles2_DrawQuad(const ShaderInfo *sh, GLuint p_textures[2])
 	glDrawElements(GL_TRIANGLES, kIndexCount, GL_UNSIGNED_SHORT, 0); SHOW_ERROR
 }
 
+static void gles2_DrawQuad_16(const ShaderInfo *sh, GLuint p_textures[2])
+{
+	glUniform1i(sh->u_texture, 0); SHOW_ERROR
+
+	glUniform2f(sh->u_texsize, tex_width, tex_height); SHOW_ERROR
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); SHOW_ERROR 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); SHOW_ERROR
+
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]); SHOW_ERROR
+	glVertexAttribPointer(sh->a_position, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), NULL); SHOW_ERROR
+	glEnableVertexAttribArray(sh->a_position); SHOW_ERROR
+
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[1]); SHOW_ERROR
+	glVertexAttribPointer(sh->a_texcoord, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL); SHOW_ERROR
+	glEnableVertexAttribArray(sh->a_texcoord); SHOW_ERROR
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[2]); SHOW_ERROR
+
+	glDrawElements(GL_TRIANGLES, kIndexCount, GL_UNSIGNED_SHORT, 0); SHOW_ERROR
+}
+
 inline unsigned short BGR565(unsigned char r, unsigned char g, unsigned char b) { return ((r&~7) << 8)|((g&~3) << 3)|(b >> 3); }
 
 extern volatile unsigned short gp2x_palette[512];
 
 
-void gles2_draw(struct osd_bitmap *bitmap, unsigned char *screen, int width, int height)
+void gles2_draw(struct osd_bitmap *bitmap, unsigned short* screen, int width, int height, int depth)
 {
 	if(!shader.program) return;
 
@@ -446,24 +483,45 @@ void gles2_draw(struct osd_bitmap *bitmap, unsigned char *screen, int width, int
 	glUseProgram(shader.program); SHOW_ERROR
 	glUniformMatrix4fv(shader.u_vp_matrix, 1, GL_FALSE, &proj[0][0]); SHOW_ERROR
 
-	if(palette_changed)
+	if(depth==8 && palette_changed)
+    {
+        glActiveTexture(GL_TEXTURE1); SHOW_ERROR
+        glBindTexture(GL_TEXTURE_2D, textures[1]); SHOW_ERROR
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, (const GLvoid*)gp2x_palette); SHOW_ERROR
+		palette_changed = 0;
+    }
+
+	if(depth==16 && palette_changed)
     {
         int i;
-        unsigned short palette[256];
-        for(i = 0; i < 256; ++i)
+        unsigned short palette[65536];
+        for(i = 0; i < 65536; ++i)
         {
             palette[i] = gp2x_palette[i];
         }
         glActiveTexture(GL_TEXTURE1); SHOW_ERROR
         glBindTexture(GL_TEXTURE_2D, textures[1]); SHOW_ERROR
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, palette); SHOW_ERROR
+        //sq glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, palette); SHOW_ERROR
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, (const GLvoid*)gp2x_palette); SHOW_ERROR
 		palette_changed = 0;
     }
 
 	glActiveTexture(GL_TEXTURE0); SHOW_ERROR
 	glBindTexture(GL_TEXTURE_2D, textures[0]); SHOW_ERROR
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, (bitmap->line[1] - bitmap->line[0]), gfx_display_lines, GL_LUMINANCE, GL_UNSIGNED_BYTE, (bitmap->line[0]+skipcolumns)+((bitmap->line[1] - bitmap->line[0])*skiplines)); SHOW_ERROR
-	gles2_DrawQuad(&shader, textures);
+	
+	if(depth == 8)
+	{
+		//Draw from the actual MAME bitmap which has "safe" areas around it so we need
+		//to skip areas of the bitmap to display to the actual screen.
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, (bitmap->line[1] - bitmap->line[0]), gfx_display_lines, GL_LUMINANCE, GL_UNSIGNED_BYTE, (bitmap->line[0]+skipcolumns)+((bitmap->line[1] - bitmap->line[0])*skiplines)); SHOW_ERROR
+
+		gles2_DrawQuad_8(&shader, textures);
+	}
+	else
+	{
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, screen); SHOW_ERROR
+		gles2_DrawQuad_16(&shader, textures);
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0); SHOW_ERROR
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); SHOW_ERROR

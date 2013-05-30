@@ -14,4 +14,5 @@ OSOBJS = $(OBJ)/rpi/minimal.o \
 	$(OBJ)/rpi/sound.o $(OBJ)/rpi/input.o $(OBJ)/rpi/fileio.o \
 	$(OBJ)/rpi/config.o $(OBJ)/rpi/fronthlp.o \
 	$(OBJ)/rpi/fifo_buffer.o $(OBJ)/rpi/thread.o \
+	$(OBJ)/rpi/gles2.o \
 	$(OBJ)/rpi/gp2x_frontend.o

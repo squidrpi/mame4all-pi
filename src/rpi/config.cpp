@@ -326,7 +326,8 @@ void parse_cmdline (int argc, char **argv, int game_index)
 	//sq if (options.color_depth != 8 && options.color_depth != 16) options.color_depth = 0;	/* auto */
 
 	//SQ Force 8 bit only
-	options.color_depth=8;	
+	//sq options.color_depth=8;	
+	options.color_depth=0;	
 
 	skiplines   = get_int    ("config", "skiplines",    NULL, 0);
 	skipcolumns = get_int    ("config", "skipcolumns",  NULL, 0);
@@ -481,7 +482,9 @@ void parse_cmdline (int argc, char **argv, int game_index)
 
 	/* Display configuration */
 	options.display_border = get_int ("config", "display_border", NULL, 24);
-	options.stretch_display = get_bool ("config", "stretch_display", NULL, 1);
+	options.display_stretch = get_bool ("config", "display_stretch", NULL, 1);
+	options.display_smooth_stretch = get_bool ("config", "display_smooth_stretch", NULL, 1);
+	options.display_effect = get_int ("config", "display_effect", NULL, 0);
 
 	kiosk_mode = get_bool("config", "kioskmode", NULL, 0);
 
