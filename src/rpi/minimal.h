@@ -78,7 +78,7 @@ extern void gp2x_gamelist_text_out(int x, int y, char *eltexto, int color);
 extern void gp2x_gamelist_text_out_fmt(int x, int y, char* fmt, ...);
 
 extern void DisplayScreen(struct osd_bitmap *bitmap);
-extern void DisplayScreen16(void);
+extern void FE_DisplayScreen(void);
 
 extern void gp2x_frontend_init(void);
 extern void gp2x_frontend_deinit(void);
