@@ -121,7 +121,7 @@ DISPMANX_ELEMENT_HANDLE_T dispman_element_bg;
 DISPMANX_DISPLAY_HANDLE_T dispman_display;
 DISPMANX_UPDATE_HANDLE_T dispman_update;
 
-void gles2_create(struct osd_bitmap *bitmap, int display_width, int display_height, int bitmap_width, int bitmap_height, int depth);
+void gles2_create(int display_width, int display_height, int bitmap_width, int bitmap_height, int depth);
 void gles2_destroy();
 void gles2_palette_changed();
 
@@ -231,12 +231,13 @@ void gp2x_deinit(void)
 	gp2x_screen15=0;
 }
 
+static uint32_t display_adj_width, display_adj_height;		//display size minus border
+
 void gp2x_set_video_mode(struct osd_bitmap *bitmap, int bpp,int width,int height)
 {
 
 	int ret;
 	uint32_t display_width, display_height;
-	uint32_t display_adj_width, display_adj_height;		//display size minus border
 	uint32_t display_x=0, display_y=0;
 	float display_ratio,game_ratio;
 
@@ -362,9 +363,9 @@ void gp2x_set_video_mode(struct osd_bitmap *bitmap, int bpp,int width,int height
 	assert(EGL_FALSE != result);
 
 	if (options.display_smooth_stretch) 
-		gles2_create(bitmap, width, height, width, height, bitmap->depth);
+		gles2_create(width, height, width, height, bitmap->depth);
 	else
-		gles2_create(bitmap, display_adj_width, display_adj_height, width, height, bitmap->depth);
+		gles2_create(display_adj_width, display_adj_height, width, height, bitmap->depth);
 }
 
 //void gp2x_set_video_mode(int bpp,int width,int height)
@@ -469,7 +470,7 @@ void gp2x_set_video_mode(struct osd_bitmap *bitmap, int bpp,int width,int height
 //	prev_res = resource0;
 //}
 
-void gles2_draw(struct osd_bitmap *bitmap, unsigned short* screen, int width, int height, int depth);
+void gles2_draw(void * screen, int width, int height, int depth);
 extern EGLDisplay display;
 extern EGLSurface surface;
 
@@ -489,7 +490,10 @@ void DisplayScreen(struct osd_bitmap *bitmap)
 	}
 
     //Draw to the screen
-    gles2_draw(bitmap, gp2x_screen15, surface_width, surface_height, bitmap->depth);
+	if (bitmap->depth == 8)
+    	gles2_draw(gp2x_screen8, surface_width, surface_height, bitmap->depth);
+	else
+    	gles2_draw(gp2x_screen15, surface_width, surface_height, bitmap->depth);
     eglSwapBuffers(display, surface);
 }
 

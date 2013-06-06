@@ -317,7 +317,7 @@ void parse_cmdline (int argc, char **argv, int game_index)
 	options.use_samples = get_bool   ("config", "samples",	NULL,  1);
 	video_sync  = get_bool   ("config", "vsync",        NULL,  0);
 	wait_vsync  = get_bool   ("config", "waitvsync",    NULL,  0);
-	use_dirty	= get_bool	 ("config", "dirty",	NULL,	-1);
+	use_dirty	= get_bool	 ("config", "dirty",	NULL,	0);
 	options.antialias   = get_bool   ("config", "antialias",    NULL,  1);
 	options.translucency = get_bool    ("config", "translucency", NULL, 1);
 
@@ -482,7 +482,6 @@ void parse_cmdline (int argc, char **argv, int game_index)
 
 	/* Display configuration */
 	options.display_border = get_int ("config", "display_border", NULL, 24);
-	options.display_stretch = get_bool ("config", "display_stretch", NULL, 1);
 	options.display_smooth_stretch = get_bool ("config", "display_smooth_stretch", NULL, 1);
 	options.display_effect = get_int ("config", "display_effect", NULL, 0);
 
