@@ -103,7 +103,6 @@ struct GameOptions {
 
 	int force_stereo;
 	int display_border;
-	int display_stretch;
 	int display_smooth_stretch;
 	int display_effect;
 };
