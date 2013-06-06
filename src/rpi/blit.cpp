@@ -60,7 +60,7 @@ UINT32 *palette_16bit_lookup;
 
 void blitscreen_dirty1_color8(struct osd_bitmap *bitmap)
 {   
-/*    int x,y=gfx_display_lines;
+    int x,y=gfx_display_lines;
     int width=(bitmap->line[1] - bitmap->line[0]);
     int columns=gfx_display_columns;
     unsigned char *lb = bitmap->line[skiplines] + skipcolumns;
@@ -73,14 +73,14 @@ void blitscreen_dirty1_color8(struct osd_bitmap *bitmap)
                 address+=gfx_width;
                 y--;
         }
-        while (y); */
+        while (y); 
 
     gp2x_video_flip(bitmap);
 }
 
 void blitscreen_dirty0_color8(struct osd_bitmap *bitmap)
 {   
-/*    int x,y=gfx_display_lines;
+    int x,y=gfx_display_lines;
     int width=(bitmap->line[1] - bitmap->line[0]);
     int columns=gfx_display_columns;
     unsigned char *lb = bitmap->line[skiplines] + skipcolumns;
@@ -93,7 +93,7 @@ void blitscreen_dirty0_color8(struct osd_bitmap *bitmap)
                 address+=gfx_width;
                 y--;
         }
-        while (y);  */
+        while (y);  
 
     gp2x_video_flip(bitmap);
 }

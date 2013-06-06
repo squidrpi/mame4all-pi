@@ -104,6 +104,7 @@ int osd_start_audio_stream(int stereo)
 		return samples_per_frame;
 
 	// attempt to initialize SDL
+	// alsa_init will also ammend the samples_per_frame
 	g_alsa = alsa_init();
 
 	return samples_per_frame;
@@ -128,7 +129,8 @@ static void alsa_worker_thread(void *data)
 {
 	alsa_t *alsa = (alsa_t*)data;
 	int wait_on_buffer=1;
-	
+	size_t fifo_size;
+
 	UINT8 *buf = (UINT8 *)calloc(1, alsa->period_size_bytes);
 	if (!buf)
 	{
@@ -148,10 +150,21 @@ static void alsa_worker_thread(void *data)
 			continue;
 		}
 		wait_on_buffer=0;
-		size_t fifo_size = min(alsa->period_size_bytes, avail);
-		fifo_read(alsa->buffer, buf, fifo_size);
-		scond_signal(alsa->cond);
-		slock_unlock(alsa->fifo_lock);
+
+		if(avail < alsa->period_size_bytes)
+		{
+			slock_unlock(alsa->fifo_lock);
+			fifo_size = 0;
+		}
+		else
+		{
+			fifo_size = min(alsa->period_size_bytes, avail);
+			if(fifo_size > alsa->period_size_bytes)
+				fifo_size = alsa->period_size_bytes;
+			fifo_read(alsa->buffer, buf, fifo_size);
+			scond_signal(alsa->cond);
+			slock_unlock(alsa->fifo_lock);
+		}
 	    
 		// If underrun, fill rest with silence.
  		if(alsa->period_size_bytes != fifo_size) {
@@ -160,7 +173,6 @@ static void alsa_worker_thread(void *data)
  		}
 
 		snd_pcm_sframes_t frames = snd_pcm_writei(alsa->pcm, buf, alsa->period_size_frames);
-
 		if (frames == -EPIPE || frames == -EINTR || frames == -ESTRPIPE)
 		{
 			snd_underrun++;
@@ -251,7 +263,6 @@ goto error; \
 
 static alsa_t *alsa_init(void)
 {
-	
 	alsa_t *alsa = (alsa_t*)calloc(1, sizeof(alsa_t));
 	if (!alsa)
 		return NULL;
@@ -268,6 +279,8 @@ static alsa_t *alsa_init(void)
 	
 	TRY_ALSA(snd_pcm_open(&alsa->pcm, alsa_dev, SND_PCM_STREAM_PLAYBACK, 0));
 
+	TRY_ALSA(snd_pcm_hw_params_malloc(&params));
+
 	//latency is one frame times by a multiplier (higher improves crackling?)
 	TRY_ALSA(snd_pcm_set_params(alsa->pcm,
 								SND_PCM_FORMAT_S16,
@@ -278,6 +291,10 @@ static alsa_t *alsa_init(void)
 								((float)TICKS_PER_SEC / (float)Machine->drv->frames_per_second) * 4)) ;
 
 	TRY_ALSA(snd_pcm_get_params ( alsa->pcm, &buffer_size_frames, &alsa->period_size_frames ));
+
+	//SQ Correct MAME sound engine to what ALSA says it's frame size is, should only
+	//be an additional number or two.
+	samples_per_frame = (int)alsa->period_size_frames;
 
 	logerror("ALSA: Period size: %d frames\n", (int)alsa->period_size_frames);
 	logerror("ALSA: Buffer size: %d frames\n", (int)buffer_size_frames);
@@ -303,7 +320,7 @@ static alsa_t *alsa_init(void)
 	alsa->fifo_lock = slock_new();
 	alsa->cond_lock = slock_new();
 	alsa->cond = scond_new();
-	alsa->buffer = fifo_new(alsa->buffer_size_bytes*3);
+	alsa->buffer = fifo_new(alsa->buffer_size_bytes*6);
 	if (!alsa->fifo_lock || !alsa->cond_lock || !alsa->cond || !alsa->buffer)
 		goto error;
 	

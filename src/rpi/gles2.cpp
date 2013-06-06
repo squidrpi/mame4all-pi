@@ -57,7 +57,6 @@ static const char* fragment_shader_none =
     "{                                                                          \n"
 	"	// u_texture is the index bitmap, u_palette is the palette for it		\n"
     "	vec4 index = texture2D(u_texture, v_texcoord);                          \n"
-    "	//gl_FragColor = texture2D(u_palette, vec2(index.r, 0));  				\n"
     "	gl_FragColor = texture2D(u_palette, index.xy);  				\n"
     "}                                                                          \n";
 
@@ -70,73 +69,6 @@ static const char* fragment_shader_none_16bit =
 	"	gl_FragColor = texture2D(u_texture, v_texcoord);	\n"
     "}                                                      \n";
 
-// Bilinear smoothing, required when using palette as
-// automatic smoothing won't work.
-//sqstatic const char* fragment_shader_smooth =
-//sq	"varying mediump vec2 v_texcoord;												\n"
-//sq	"uniform sampler2D u_texture;													\n"
-//sq    "uniform sampler2D u_palette;                                                   \n"
-//sq    "uniform float u_width;                                                   \n"
-//sq    "uniform float u_height;                                                   \n"
-//sq	"void main()																	\n"
-//sq	"{																				\n"
-//sq	"	vec4 p0 = texture2D(u_texture, v_texcoord);									\n"
-//sq	"	vec4 p1 = texture2D(u_texture, v_texcoord + vec2(1.0/u_width, 0)); 			\n"
-//sq	"	vec4 p2 = texture2D(u_texture, v_texcoord + vec2(0, 1.0/u_height)); 			\n"
-//sq	"	vec4 p3 = texture2D(u_texture, v_texcoord + vec2(1.0/u_width, 1.0/u_height)); 	\n"
-//sq	"	vec4 c0 = texture2D(u_palette, p0.xy); 			\n"
-//sq	"	vec4 c1 = texture2D(u_palette, p1.xy); 			\n"
-//sq	"	vec4 c2 = texture2D(u_palette, p2.xy); 			\n"
-//sq	"	vec4 c3 = texture2D(u_palette, p3.xy); 			\n"
-//sq	"	//vec2 l = vec2(fract(u_width*v_texcoord.x), fract(u_height*v_texcoord.y)); 		\n"
-//sq	"	//gl_FragColor = mix(mix(c0, c1, l.x), mix(c2, c3, l.x), l.y); 				\n"
-//sq	"	gl_FragColor = mix(mix(c0, c1, 0.5), mix(c2, c3, 0.5), 0.5); 				\n"
-//sq	"}";
-
-//sq static const char* fragment_shader_smooth =
-//sq 	"varying mediump vec2 v_texcoord;												\n"
-//sq 	"uniform sampler2D u_texture;													\n"
-//sq     "uniform sampler2D u_palette;                                                   \n"
-//sq     "uniform vec2 u_texsize;                                                   \n"
-//sq 	"void main()																	\n"
-//sq 	"{																				\n"
-//sq 	"	vec4 p0 = texture2D(u_texture, v_texcoord);									\n"
-//sq 	"	vec4 p1 = texture2D(u_texture, v_texcoord + vec2(1.0/u_texsize.x, 0)); 			\n"
-//sq 	"	vec4 p2 = texture2D(u_texture, v_texcoord + vec2(0, 1.0/u_texsize.y)); 			\n"
-//sq 	"	vec4 p3 = texture2D(u_texture, v_texcoord + vec2(1.0/u_texsize.x, 1.0/u_texsize.y)); 	\n"
-//sq 	"	vec4 tl = texture2D(u_palette, p0.xy); 			\n"
-//sq 	"	vec4 tr = texture2D(u_palette, p1.xy); 			\n"
-//sq 	"	vec4 bl = texture2D(u_palette, p2.xy); 			\n"
-//sq 	"	vec4 br = texture2D(u_palette, p3.xy); 			\n"
-//sq 	"	//vec2 f = vec2(fract(v_texcoord.x * u_texsize.x), fract(v_texcoord.y * u_texsize.y)); 	\n"
-//sq 	"	vec2 f = fract( v_texcoord.xy * u_texsize.x ); 	\n"
-//sq 	"	vec4 tA = mix ( tl, tr, f.x );												\n"
-//sq 	"	vec4 tB = mix ( bl, br, f.x );												\n"
-//sq 	"	gl_FragColor = mix(tA, tB, f.y); 											\n"
-//sq 	"}";
-
-//original one
-static const char* fragment_shader_smooth =
-	"varying mediump vec2 v_texcoord;												\n"
-	"uniform sampler2D u_texture;													\n"
-	"uniform sampler2D u_palette;													\n"
-	"uniform vec2 u_texsize;                                                   \n"
-	"void main()																\n"
-	"{																	\n"
-	"	vec4 p0 = texture2D(u_texture, v_texcoord);									\n" 
-	"	vec4 p1 = texture2D(u_texture, v_texcoord + vec2(1.0/256.0, 0)); 			\n"
-	"	vec4 p2 = texture2D(u_texture, v_texcoord + vec2(0, 1.0/224.0)); 			\n"
-	"	vec4 p3 = texture2D(u_texture, v_texcoord + vec2(1.0/256.0, 1.0/224.0)); 	\n"
-	"	vec4 c0 = texture2D(u_palette, vec2(p0.r, 0));          \n"
-	"	vec4 c1 = texture2D(u_palette, vec2(p1.r, 0));          \n"
-	"	vec4 c2 = texture2D(u_palette, vec2(p2.r, 0));          \n"
-	"	vec4 c3 = texture2D(u_palette, vec2(p3.r, 0));          \n"
-	"	vec2 l = vec2(fract(256.0*v_texcoord.x), fract(224.0*v_texcoord.y)); 		\n"
-	"	gl_FragColor = mix(mix(c0, c1, l.x), mix(c2, c3, l.x), l.y); 				\n"
-	"}																	\n";
-
-
-
 // scanline-3x.shader
 static const char* fragment_shader_scanline =
 	"varying mediump vec2 v_texcoord; 												\n"
@@ -144,8 +76,25 @@ static const char* fragment_shader_scanline =
     "uniform sampler2D u_palette;                                                   \n"
 	"void main()     																\n"
 	"{																				\n"
-	"	vec4 p0 = texture2D(u_texture, v_texcoord);  								\n"
-    "   vec4 rgb = texture2D(u_palette, vec2(index.r, 0));  					    \n"
+	"	vec4 index = texture2D(u_texture, v_texcoord);  								\n"
+    "   vec4 rgb = texture2D(u_palette, index.xy);  					    \n"
+	"	vec4 intens ;  																\n"
+	"	if (fract(gl_FragCoord.y * (0.5*4.0/3.0)) > 0.5)  							\n"
+	"		intens = vec4(0);  														\n"
+	"	else  																		\n"
+	"		intens = smoothstep(0.2,0.8,rgb) + normalize(vec4(rgb.xyz, 1.0));  		\n"
+	"	float level = (4.0-0.0) * 0.19;  											\n"
+	"	gl_FragColor = intens * (0.5-level) + rgb * 1.1 ;  							\n"
+	"} 																				\n";
+
+// scanline-3x.shader
+static const char* fragment_shader_scanline_16bit =
+	"varying mediump vec2 v_texcoord; 												\n"
+	"uniform sampler2D u_texture; 													\n"
+    "uniform sampler2D u_palette;                                                   \n"
+	"void main()     																\n"
+	"{																				\n"
+	"	vec4 rgb = texture2D(u_texture, v_texcoord);  								\n"
 	"	vec4 intens ;  																\n"
 	"	if (fract(gl_FragCoord.y * (0.5*4.0/3.0)) > 0.5)  							\n"
 	"		intens = vec4(0);  														\n"
@@ -278,7 +227,6 @@ typedef	struct ShaderInfo {
 		GLint u_vp_matrix;
 		GLint u_texture;
 		GLint u_palette;
-		GLint u_texsize;
 } ShaderInfo;
 
 static ShaderInfo shader;
@@ -292,46 +240,31 @@ static int dis_height;
 static float proj[4][4];
 static float tex_width, tex_height;
 
-extern int gfx_xoffset;
-extern int gfx_yoffset;
-extern int gfx_display_lines;
-extern int gfx_display_columns;
-extern int gfx_width;
-extern int gfx_height;
-extern int skiplines;
-extern int skipcolumns;
-
-//sq void gles2_create(struct osd_bitmap *bitmap, int display_width, int display_height, int bitmap_width, int bitmap_height)
-void gles2_create(struct osd_bitmap *bitmap, int display_width, int display_height, int bitmap_width, int bitmap_height, int depth)
+void gles2_create(int display_width, int display_height, int bitmap_width, int bitmap_height, int depth)
 {
-	//sq tex_width = (float)bitmap_width;
-	tex_width = (bitmap->line[1] - bitmap->line[0]);
+	float min_u, max_u, min_v, max_v;
+	
+	tex_width = (float)bitmap_width;
 	tex_height = (float)bitmap_height;
+	min_u=0;
+	max_u=1.0f;
+	min_v=0;
+	max_v=1.0f;
 
-	//float min_u=0.0f;
-	float min_u=(float)(1.0f/tex_width)*(float)skipcolumns;
-	float max_u=(float)bitmap_width/tex_width;
-	//sq float min_v=0.0f;
-	float min_v=(float)(1.0f/tex_height)*(float)skiplines;
-	float max_v=(float)bitmap_height/tex_height;
-
-	//sq float op_zoom = (float)(display_width-Settings.DisplayBorder)/(float)display_width;
-	//sq float op_zoom = (float)(display_width)/(float)display_width;
 	float op_zoom = 1.0f;
 	
 	memset(&shader, 0, sizeof(ShaderInfo));
 
-//sq	if(options.display_effect == 0)
-	if(depth == 8)
-		shader.program = CreateProgram(vertex_shader_prg, fragment_shader_none);
+	if (options.display_effect == 1)
+		if(depth == 8)
+			shader.program = CreateProgram(vertex_shader_prg, fragment_shader_scanline);
+		else
+			shader.program = CreateProgram(vertex_shader_prg, fragment_shader_scanline_16bit);
 	else
-		shader.program = CreateProgram(vertex_shader_prg, fragment_shader_none_16bit);
-
-//sq		shader.program = CreateProgram(vertex_shader_prg, fragment_shader_smooth);
-//sq	else if (options.display_effect == 1)
-//sq		shader.program = CreateProgram(vertex_shader_prg, fragment_shader_scanline);
-//sq	else
-//sq		shader.program = CreateProgram(vertex_shader_prg, fragment_shader_none);
+		if(depth == 8)
+			shader.program = CreateProgram(vertex_shader_prg, fragment_shader_none);
+		else
+			shader.program = CreateProgram(vertex_shader_prg, fragment_shader_none_16bit);
 	
 	if(shader.program)
 	{
@@ -340,20 +273,22 @@ void gles2_create(struct osd_bitmap *bitmap, int display_width, int display_heig
 		shader.u_vp_matrix	= glGetUniformLocation(shader.program, "u_vp_matrix");
 		shader.u_texture	= glGetUniformLocation(shader.program, "u_texture");
 		shader.u_palette    = glGetUniformLocation(shader.program, "u_palette");
-		shader.u_texsize    = glGetUniformLocation(shader.program, "u_texsize");
 	}
 	if(!shader.program) return;
 
 	glGenTextures(2, textures);	SHOW_ERROR
 
 	//create bitmap texture
+	//8bit uses a texture palette, 16bit does not
 	glBindTexture(GL_TEXTURE_2D, textures[0]); SHOW_ERROR
-if (depth == 8)
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, tex_width, tex_height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL); SHOW_ERROR
-else
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL); SHOW_ERROR
+	if (depth == 8) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, tex_width, tex_height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL); SHOW_ERROR
+	}
+	else {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL); SHOW_ERROR
+	}
 
-	//create palette texture
+	//create palette texture, only used by 8bit
 	glBindTexture(GL_TEXTURE_2D, textures[1]); SHOW_ERROR	// color palette
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 1, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL); SHOW_ERROR
 
@@ -386,15 +321,12 @@ else
 	dis_height = display_height;
 
 	// Screen aspect ratio adjustment
-	if(!options.display_stretch)
-	{
-		float a = (float)display_width/(float)display_height;
-		float a0 = (float)bitmap_width/(float)bitmap_height;
-		if(a > a0)
-			sx = a0/a;
-		else
-			sy = a/a0;
-	}
+	float a = (float)display_width/(float)display_height;
+	float a0 = (float)bitmap_width/(float)bitmap_height;
+	if(a > a0)
+		sx = a0/a;
+	else
+		sy = a/a0;
 
 	//Set the dimensions for displaying the texture(bitmap) on the screen
 	SetOrtho(proj, -0.5f, +0.5f, +0.5f, -0.5f, -1.0f, 1.0f, sx*op_zoom, sy*op_zoom);
@@ -410,21 +342,13 @@ void gles2_destroy()
 	glDeleteTextures(2, textures); SHOW_ERROR
 }
 
+//Draw using a palette texture
 static void gles2_DrawQuad_8(const ShaderInfo *sh, GLuint p_textures[2])
 {
 	glUniform1i(sh->u_texture, 0); SHOW_ERROR
 
-	glUniform2f(sh->u_texsize, tex_width, tex_height); SHOW_ERROR
-
-//sq	if (Settings.DisplaySmoothStretch) 
-	{
-//sq		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); SHOW_ERROR 
-//sq		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); SHOW_ERROR
-	}
-//sq	else {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); SHOW_ERROR 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); SHOW_ERROR
-//sq	}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); SHOW_ERROR 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); SHOW_ERROR
 
     glActiveTexture(GL_TEXTURE1); SHOW_ERROR
     glBindTexture(GL_TEXTURE_2D, p_textures[1]); SHOW_ERROR
@@ -445,11 +369,10 @@ static void gles2_DrawQuad_8(const ShaderInfo *sh, GLuint p_textures[2])
 	glDrawElements(GL_TRIANGLES, kIndexCount, GL_UNSIGNED_SHORT, 0); SHOW_ERROR
 }
 
+//Draw directly, without a palette texture.
 static void gles2_DrawQuad_16(const ShaderInfo *sh, GLuint p_textures[2])
 {
 	glUniform1i(sh->u_texture, 0); SHOW_ERROR
-
-	glUniform2f(sh->u_texsize, tex_width, tex_height); SHOW_ERROR
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); SHOW_ERROR 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); SHOW_ERROR
@@ -467,12 +390,9 @@ static void gles2_DrawQuad_16(const ShaderInfo *sh, GLuint p_textures[2])
 	glDrawElements(GL_TRIANGLES, kIndexCount, GL_UNSIGNED_SHORT, 0); SHOW_ERROR
 }
 
-inline unsigned short BGR565(unsigned char r, unsigned char g, unsigned char b) { return ((r&~7) << 8)|((g&~3) << 3)|(b >> 3); }
-
 extern volatile unsigned short gp2x_palette[512];
 
-
-void gles2_draw(struct osd_bitmap *bitmap, unsigned short* screen, int width, int height, int depth)
+void gles2_draw(void *screen, int width, int height, int depth)
 {
 	if(!shader.program) return;
 
@@ -491,35 +411,17 @@ void gles2_draw(struct osd_bitmap *bitmap, unsigned short* screen, int width, in
 		palette_changed = 0;
     }
 
-	if(depth==16 && palette_changed)
-    {
-        int i;
-        unsigned short palette[65536];
-        for(i = 0; i < 65536; ++i)
-        {
-            palette[i] = gp2x_palette[i];
-        }
-        glActiveTexture(GL_TEXTURE1); SHOW_ERROR
-        glBindTexture(GL_TEXTURE_2D, textures[1]); SHOW_ERROR
-        //sq glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, palette); SHOW_ERROR
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, (const GLvoid*)gp2x_palette); SHOW_ERROR
-		palette_changed = 0;
-    }
-
 	glActiveTexture(GL_TEXTURE0); SHOW_ERROR
 	glBindTexture(GL_TEXTURE_2D, textures[0]); SHOW_ERROR
 	
 	if(depth == 8)
 	{
-		//Draw from the actual MAME bitmap which has "safe" areas around it so we need
-		//to skip areas of the bitmap to display to the actual screen.
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, (bitmap->line[1] - bitmap->line[0]), gfx_display_lines, GL_LUMINANCE, GL_UNSIGNED_BYTE, (bitmap->line[0]+skipcolumns)+((bitmap->line[1] - bitmap->line[0])*skiplines)); SHOW_ERROR
-
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_LUMINANCE, GL_UNSIGNED_BYTE, (unsigned char*) screen); SHOW_ERROR
 		gles2_DrawQuad_8(&shader, textures);
 	}
 	else
 	{
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, screen); SHOW_ERROR
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, (unsigned short*) screen); SHOW_ERROR
 		gles2_DrawQuad_16(&shader, textures);
 	}
 
