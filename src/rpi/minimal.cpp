@@ -498,32 +498,32 @@ void DisplayScreen(struct osd_bitmap *bitmap)
 }
 
 
-//void DisplayScreen(void)
-//{
-//	VC_RECT_T dst_rect;
-//
-//	vc_dispmanx_rect_set( &dst_rect, 0, 0, surface_width, surface_height );
-//
-//	// blit image to the current resource
-//	vc_dispmanx_resource_write_data( cur_res, VC_IMAGE_RGB565, surface_width*2, gp2x_screen15, &dst_rect );
-//
-//	// begin display update
-//	dispman_update = vc_dispmanx_update_start( 0 );
-//
-//	// change element source to be the current resource
-//	vc_dispmanx_element_change_source( dispman_update, dispman_element, cur_res );
-//
-//	// finish display update, vsync is handled by software throttling
-//	// dispmanx avoids any tearing. vsync here would be limited to 30fps
-//	// on a CRT TV.
-//	vc_dispmanx_update_submit( dispman_update, 0, 0 );
-//
-//	// swap current resource
-//	tmp_res = cur_res;
-//	cur_res = prev_res;
-//	prev_res = tmp_res;
-//
-//}
+void FE_DisplayScreen(void)
+{
+	VC_RECT_T dst_rect;
+
+	vc_dispmanx_rect_set( &dst_rect, 0, 0, surface_width, surface_height );
+
+	// blit image to the current resource
+	vc_dispmanx_resource_write_data( cur_res, VC_IMAGE_RGB565, surface_width*2, gp2x_screen15, &dst_rect );
+
+	// begin display update
+	dispman_update = vc_dispmanx_update_start( 0 );
+
+	// change element source to be the current resource
+	vc_dispmanx_element_change_source( dispman_update, dispman_element, cur_res );
+
+	// finish display update, vsync is handled by software throttling
+	// dispmanx avoids any tearing. vsync here would be limited to 30fps
+	// on a CRT TV.
+	vc_dispmanx_update_submit( dispman_update, 0, 0 );
+
+	// swap current resource
+	tmp_res = cur_res;
+	cur_res = prev_res;
+	prev_res = tmp_res;
+
+}
 
 void gp2x_frontend_init(void)
 {
@@ -806,7 +806,7 @@ void gp2x_printf(char* fmt, ...)
 	    }
 	}
 
-//sq	DisplayScreen();
+	FE_DisplayScreen();
 	sleep(6);	
 	gp2x_frontend_deinit();
 
