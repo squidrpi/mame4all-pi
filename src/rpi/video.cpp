@@ -1023,11 +1023,7 @@ void osd_update_video_and_audio(struct osd_bitmap *bitmap)
 				while (frameskipadjust <= -2)
 				{
 					frameskipadjust += 2;
-//sq #ifdef GP2X
-//sq 					if (frameskip < 7) frameskip++;
-//sq #else
 					if (frameskip < FRAMESKIP_LEVELS-1) frameskip++;
-//sq#endif
 				}
 			}
 		}
