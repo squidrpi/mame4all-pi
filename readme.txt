@@ -106,6 +106,12 @@ enter "./mame {gamerom}" where "{gamerom}" is the game to run.
 
 It will work in X-Windows or in the Console.
 
+*GRAPHICS CONFIGURATION*
+
+To switch off anti-aliasing drawing set the "display_smooth_stretch" to "no" in the mame.cfg. Performance can be impacted depending on the size of your monitor's resolution when switching off anti-aliasing. The "antialias" setting in mame.cfg is only for vector drawing.
+
+Postprocessing scanline drawing is available, the "display_effect" in the mame.cfg controls this. Scanlines work best when "display_smooth_stretch" is set to "no".
+
 
 *SUPPORTED GAMES*
 
@@ -167,10 +173,16 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
   * Ported to Raspberry Pi by Squid.
   * Original MAM4ALL port to GP2X, WIZ and CAANOO by Franxis (franxism@gmail.com) based on source code MAME 0.37b5 (dated on july 2000).
-  * ALSA sound code is borrowed from RetroArch (http://themaister.net/retroarch.html)
+  * ALSA sound code is based on code from RetroArch (http://themaister.net/retroarch.html)
 
 
 *CHANGE LOG*
+
+_June ??, 2013:_
+  * New graphics engine backend has options for non-antialised graphics, scanlines and 16bit colour support.
+  * VSync support is much better eliminating stutter on full speed games.
+  * New graphics backend may mean some 8bit games are faster, but 16bit games maybe slower.
+  * Improvements to the sound should eliminate static on full speed games.
 
 _May 08, 2013:_
   * Fix for "roms" configuration not read in the frontend.
