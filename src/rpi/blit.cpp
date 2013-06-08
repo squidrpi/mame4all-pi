@@ -13,50 +13,14 @@ extern int gfx_height;
 extern int skiplines;
 extern int skipcolumns;
 
-#define SCREEN8 gp2x_screen8
 #define SCREEN16 gp2x_screen15
-#define FLIP_VIDEO gp2x_video_flip(bitmap)
 
 #include "minimal.h"
 
 UINT32 *palette_16bit_lookup;
 
-//sqvoid blitscreen_dirty1_color8(struct osd_bitmap *bitmap)
-//sq{
-//sq	int x, y, m;
-//sq	int width=(bitmap->line[1] - bitmap->line[0]);
-//sq	unsigned char *lb=bitmap->line[skiplines] + skipcolumns;
-//sq	unsigned char *address=SCREEN8 + gfx_xoffset + (gfx_yoffset * gfx_width);
-//sq
-//sq	for (y = 0; y < gfx_display_lines; y += 16)
-//sq	{
-//sq		for (x = 0; x < gfx_display_columns; )
-//sq		{
-//sq			int w = 16;
-//sq			if (ISDIRTY(x,y))
-//sq			{
-//sq				int h;
-//sq				unsigned char *lb0 = lb + x;
-//sq				unsigned char *address0 = address + x;
-//sq				while (x + w < gfx_display_columns && ISDIRTY(x+w,y))
-//sq                    			w += 16;
-//sq				if (x + w > gfx_display_columns)
-//sq                    			w = gfx_display_columns - x;
-//sq				for (h = 0; ((h < 16) && ((y + h) < gfx_display_lines)); h++)
-//sq				{
-//sq					memcpy(address0,lb0,w);
-//sq					lb0 += width;
-//sq					address0 += gfx_width;
-//sq				}
-//sq			}
-//sq			x += w;
-//sq        	}
-//sq		lb += 16 * width;
-//sq		address += 16 * gfx_width;
-//sq	}
-//sq
-//sq    FLIP_VIDEO;
-//sq}
+//Dirty and non-dirty 8bit are handled the same for performance, i.e.
+//blit big chunks of memory which ARM is better at.
 
 void blitscreen_dirty1_color8(struct osd_bitmap *bitmap)
 {   
@@ -64,7 +28,7 @@ void blitscreen_dirty1_color8(struct osd_bitmap *bitmap)
     int width=(bitmap->line[1] - bitmap->line[0]);
     int columns=gfx_display_columns;
     unsigned char *lb = bitmap->line[skiplines] + skipcolumns;
-    unsigned char *address = SCREEN8 + gfx_xoffset + (gfx_yoffset * gfx_width);
+    unsigned char *address = gp2x_screen8 + gfx_xoffset + (gfx_yoffset * gfx_width);
 
     do
         {
@@ -84,7 +48,7 @@ void blitscreen_dirty0_color8(struct osd_bitmap *bitmap)
     int width=(bitmap->line[1] - bitmap->line[0]);
     int columns=gfx_display_columns;
     unsigned char *lb = bitmap->line[skiplines] + skipcolumns;
-    unsigned char *address = SCREEN8 + gfx_xoffset + (gfx_yoffset * gfx_width);
+    unsigned char *address = gp2x_screen8 + gfx_xoffset + (gfx_yoffset * gfx_width);
 
     do
         {
@@ -103,7 +67,7 @@ void blitscreen_dirty1_palettized16(struct osd_bitmap *bitmap)
 	int x, y;
 	int width=(bitmap->line[1] - bitmap->line[0])>>1;
 	unsigned short *lb=((unsigned short*)(bitmap->line[skiplines])) + skipcolumns;
-	unsigned short *address=SCREEN16 + gfx_xoffset + (gfx_yoffset * gfx_width);
+	unsigned short *address=gp2x_screen15 + gfx_xoffset + (gfx_yoffset * gfx_width);
 
 	for (y = 0; y < gfx_display_lines; y += 16)
 	{
@@ -135,6 +99,8 @@ void blitscreen_dirty1_palettized16(struct osd_bitmap *bitmap)
 		lb += 16 * width;
 		address += 16 * gfx_width;
 	}
+
+	gp2x_video_flip(bitmap);
 }
 
 void blitscreen_dirty0_palettized16(struct osd_bitmap *bitmap)
@@ -143,7 +109,7 @@ void blitscreen_dirty0_palettized16(struct osd_bitmap *bitmap)
 	int width=(bitmap->line[1] - bitmap->line[0])>>1;
 	int columns=gfx_display_columns;
 	unsigned short *lb = ((unsigned short*)(bitmap->line[skiplines])) + skipcolumns;
-	unsigned short *address = SCREEN16 + gfx_xoffset + (gfx_yoffset * gfx_width);
+	unsigned short *address = gp2x_screen15 + gfx_xoffset + (gfx_yoffset * gfx_width);
 
 	for (y = 0; y < gfx_display_lines; y++)
 	{
@@ -155,7 +121,7 @@ void blitscreen_dirty0_palettized16(struct osd_bitmap *bitmap)
 		address+=gfx_width;
 	}
 	
-	FLIP_VIDEO;
+	gp2x_video_flip(bitmap);
 }
 
 void blitscreen_dirty1_color16(struct osd_bitmap *bitmap)
@@ -163,7 +129,7 @@ void blitscreen_dirty1_color16(struct osd_bitmap *bitmap)
 	int x, y;
 	int width=(bitmap->line[1] - bitmap->line[0])>>1;
 	unsigned short *lb=((unsigned short*)(bitmap->line[skiplines])) + skipcolumns;
-	unsigned short *address=SCREEN16 + gfx_xoffset + (gfx_yoffset * gfx_width);
+	unsigned short *address=gp2x_screen15 + gfx_xoffset + (gfx_yoffset * gfx_width);
 
 	for (y = 0; y < gfx_display_lines; y += 16)
 	{
@@ -195,6 +161,8 @@ void blitscreen_dirty1_color16(struct osd_bitmap *bitmap)
 		lb += 16 * width;
 		address += 16 * gfx_width;
 	}
+
+	gp2x_video_flip(bitmap);
 }
 
 void blitscreen_dirty0_color16(struct osd_bitmap *bitmap)
@@ -203,7 +171,7 @@ void blitscreen_dirty0_color16(struct osd_bitmap *bitmap)
 	int width=(bitmap->line[1] - bitmap->line[0])>>1;
 	int columns=gfx_display_columns;
 	unsigned short *lb = ((unsigned short*)(bitmap->line[skiplines])) + skipcolumns;
-	unsigned short *address = SCREEN16 + gfx_xoffset + (gfx_yoffset * gfx_width);
+	unsigned short *address = gp2x_screen15 + gfx_xoffset + (gfx_yoffset * gfx_width);
 
 	for (y = 0; y < gfx_display_lines; y++)
 	{
@@ -215,5 +183,5 @@ void blitscreen_dirty0_color16(struct osd_bitmap *bitmap)
 		address+=gfx_width;
 	}
 	
-	FLIP_VIDEO;
+	gp2x_video_flip(bitmap);
 }

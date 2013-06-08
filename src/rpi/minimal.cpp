@@ -294,6 +294,9 @@ void gp2x_set_video_mode(struct osd_bitmap *bitmap, int bpp,int width,int height
 
 	if (options.display_smooth_stretch) 
 	{
+		//We use the dispmanx scaler to smooth stretch the display
+		//so GLES2 doesn't have to handle the performance intensive postprocessing
+
 	    uint32_t sx, sy;
 
 	 	// Work out the position and size on the display
@@ -353,6 +356,7 @@ void gp2x_set_video_mode(struct osd_bitmap *bitmap, int bpp,int width,int height
 		nativewindow.width = display_adj_width;
 		nativewindow.height = display_adj_height;
 	}
+
 	vc_dispmanx_update_submit_sync(dispman_update);
 
 	surface = eglCreateWindowSurface(display, config, &nativewindow, NULL);
@@ -362,113 +366,13 @@ void gp2x_set_video_mode(struct osd_bitmap *bitmap, int bpp,int width,int height
 	result = eglMakeCurrent(display, surface, surface, context);
 	assert(EGL_FALSE != result);
 
+	//Smooth stretch the display size for GLES2 is the size of the bitmap
+	//otherwise let GLES2 upscale (NEAR) to the size of the display
 	if (options.display_smooth_stretch) 
 		gles2_create(width, height, width, height, bitmap->depth);
 	else
 		gles2_create(display_adj_width, display_adj_height, width, height, bitmap->depth);
 }
-
-//void gp2x_set_video_mode(int bpp,int width,int height)
-//{
-//	int ret;
-//	uint32_t display_width, display_height;
-//	uint32_t display_width_save, display_height_save;
-//	uint32_t display_x=0, display_y=0;
-//	float display_ratio,game_ratio;
-//
-//	VC_RECT_T dst_rect;
-//	VC_RECT_T src_rect;
-//
-//	surface_width = width;
-//	surface_height = height;
-//
-//	gp2x_screen8=0;
-//	gp2x_screen15=(unsigned short *) calloc(1, width*height*2);
-//	
-//	graphics_get_display_size(0 /* LCD */, &display_width, &display_height);
-//
-//    dispman_display = vc_dispmanx_display_open( 0 );
-//	assert( dispman_display != 0 );
-//
-//	display_width_save = display_width;
-//	display_height_save = display_height;
-//
-//	// Add border around bitmap for TV
-//	display_width -= options.display_border * 2;
-//	display_height -= options.display_border * 2;
-//
-//	//Create two surfaces for flipping between
-//	//Make sure bitmap type matches the source for better performance
-//    uint32_t crap;
-//    resource0 = vc_dispmanx_resource_create(VC_IMAGE_RGB565, width, height, &crap);
-//    resource1 = vc_dispmanx_resource_create(VC_IMAGE_RGB565, width, height, &crap);
-//
-//	//Create a blank background for the whole screen, make sure width is divisible by 32!
-//    resource_bg = vc_dispmanx_resource_create(VC_IMAGE_RGB565, 128, 128, &crap);
-//    
-// 	// Work out the position and size on the display
-// 	display_ratio = (float)display_width/(float)display_height;
-// 	game_ratio = (float)width/(float)height;
-// 
-// 	display_x = display_width;
-// 	display_y = display_height;
-// 
-// 	if (game_ratio>display_ratio) {
-// 		display_height = (float)display_width/(float)game_ratio;
-// 	} else {
-// 		display_width = display_height*(float)game_ratio;;
-// 	}
-// 
-//	// Centre bitmap on screen
-// 	display_x = (display_x - display_width) / 2;
-// 	display_y = (display_y - display_height) / 2;
-//
-//	if(!options.stretch_display) {
-//		display_width = width + options.display_border;
-//		display_height = height + options.display_border;
-//		display_x = (display_width_save - display_width - options.display_border*2) / 2;
-//		display_y = (display_height_save - display_height - options.display_border*2) / 2;
-//    }
-//
-//	vc_dispmanx_rect_set( &dst_rect, display_x + options.display_border, display_y + options.display_border, 
-//								display_width, display_height);
-//	vc_dispmanx_rect_set( &src_rect, 0, 0, width << 16, height << 16);
-//
-//	dispman_update = vc_dispmanx_update_start( 0 );
-//
-//    // create the 'window' element - based on the first buffer resource (resource0)
-//    dispman_element = vc_dispmanx_element_add(  dispman_update,
-//                                         dispman_display,
-//                                         10,
-//                                         &dst_rect,
-//                                         resource0,
-//                                         &src_rect,
-//                                         DISPMANX_PROTECTION_NONE,
-//                                         0,
-//                                         0,
-//                                         (DISPMANX_TRANSFORM_T) 0 );
-//
-//	vc_dispmanx_rect_set( &dst_rect, 0, 0, display_width_save, display_height_save );
-//	vc_dispmanx_rect_set( &src_rect, 0, 0, 128 << 16, 128 << 16);
-//
-//	//Create a blank background to cover the whole screen
-//    dispman_element_bg = vc_dispmanx_element_add(  dispman_update,
-//                                         dispman_display,
-//                                         9,
-//                                         &dst_rect,
-//                                         resource_bg,
-//                                         &src_rect,
-//                                         DISPMANX_PROTECTION_NONE,
-//                                         0,
-//                                         0,
-//                                         (DISPMANX_TRANSFORM_T) 0 );
-//
-//    ret = vc_dispmanx_update_submit_sync( dispman_update );
-//
-//	// setup swapping of double buffers
-//	cur_res = resource1;
-//	prev_res = resource0;
-//}
 
 void gles2_draw(void * screen, int width, int height, int depth);
 extern EGLDisplay display;
@@ -497,33 +401,6 @@ void DisplayScreen(struct osd_bitmap *bitmap)
     eglSwapBuffers(display, surface);
 }
 
-
-void FE_DisplayScreen(void)
-{
-	VC_RECT_T dst_rect;
-
-	vc_dispmanx_rect_set( &dst_rect, 0, 0, surface_width, surface_height );
-
-	// blit image to the current resource
-	vc_dispmanx_resource_write_data( cur_res, VC_IMAGE_RGB565, surface_width*2, gp2x_screen15, &dst_rect );
-
-	// begin display update
-	dispman_update = vc_dispmanx_update_start( 0 );
-
-	// change element source to be the current resource
-	vc_dispmanx_element_change_source( dispman_update, dispman_element, cur_res );
-
-	// finish display update, vsync is handled by software throttling
-	// dispmanx avoids any tearing. vsync here would be limited to 30fps
-	// on a CRT TV.
-	vc_dispmanx_update_submit( dispman_update, 0, 0 );
-
-	// swap current resource
-	tmp_res = cur_res;
-	cur_res = prev_res;
-	prev_res = tmp_res;
-
-}
 
 void gp2x_frontend_init(void)
 {
@@ -598,6 +475,23 @@ void gp2x_frontend_deinit(void)
 	gp2x_screen8=0;
 	gp2x_screen15=0;
     
+}
+
+void FE_DisplayScreen(void)
+{
+	VC_RECT_T dst_rect;
+
+	vc_dispmanx_rect_set( &dst_rect, 0, 0, surface_width, surface_height );
+
+	vc_dispmanx_resource_write_data( cur_res, VC_IMAGE_RGB565, surface_width*2, gp2x_screen15, &dst_rect );
+	dispman_update = vc_dispmanx_update_start( 0 );
+	vc_dispmanx_element_change_source( dispman_update, dispman_element, cur_res );
+	vc_dispmanx_update_submit( dispman_update, 0, 0 );
+
+	// swap current resource
+	tmp_res = cur_res;
+	cur_res = prev_res;
+	prev_res = tmp_res;
 }
 
 

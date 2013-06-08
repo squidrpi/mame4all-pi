@@ -35,15 +35,6 @@
 #define gp2x_video_color8(C,R,G,B) gp2x_palette[C]=gp2x_video_color15(R,G,B,0)
 #define gp2x_video_color15(R,G,B,A) (((R>>3)&0x1f) << 11) | (((G>>2)&0x3f) << 5 ) | (((B>>3)&0x1f) << 0 );
 
-//SQ Pi uses web safe 8 bit palette
-//sq #define gp2x_video_color8(C,R,G,B) (gp2x_palette[C]=(36*(R/51)+6*(G/51)+(B/51)))
-//sq #define gp2x_video_color15(R,G,B,A) ((((R)&0xF8)<<8)|(((G)&0xF8)<<3)|(((B)&0xF8)>>3)|((A)<<5))
-//sq #define gp2x_video_color15(R,G,B,A) ((R >> 3) << 11) | (( G >> 2) << 5 ) | (( B >> 3 ) << 0 );
-//sq #define gp2x_video_color15(R,G,B,A) ((R&~7) << 8)|((G&~3) << 3)|(B >> 3);
-//sq #define gp2x_video_color15(R,G,B,A) (safe_render_path  ? ((R >> 3) << 10) | (( G >> 3) << 5 ) | (( B >> 3 ) << 0 ) : ((R >> 3) << 11) | (( G >> 2) << 5 ) | (( B >> 3 ) << 0 ))
-
-//sqdebug #define gp2x_video_color8(C,R,G,B) (gp2x_palette[((C)<<1)+0]=((G)<<8)|(B),gp2x_palette[((C)<<1)+1]=(R))
-
 #define gp2x_video_getr15(C) (((C)>>8)&0xF8)
 #define gp2x_video_getg15(C) (((C)>>3)&0xF8)
 #define gp2x_video_getb15(C) (((C)<<3)&0xF8)
