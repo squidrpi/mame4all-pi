@@ -100,8 +100,7 @@ int osd_start_audio_stream(int stereo)
 	}
 
 	//Sound switched off?
-	if (Machine->sample_rate == 0)
-		return samples_per_frame;
+	if (Machine->sample_rate == 0) return samples_per_frame;
 
 	// attempt to initialize SDL
 	// alsa_init will also ammend the samples_per_frame
@@ -292,8 +291,8 @@ static alsa_t *alsa_init(void)
 
 	TRY_ALSA(snd_pcm_get_params ( alsa->pcm, &buffer_size_frames, &alsa->period_size_frames ));
 
-	//SQ Correct MAME sound engine to what ALSA says it's frame size is, should only
-	//be an additional number or two.
+	//SQ Adjust MAME sound engine to what ALSA says its frame size is, ALSA 
+	//tends to be even whereas MAME uses odd - based on the frame & sound rates.
 	samples_per_frame = (int)alsa->period_size_frames;
 
 	logerror("ALSA: Period size: %d frames\n", (int)alsa->period_size_frames);

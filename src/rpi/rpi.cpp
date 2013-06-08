@@ -244,60 +244,16 @@ gui_loop:
 	/* If not playing back a new .inp file */
     if (game_index == -1)
     {
-        /* take the first commandline argument without "-" as the game name */
-//        for (j = 1; j < argc; j++)
-//        {
-//            if (argv[j][0] != '-') break;
-//        }
 		/* do we have a driver for this? */
         {
             for (i = 0; drivers[i] && (game_index == -1); i++)
             {
-//                if (strcasecmp(argv[j],drivers[i]->name) == 0)
                     if (strcasecmp(gamenameselection,drivers[i]->name) == 0)
                 {
                     game_index = i;
                     break;
                 }
             }
-
-//            /* educated guess on what the user wants to play */
-//            if (game_index == -1)
-//            {
-//                int fuzz = 9999; /* best fuzz factor so far */
-//
-//                for (i = 0; (drivers[i] != 0); i++)
-//                {
-//                    int tmp;
-//                    tmp = fuzzycmp(argv[j], drivers[i]->description);
-//                    /* continue if the fuzz index is worse */
-//                    if (tmp > fuzz)
-//                        continue;
-//
-//                    /* on equal fuzz index, we prefer working, original games */
-//                    if (tmp == fuzz)
-//                    {
-//						/* game is a clone */
-//						if (drivers[i]->clone_of != 0
-//								&& !(drivers[i]->clone_of->flags & NOT_A_DRIVER))
-//                        {
-//                            /* if the game we already found works, why bother. */
-//                            /* and broken clones aren't very helpful either */
-//                            if ((!drivers[game_index]->flags & GAME_NOT_WORKING) ||
-//                                (drivers[i]->flags & GAME_NOT_WORKING))
-//                                continue;
-//                        }
-//                        else continue;
-//                    }
-//
-//                    /* we found a better match */
-//                    game_index = i;
-//                    fuzz = tmp;
-//                }
-//
-//                if (game_index != -1)
-//                    printf("fuzzy name compare, running %s\n",drivers[game_index]->name);
-//            }
         }
 
         if (game_index == -1)
@@ -462,13 +418,6 @@ gui_loop:
 	if (options.playback) osd_fclose (options.playback);
 	if (options.record)   osd_fclose (options.record);
 	if (options.language_file) osd_fclose (options.language_file);
-
-//sq	if (res!=0)
-//sq	{
-//sq		/* wait a key press */
-//sq		gp2x_video_flip_single();
-//sq		sleep(5);
-//sq	}
 
 	gp2x_deinit();
     

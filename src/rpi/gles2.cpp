@@ -246,6 +246,8 @@ void gles2_create(int display_width, int display_height, int bitmap_width, int b
 	
 	tex_width = (float)bitmap_width;
 	tex_height = (float)bitmap_height;
+
+	//Setup drawing area of texture, i.e. the whole thing
 	min_u=0;
 	max_u=1.0f;
 	min_v=0;
@@ -403,7 +405,7 @@ void gles2_draw(void *screen, int width, int height, int depth)
 	glUseProgram(shader.program); SHOW_ERROR
 	glUniformMatrix4fv(shader.u_vp_matrix, 1, GL_FALSE, &proj[0][0]); SHOW_ERROR
 
-	if(depth==8 && palette_changed)
+	if(depth == 8 && palette_changed)
     {
         glActiveTexture(GL_TEXTURE1); SHOW_ERROR
         glBindTexture(GL_TEXTURE_2D, textures[1]); SHOW_ERROR
