@@ -65,6 +65,7 @@ is causing the issues as it has problems with the ALSA drivers. To fix
 this simply remove PulseAudio:
 {{{
 sudo apt-get --purge remove pulseaudio
+sudo apt-get autoremove
 }}}
 
 Additionally some TVs have problems with mono sound through HDMI, to fix this try setting the "force_stereo" to "yes" in mame.cfg.
@@ -178,7 +179,7 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
 *CHANGE LOG*
 
-_June ??, 2013:_
+_June 07, 2013:_
   * New graphics engine backend has options for non-antialised graphics, scanlines and 16bit colour support.
   * VSync support is much better eliminating stutter on full speed games.
   * New graphics backend may mean some 8bit games are faster, but 16bit games maybe slower.
