@@ -43,8 +43,8 @@ as MAME is very CPU intensive and overclocking will make most games run at full 
 
 My overclocking settings which work well, (/boot/config.txt)
 {{{
-arm_freq=950
-core_freq=350
+arm_freq=900
+core_freq=300
 sdram_freq=500
 }}}
 
