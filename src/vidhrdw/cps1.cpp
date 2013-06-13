@@ -256,7 +256,7 @@ static void cps1_init_machine(void)
 		/* Patch out protection check */
 		WRITE_WORD(&RAM[0xe5464],0x6012);
 	}
-#if 0
+#if 1
 	else if (strcmp(gamename, "ghouls" )==0)
 	{
 		/* Patch out self-test... it takes forever */
