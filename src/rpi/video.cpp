@@ -56,7 +56,7 @@ static int skipcolumnsmax;
 static int skiplinesmin;
 static int skipcolumnsmin;
 
-static int vector_game;
+int vector_game;
 
 int gfx_xoffset;
 int gfx_yoffset;
