@@ -37,6 +37,20 @@ static void gp2x_exit(void);
 
 #define gp2x_color15(R,G,B)  ((R >> 3) << 11) | (( G >> 2) << 5 ) | (( B >> 3 ) << 0 )
 
+#define A_1 0
+#define START_1 6
+#define SELECT_1 7
+#define UP_1 8
+#define DOWN_1 9
+#define LEFT_1 10
+#define RIGHT_1 11
+#define QUIT 12
+
+void open_config_file(void);
+void close_config_file(void);
+int get_int (char *section, char *option, char *shortcut, int def);
+int is_joy_button_pressed (int button, int ExKey);
+
 static void load_bmp_16bpp(unsigned short *out, unsigned short *in)
 {
  	int y;
@@ -394,8 +408,13 @@ static void gp2x_exit(void)
 
 extern unsigned long ExKey1;
 
-extern int osd_is_key_pressed(int keycode);
+extern int osd_is_sdlkey_pressed(int inkey);
 extern int is_joy_axis_pressed (int axis, int dir, int joynum);
+
+#define NUMKEYS 256
+static Uint16 pi_key[NUMKEYS];
+static Uint16 pi_joy[NUMKEYS];
+int joyaxis_LR, joyaxis_UD;
 
 static void select_game(char *emu, char *game)
 {
@@ -428,22 +447,22 @@ static void select_game(char *emu, char *game)
 			keydirection=0;
 
 			//Any keyboard key pressed?
-			if(osd_is_key_pressed(KEY_LEFT) || osd_is_key_pressed(KEY_RIGHT) ||
-			   osd_is_key_pressed(KEY_UP) || osd_is_key_pressed(KEY_DOWN) )
+			if(osd_is_sdlkey_pressed(pi_key[LEFT_1]) || osd_is_sdlkey_pressed(pi_key[RIGHT_1]) ||
+			   osd_is_sdlkey_pressed(pi_key[UP_1]) || osd_is_sdlkey_pressed(pi_key[DOWN_1]) )
 			{
 				keydirection=1;
 				break;
 			}
 
-			if(osd_is_key_pressed(KEY_ENTER) || osd_is_key_pressed(KEY_LCONTROL) ||
-			   osd_is_key_pressed(KEY_ESC) || osd_is_key_pressed(KEY_5) )
+			if(osd_is_sdlkey_pressed(pi_key[START_1]) || osd_is_sdlkey_pressed(pi_key[A_1]) ||
+			   osd_is_sdlkey_pressed(pi_key[QUIT]) || osd_is_sdlkey_pressed(pi_key[SELECT_1]) )
 			{
 				break;
 			}
 
 			//Any stick direction?
-			if(is_joy_axis_pressed (0, 1, 0) || is_joy_axis_pressed (0, 2, 0) ||
-			   is_joy_axis_pressed (1, 1, 0) || is_joy_axis_pressed (1, 2, 0))
+			if(is_joy_axis_pressed (joyaxis_LR, 1, 0) || is_joy_axis_pressed (joyaxis_LR, 2, 0) ||
+			   is_joy_axis_pressed (joyaxis_UD, 1, 0) || is_joy_axis_pressed (joyaxis_UD, 2, 0) )
 			{
 				keydirection=1;
 				break;
@@ -467,23 +486,31 @@ static void select_game(char *emu, char *game)
 		}
 
 		int updown=0;
-		if(is_joy_axis_pressed (1, 1, 0)) {last_game_selected--; updown=1;};
-		if(is_joy_axis_pressed (1, 2, 0)) {last_game_selected++; updown=1;};
+		if(is_joy_axis_pressed (joyaxis_UD, 1, 0)) {last_game_selected--; updown=1;};
+		if(is_joy_axis_pressed (joyaxis_UD, 2, 0)) {last_game_selected++; updown=1;};
 
 		// Stop diagonals on game selection
 		if(!updown) {
-			if(is_joy_axis_pressed (0, 1, 0)) last_game_selected-=21;
-			if(is_joy_axis_pressed (0, 2, 0)) last_game_selected+=21;
+			if(is_joy_axis_pressed (joyaxis_LR, 1, 0)) last_game_selected-=21;
+			if(is_joy_axis_pressed (joyaxis_LR, 2, 0)) last_game_selected+=21;
 		}
 
-		if (osd_is_key_pressed(KEY_UP)) last_game_selected--;
-		if (osd_is_key_pressed(KEY_DOWN)) last_game_selected++;
-		if (osd_is_key_pressed(KEY_LEFT)) last_game_selected-=21;
-		if (osd_is_key_pressed(KEY_RIGHT)) last_game_selected+=21;
+		if (osd_is_sdlkey_pressed(pi_key[UP_1])) last_game_selected--;
+		if (osd_is_sdlkey_pressed(pi_key[DOWN_1])) last_game_selected++;
+		if (osd_is_sdlkey_pressed(pi_key[LEFT_1])) last_game_selected-=21;
+		if (osd_is_sdlkey_pressed(pi_key[RIGHT_1])) last_game_selected+=21;
 
-		if ((osd_is_key_pressed(KEY_ESC) || (ExKey1 & GP2X_9)) && !kiosk_mode) gp2x_exit();
+		if (!kiosk_mode)
+		{
+			if( osd_is_sdlkey_pressed(pi_key[QUIT]) || 
+			    	(is_joy_button_pressed(pi_joy[START_1], ExKey1) && is_joy_button_pressed(pi_joy[SELECT_1], ExKey1)) ) {
+				gp2x_exit();
+			}
+		}
 
-		if ((ExKey1 & GP2X_1) || osd_is_key_pressed(KEY_LCONTROL) || osd_is_key_pressed(KEY_ENTER))
+		if (is_joy_button_pressed(pi_joy[A_1], ExKey1) || 
+			osd_is_sdlkey_pressed(pi_key[A_1]) || 
+			osd_is_sdlkey_pressed(pi_key[START_1]) )
 		{
 			/* Select the game */
 			game_list_select(last_game_selected, game, emu);
@@ -491,7 +518,7 @@ static void select_game(char *emu, char *game)
 			break;
 		}
 
-		if ((ExKey1 & GP2X_7) || osd_is_key_pressed(KEY_5) )
+		if (is_joy_button_pressed(pi_joy[SELECT_1], ExKey1) || osd_is_sdlkey_pressed(pi_key[SELECT_1]) )
 		{
            //Check if the game is already a favorite
             game_list_select(last_game_selected, game, emu);
@@ -555,6 +582,31 @@ void frontend_gui (char *gamename, int first_run)
 		&gp2x_frameskip,&gp2x_sound,&gp2x_clock_cpu,&gp2x_clock_sound,&gp2x_cpu_cores,&gp2x_ramtweaks,&last_game_selected,&gp2x_cheat,&gp2x_volume);
 		fclose(f);
 	}
+
+	//Read joystick configuration
+	memset(pi_key, 0, NUMKEYS*2);
+	memset(pi_joy, 0, NUMKEYS*2);
+	open_config_file();	
+
+	pi_key[START_1] = get_int("frontend", "K_START",    NULL, KEY_ENTER);
+	pi_key[SELECT_1] = get_int("frontend", "K_SELECT",    NULL, KEY_5);
+	pi_key[LEFT_1] = get_int("frontend", "K_LEFT",    NULL, KEY_LEFT);
+	pi_key[RIGHT_1] = get_int("frontend", "K_RIGHT",    NULL, KEY_RIGHT);
+	pi_key[UP_1] = get_int("frontend", "K_UP",    NULL, KEY_UP);
+	pi_key[DOWN_1] = get_int("frontend", "K_DOWN",    NULL, KEY_DOWN);
+	pi_key[A_1] = get_int("frontend", "K_A",    NULL, KEY_LCONTROL);
+	pi_key[QUIT] = get_int("frontend", "K_QUIT",    NULL, KEY_ESC);
+
+	pi_joy[START_1] = get_int("frontend", "J_START",    NULL, 9);
+	pi_joy[SELECT_1] = get_int("frontend", "J_SELECT",    NULL, 8);
+	pi_joy[A_1] = get_int("frontend", "J_A",    NULL, 3);
+
+    //Read joystick axis to use, default to 0 & 1
+    joyaxis_LR = get_int("frontend", "AXIS_LR", NULL, 0);
+    joyaxis_UD = get_int("frontend", "AXIS_UD", NULL, 1);
+
+	close_config_file();
+
 	
 	/* Select Game */
 	select_game(playemu,playgame); 
