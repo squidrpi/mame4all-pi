@@ -303,6 +303,7 @@ int osd_fwrite_swap(void *file,const void *buffer,int length);
 int osd_fread_scatter(void *file,void *buffer,int length,int increment);
 int osd_fseek(void *file,int offset,int whence);
 void osd_fclose(void *file);
+void osd_fsync(void);
 int osd_fchecksum(const char *gamename, const char *filename, unsigned int *length, unsigned int *sum);
 int osd_fsize(void *file);
 unsigned int osd_fcrc(void *file);
