@@ -3,14 +3,14 @@
 *INTRODUCTION*
 
 This is a MAME Raspberry Pi port based on Franxis MAME4ALL which is itself based on the MAME 0.37b5 emulator by Nicola Salmoria.
-To see MAME license see the end of this document (chapter 18).
+To see MAME license see the end of this document.
 It emulates all arcade games supported by original MAME 0.37b5 plus some additional games from newer MAME versions.
 
 This version emulates 2270 different romsets.
 
 Although this is an old version of MAME it plays much faster than the newer versions and as the Pi is rather CPU underpowered it was chosen to get as many games working at full speed as possible (full speed means 100% with no frame skip). It also plays most of the games I'm interested in playing!
 
-This is a highly optimised version for the Raspberry Pi, using dispmanx for graphics, ALSA for sound and SDL for input.
+This is a highly optimised version for the Raspberry Pi, using GLES2/dispmanx for graphics, ALSA for sound and SDL for input. It also uses the GPU for post-processing effects like scanlines.
 
 Download it from the official Raspberry Pi Store App:
 http://store.raspberrypi.com/
@@ -40,6 +40,7 @@ NOTE: To type OK when MAME requires it with the joystick, press LEFT and then RI
 
 I highly recommend overclocking your Raspberry Pi to gain maximum performance
 as MAME is very CPU intensive and overclocking will make most games run at full speed.
+Overclocking is supported by the Raspberry Foundation.
 
 My overclocking settings which work well, (/boot/config.txt)
 {{{
@@ -48,7 +49,7 @@ core_freq=300
 sdram_freq=500
 }}}
 
-NOTE: Make sure overclocking is actually working by checking "cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor" should be "ondemand". Later kernels appear to set it to "powersave" by default.
+NOTE: Make sure overclocking is actually working by checking "cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor" should be "ondemand". Later kernels appear to set it to "powersave" by default. You will also need to make this permanent after a reboot.
 
 I'd also recommend a minimum of 64MB for the GPU RAM allocation (gpu_mem=64).
 
@@ -79,7 +80,7 @@ Composite output, try removing/commenting out the "overscan_" parameters from "/
 #overscan_bottom=16
 }}}
 
-If the image goes of your TV screen then you can change the border width by setting "display_border" in mame.cfg. By default this is set to 24 to cater for most TVs. If you want to remove the border simply set it to 0.
+If the image goes off your TV screen then you can change the border width by setting "display_border" in mame.cfg. 
 
 *INSTALLATION*
 {{{
@@ -178,6 +179,13 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
 
 *CHANGE LOG*
+
+_September 02, 2013:_
+  * Supports more joystick axis and up to 16 joystick buttons.
+  * Frontend keys and joystick controls now configurable.
+  * Joystick START+SELECT now quits frontend.
+  * Vector games no longer display scanlines.
+  * Flushes filesystem for hiscore and input saves.
 
 _June 07, 2013:_
   * New graphics engine backend has options for non-antialised graphics, scanlines and 16bit colour support.
