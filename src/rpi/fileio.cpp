@@ -1194,6 +1194,11 @@ void osd_fclose (void *file)
 	free(f);
 }
 
+void osd_fsync(void)
+{
+	sync();
+}
+
 /* JB 980920 update */
 /* AM 980919 */
 static int checksum_file (const char *file, unsigned char **p, unsigned int *size, unsigned int *crc)
