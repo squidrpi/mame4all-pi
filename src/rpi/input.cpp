@@ -262,6 +262,20 @@ void keyprocess(SDLKey inkey, SDL_bool pressed)
 	}
 }
 
+int osd_is_sdlkey_pressed(int inkey)
+{
+	int i=0;
+
+	while(sdlkeytranslate[i].mamekey)
+	{
+		if(inkey == (int) sdlkeytranslate[i].sdlkey)
+		{
+			return (key[sdlkeytranslate[i].mamekey]);
+		}
+		i++;
+	}
+}
+
 void joyprocess(Uint8 button, SDL_bool pressed, Uint8 njoy)
 {
     Uint32 val=0;
@@ -295,6 +309,24 @@ void joyprocess(Uint8 button, SDL_bool pressed, Uint8 njoy)
 			break;
 		case 9:
             val=GP2X_10; break;
+			break;
+		case 10:
+            val=GP2X_11; break;
+			break;
+		case 11:
+            val=GP2X_12; break;
+			break;
+		case 12:
+            val=GP2X_13; break;
+			break;
+		case 13:
+            val=GP2X_14; break;
+			break;
+		case 14:
+            val=GP2X_15; break;
+			break;
+		case 15:
+            val=GP2X_16; break;
 			break;
         default:
             return;
@@ -348,6 +380,8 @@ void gp2x_joystick_clear(void)
 		key[i] = 0;
 	}
 }
+
+
 
 int osd_is_key_pressed(int keycode)
 {
@@ -422,7 +456,7 @@ int osd_readkey_unicode(int flush)
 
 #define MAX_JOY 256
 #define MAX_JOY_NAME_LEN 40
-#define MAX_BUTTONS 10
+#define MAX_BUTTONS 16
 
 static struct JoystickInfo joylist[MAX_JOY] =
 {
@@ -448,10 +482,16 @@ static int joyequiv[][2] =
 	{ JOYCODE(1,0,7,0),	JOYCODE_1_BUTTON7 },
 	{ JOYCODE(1,0,8,0),	JOYCODE_1_BUTTON8 },
 	{ JOYCODE(1,0,9,0),	JOYCODE_1_BUTTON9 },
+	{ JOYCODE(1,0,10,0),JOYCODE_1_BUTTON10 },
+	{ JOYCODE(1,0,11,0),JOYCODE_1_BUTTON11 },
+	{ JOYCODE(1,0,12,0),JOYCODE_1_BUTTON12 },
+	{ JOYCODE(1,0,13,0),JOYCODE_1_BUTTON13 },
+	{ JOYCODE(1,0,14,0),JOYCODE_1_BUTTON14 },
+	{ JOYCODE(1,0,15,0),JOYCODE_1_BUTTON15 },
+	{ JOYCODE(1,0,16,0),JOYCODE_1_BUTTON16 },
 	{ JOYCODE(1,0,1,1),	JOYCODE_1_MOUSE1 },
 	{ JOYCODE(1,0,2,1),	JOYCODE_1_MOUSE2 },
 	{ JOYCODE(1,0,3,1),	JOYCODE_1_MOUSE3 },
-	{ JOYCODE(1,0,10,0),JOYCODE_1_BUTTON10 },
 	{ JOYCODE(2,1,1,1),	JOYCODE_2_LEFT },
 	{ JOYCODE(2,1,1,2),	JOYCODE_2_RIGHT },
 	{ JOYCODE(2,1,2,1),	JOYCODE_2_UP },
@@ -466,6 +506,12 @@ static int joyequiv[][2] =
 	{ JOYCODE(2,0,8,0),	JOYCODE_2_BUTTON8 },
 	{ JOYCODE(2,0,9,0),	JOYCODE_2_BUTTON9 },
 	{ JOYCODE(2,0,10,0),JOYCODE_2_BUTTON10 },
+	{ JOYCODE(2,0,11,0),JOYCODE_2_BUTTON11 },
+	{ JOYCODE(2,0,12,0),JOYCODE_2_BUTTON12 },
+	{ JOYCODE(2,0,13,0),JOYCODE_2_BUTTON13 },
+	{ JOYCODE(2,0,14,0),JOYCODE_2_BUTTON14 },
+	{ JOYCODE(2,0,15,0),JOYCODE_2_BUTTON15 },
+	{ JOYCODE(2,0,16,0),JOYCODE_2_BUTTON16 },
 	{ JOYCODE(3,1,1,1),	JOYCODE_3_LEFT },
 	{ JOYCODE(3,1,1,2),	JOYCODE_3_RIGHT },
 	{ JOYCODE(3,1,2,1),	JOYCODE_3_UP },
@@ -480,6 +526,12 @@ static int joyequiv[][2] =
 	{ JOYCODE(3,0,8,0),	JOYCODE_3_BUTTON8 },
 	{ JOYCODE(3,0,9,0),	JOYCODE_3_BUTTON9 },
 	{ JOYCODE(3,0,10,0),JOYCODE_3_BUTTON10 },
+	{ JOYCODE(3,0,11,0),JOYCODE_3_BUTTON11 },
+	{ JOYCODE(3,0,12,0),JOYCODE_3_BUTTON12 },
+	{ JOYCODE(3,0,13,0),JOYCODE_3_BUTTON13 },
+	{ JOYCODE(3,0,14,0),JOYCODE_3_BUTTON14 },
+	{ JOYCODE(3,0,15,0),JOYCODE_3_BUTTON15 },
+	{ JOYCODE(3,0,16,0),JOYCODE_3_BUTTON16 },
 	{ JOYCODE(4,1,1,1),	JOYCODE_4_LEFT },
 	{ JOYCODE(4,1,1,2),	JOYCODE_4_RIGHT },
 	{ JOYCODE(4,1,2,1),	JOYCODE_4_UP },
@@ -494,6 +546,12 @@ static int joyequiv[][2] =
 	{ JOYCODE(4,0,8,0),	JOYCODE_4_BUTTON8 },
 	{ JOYCODE(4,0,9,0),	JOYCODE_4_BUTTON9 },
 	{ JOYCODE(4,0,10,0),JOYCODE_4_BUTTON10 },
+	{ JOYCODE(4,0,11,0),JOYCODE_4_BUTTON11 },
+	{ JOYCODE(4,0,12,0),JOYCODE_4_BUTTON12 },
+	{ JOYCODE(4,0,13,0),JOYCODE_4_BUTTON13 },
+	{ JOYCODE(4,0,14,0),JOYCODE_4_BUTTON14 },
+	{ JOYCODE(4,0,15,0),JOYCODE_4_BUTTON15 },
+	{ JOYCODE(4,0,16,0),JOYCODE_4_BUTTON16 },
 	{ 0,0 }
 };
 
@@ -518,28 +576,30 @@ static void init_joy_list(void)
 
 	for (i = 0;i < num_joysticks;i++)
 	{
-		for (j = 0;j < 1;j++)
-		{
-			for (k = 0;k < 2;k++)
+			//Generate joystick axis joycodes
+			for (k = 0;k < 6;k++)
 			{
-				sprintf(buf,"J%d %s %s -",i+1,"JoystickAxis","-");
+				//direction 1
+				sprintf(buf,"J%d %s %d-",i+1,"JoyAxis", k);
 				strncpy(joynames[tot],buf,MAX_JOY_NAME_LEN);
 				joynames[tot][MAX_JOY_NAME_LEN] = 0;
 				joylist[tot].name = joynames[tot];
-				joylist[tot].code = JOYCODE(i+1,j+1,k+1,1);
+				joylist[tot].code = JOYCODE(i+1,1,k+1,1);
 				tot++;
 
-				sprintf(buf,"J%d %s %s +",i+1,"JoystickAxis","+");
+				//direction 2
+				sprintf(buf,"J%d %s %d+",i+1,"JoyAxis", k);
 				strncpy(joynames[tot],buf,MAX_JOY_NAME_LEN);
 				joynames[tot][MAX_JOY_NAME_LEN] = 0;
 				joylist[tot].name = joynames[tot];
-				joylist[tot].code = JOYCODE(i+1,j+1,k+1,2);
+				joylist[tot].code = JOYCODE(i+1,1,k+1,2);
 				tot++;
 			}
-		}
+
+		//Generate joystick button codes
 		for (j = 0;j < MAX_BUTTONS;j++)
 		{
-			sprintf(buf,"J%d %s",i+1,"JoystickButton");
+			sprintf(buf,"J%d %s %d",i+1,"JoyButton", j);
 			strncpy(joynames[tot],buf,MAX_JOY_NAME_LEN);
 			joynames[tot][MAX_JOY_NAME_LEN] = 0;
 			joylist[tot].name = joynames[tot];
@@ -578,7 +638,7 @@ const struct JoystickInfo *osd_get_joy_list(void)
 	return joylist;
 }
 
-static int is_joy_button_pressed (int button, int ExKey)
+int is_joy_button_pressed (int button, int ExKey)
 {
 	switch (button)
 	{
@@ -592,15 +652,21 @@ static int is_joy_button_pressed (int button, int ExKey)
 		case 7: return ExKey & GP2X_8; break;
 		case 8: return ExKey & GP2X_9; break;
 		case 9: return ExKey & GP2X_10; break;
+		case 10: return ExKey & GP2X_11; break;
+		case 11: return ExKey & GP2X_12; break;
+		case 12: return ExKey & GP2X_13; break;
+		case 13: return ExKey & GP2X_14; break;
+		case 14: return ExKey & GP2X_15; break;
+		case 15: return ExKey & GP2X_16; break;
 		default: break;
 	}
 	return 0; 
 }
 
-#define JOY_LEFT_PRESSED is_joy_axis_pressed(0,1,ExKey1)
-#define JOY_RIGHT_PRESSED is_joy_axis_pressed(0,2,ExKey1)
-#define JOY_UP_PRESSED is_joy_axis_pressed(1,1,ExKey1)
-#define JOY_DOWN_PRESSED is_joy_axis_pressed(1,2,ExKey1)
+//#define JOY_LEFT_PRESSED is_joy_axis_pressed(0,1,ExKey1)
+//#define JOY_RIGHT_PRESSED is_joy_axis_pressed(0,2,ExKey1)
+//#define JOY_UP_PRESSED is_joy_axis_pressed(1,1,ExKey1)
+//#define JOY_DOWN_PRESSED is_joy_axis_pressed(1,2,ExKey1)
 
 extern SDL_Joystick* myjoy[4];
 
@@ -609,24 +675,11 @@ int is_joy_axis_pressed (int axis, int dir, int joynum)
 	if (!myjoy[joynum]) return 0;
 
 	/* Normal controls */
-	if (axis==0)
-	{
-		if(dir == 1) { //left
-			if(SDL_JoystickGetAxis(myjoy[joynum], 0) < -12000) return true;	
-		}
-		if(dir == 2) { //right
-			if(SDL_JoystickGetAxis(myjoy[joynum], 0) > 12000) return true;	
-		}
+	if(dir == 1) { //left up
+		if(SDL_JoystickGetAxis(myjoy[joynum], axis) < -12000) return true;	
 	}
-	else
-	{
-		if(dir == 1) { //up
-			if(SDL_JoystickGetAxis(myjoy[joynum], 1) < -12000) return true;	
-		}
-				
-		if(dir == 2) { //down
-			if(SDL_JoystickGetAxis(myjoy[joynum], 1) > 12000) return true;	
-		}
+	if(dir == 2) { //right down
+		if(SDL_JoystickGetAxis(myjoy[joynum], axis) > 12000) return true;	
 	}
 
 	return 0;
@@ -656,6 +709,7 @@ int osd_is_joy_pressed(int joycode)
 
 	stick = GET_JOYCODE_STICK(joycode);
 
+	//stick 0 is buttons, stick 1 is axis
 	if (stick == 0)
 	{
 		/* buttons */
@@ -677,7 +731,7 @@ int osd_is_joy_pressed(int joycode)
 	}
 	else
 	{
-		/* sticks */
+		/* axis stick */
 		int axis,dir;
 
 		if (stick > 1)
@@ -687,18 +741,11 @@ int osd_is_joy_pressed(int joycode)
 		axis = GET_JOYCODE_AXIS(joycode);
 		dir = GET_JOYCODE_DIR(joycode);
 
-		if (axis == 0 || axis > 2)
+		if (axis == 0 || axis > 7)
 			return 0;
 		axis--;
 
-		switch (joy_num)
-		{
-			case 0: return is_joy_axis_pressed(axis, dir, joy_num); break;
-			case 1: return is_joy_axis_pressed(axis, dir, joy_num); break;
-			case 2: return is_joy_axis_pressed(axis, dir, joy_num); break;
-			case 3: return is_joy_axis_pressed(axis, dir, joy_num); break;
-			default: break;
-		}
+		return is_joy_axis_pressed(axis, dir, joy_num);
 	}
 
 	return 0;
