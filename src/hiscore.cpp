@@ -242,6 +242,7 @@ static void hs_save (void)
 			mem_range = mem_range->next;
 		}
 		osd_fclose(f);
+		osd_fsync();
 	}
 }
 

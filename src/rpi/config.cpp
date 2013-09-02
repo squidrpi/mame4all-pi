@@ -159,7 +159,7 @@ static int get_bool (char *section, char *option, char *shortcut, int def)
 	return res;
 }
 
-static int get_int (char *section, char *option, char *shortcut, int def)
+int get_int (char *section, char *option, char *shortcut, int def)
 {
 	int res,i;
 	GError *error=NULL;
