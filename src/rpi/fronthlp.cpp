@@ -882,7 +882,7 @@ int frontend_help (int argc, char **argv)
 				{
 					char name[200];
 
-					printf("%-5s%-36s ",drivers[i]->year,drivers[i]->manufacturer);
+					printf("%-8.8s %-5.5s%-36.36s ",drivers[i]->name, drivers[i]->year,drivers[i]->manufacturer);
 
 					strcpy(name,drivers[i]->description);
 
@@ -909,15 +909,43 @@ int frontend_help (int argc, char **argv)
 			return 0;
 			break;
 
-		case LIST_LISTCLONES: /* list clones */
-			printf("Name:    Clone of:\n");
+//		case LIST_LISTCLONES: /* list clones */
+//			printf("Name:    Clone of:\n");
+//			i = 0;
+//			while (drivers[i])
+//			{
+//				if (drivers[i]->clone_of && !(drivers[i]->clone_of->flags & NOT_A_DRIVER) &&
+//						(!strwildcmp(gamename,drivers[i]->name)
+//								|| !strwildcmp(gamename,drivers[i]->clone_of->name)))
+//					printf("%-8s %-8s\n",drivers[i]->name,drivers[i]->clone_of->name);
+//				i++;
+//			}
+//			return 0;
+//			break;
+
+//sq, special list for rominfo.fba
+//		case LIST_LISTCLONES: 
+//			i = 0;
+//			while (drivers[i])
+//			{
+//				if (drivers[i]->clone_of && !(drivers[i]->clone_of->flags & NOT_A_DRIVER) &&
+//						(!strwildcmp(gamename,drivers[i]->name)
+//								|| !strwildcmp(gamename,drivers[i]->clone_of->name)))
+//					printf("FILENAME( %-8s %-8s %-5s \"%.13s\" )\n",drivers[i]->name,drivers[i]->clone_of->name, drivers[i]->year, drivers[i]->manufacturer);
+//				else
+//					printf("FILENAME( %-8s mame %-5s \"%.13s\" )\n",drivers[i]->name,drivers[i]->year, drivers[i]->manufacturer);
+//
+//				i++;
+//			}
+//			return 0;
+//			break;
+
+//sq, special list for zipname.fba
+		case LIST_LISTCLONES: 
 			i = 0;
 			while (drivers[i])
 			{
-				if (drivers[i]->clone_of && !(drivers[i]->clone_of->flags & NOT_A_DRIVER) &&
-						(!strwildcmp(gamename,drivers[i]->name)
-								|| !strwildcmp(gamename,drivers[i]->clone_of->name)))
-					printf("%-8s %-8s\n",drivers[i]->name,drivers[i]->clone_of->name);
+				printf("%s,%s,%s %s\n",drivers[i]->name, drivers[i]->description, drivers[i]->year, drivers[i]->manufacturer);
 				i++;
 			}
 			return 0;
