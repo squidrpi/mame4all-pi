@@ -189,6 +189,12 @@ struct ipd inputport_defaults[] =
 	{ IPT_BUTTON8             | IPF_PLAYER1, "P1 Button 8",    SEQ_DEF_3(KEYCODE_V, CODE_OR, JOYCODE_1_BUTTON8) },
 	{ IPT_BUTTON9             | IPF_PLAYER1, "P1 Button 9",    SEQ_DEF_3(KEYCODE_B, CODE_OR, JOYCODE_1_BUTTON9) },
 	{ IPT_BUTTON10            | IPF_PLAYER1, "P1 Button 10",   SEQ_DEF_3(KEYCODE_N, CODE_OR, JOYCODE_1_BUTTON10) },
+	{ IPT_BUTTON11            | IPF_PLAYER2, "P1 Button 11",   SEQ_DEF_1(JOYCODE_1_BUTTON11) },
+	{ IPT_BUTTON12            | IPF_PLAYER2, "P1 Button 12",   SEQ_DEF_1(JOYCODE_1_BUTTON12) },
+	{ IPT_BUTTON13            | IPF_PLAYER2, "P1 Button 13",   SEQ_DEF_1(JOYCODE_1_BUTTON13) },
+	{ IPT_BUTTON14            | IPF_PLAYER2, "P1 Button 14",   SEQ_DEF_1(JOYCODE_1_BUTTON14) },
+	{ IPT_BUTTON15            | IPF_PLAYER2, "P1 Button 15",   SEQ_DEF_1(JOYCODE_1_BUTTON15) },
+	{ IPT_BUTTON16            | IPF_PLAYER2, "P1 Button 16",   SEQ_DEF_1(JOYCODE_1_BUTTON16) },
 	{ IPT_JOYSTICKRIGHT_UP    | IPF_PLAYER1, "P1 Right/Up",    SEQ_DEF_3(KEYCODE_I, CODE_OR, JOYCODE_1_BUTTON4) },
 	{ IPT_JOYSTICKRIGHT_DOWN  | IPF_PLAYER1, "P1 Right/Down",  SEQ_DEF_3(KEYCODE_K, CODE_OR, JOYCODE_1_BUTTON2) },
 	{ IPT_JOYSTICKRIGHT_LEFT  | IPF_PLAYER1, "P1 Right/Left",  SEQ_DEF_3(KEYCODE_J, CODE_OR, JOYCODE_1_BUTTON3) },
@@ -212,6 +218,12 @@ struct ipd inputport_defaults[] =
 	{ IPT_BUTTON8             | IPF_PLAYER2, "P2 Button 8",    SEQ_DEF_1(JOYCODE_2_BUTTON8) },
 	{ IPT_BUTTON9             | IPF_PLAYER2, "P2 Button 9",    SEQ_DEF_1(JOYCODE_2_BUTTON9) },
 	{ IPT_BUTTON10            | IPF_PLAYER2, "P2 Button 10",   SEQ_DEF_1(JOYCODE_2_BUTTON10) },
+	{ IPT_BUTTON11            | IPF_PLAYER2, "P2 Button 11",   SEQ_DEF_1(JOYCODE_2_BUTTON11) },
+	{ IPT_BUTTON12            | IPF_PLAYER2, "P2 Button 12",   SEQ_DEF_1(JOYCODE_2_BUTTON12) },
+	{ IPT_BUTTON13            | IPF_PLAYER2, "P2 Button 13",   SEQ_DEF_1(JOYCODE_2_BUTTON13) },
+	{ IPT_BUTTON14            | IPF_PLAYER2, "P2 Button 14",   SEQ_DEF_1(JOYCODE_2_BUTTON14) },
+	{ IPT_BUTTON15            | IPF_PLAYER2, "P2 Button 15",   SEQ_DEF_1(JOYCODE_2_BUTTON15) },
+	{ IPT_BUTTON16            | IPF_PLAYER2, "P2 Button 16",   SEQ_DEF_1(JOYCODE_2_BUTTON16) },
 	{ IPT_JOYSTICKRIGHT_UP    | IPF_PLAYER2, "P2 Right/Up",    SEQ_DEF_0 },
 	{ IPT_JOYSTICKRIGHT_DOWN  | IPF_PLAYER2, "P2 Right/Down",  SEQ_DEF_0 },
 	{ IPT_JOYSTICKRIGHT_LEFT  | IPF_PLAYER2, "P2 Right/Left",  SEQ_DEF_0 },
@@ -538,6 +550,7 @@ static void save_default_keys(void)
 		}
 
 		osd_fclose(f);
+		osd_fsync();
 	}
 	memcpy(inputport_defaults,inputport_defaults_backup,sizeof(inputport_defaults_backup));
 }
@@ -993,6 +1006,7 @@ void save_input_port_settings(void)
 		mixer_write_config(f);
 
 		osd_fclose(f);
+		osd_fsync();
 	}
 }
 
