@@ -1290,7 +1290,7 @@ void init_uopoko(void)
 
 ***************************************************************************/
 
-GAME( 1997, ddonpach, 0, ddonpach, dfeveron, ddonpach, ROT270_16BIT, "Atlus/Cave",                  "Dodonpachi (Japan)"     )
+GAME( 1997, ddonpach, 0, ddonpach, dfeveron, ddonpach, ROT90_16BIT, "Atlus/Cave",                  "Dodonpachi (Japan)"     )
 GAME( 1998, dfeveron, 0, dfeveron, dfeveron, dfeveron, ROT270_16BIT, "Cave (Nihon System license)", "Dangun Feveron (Japan)" )
 GAME( 1998, esprade,  0, esprade,  dfeveron, esprade,  ROT270_16BIT, "Atlus/Cave",                  "ESP Ra.De. (Japan)"     )
 GAME( 1998, uopoko,   0, uopoko,   dfeveron, uopoko,   ROT0_16BIT,   "Cave (Jaleco license)",       "Uo Poko (Japan)"        )
