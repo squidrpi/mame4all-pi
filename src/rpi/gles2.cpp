@@ -240,6 +240,8 @@ static int dis_height;
 static float proj[4][4];
 static float tex_width, tex_height;
 
+extern int vector_game;
+
 void gles2_create(int display_width, int display_height, int bitmap_width, int bitmap_height, int depth)
 {
 	float min_u, max_u, min_v, max_v;
@@ -257,7 +259,7 @@ void gles2_create(int display_width, int display_height, int bitmap_width, int b
 	
 	memset(&shader, 0, sizeof(ShaderInfo));
 
-	if (options.display_effect == 1)
+	if (options.display_effect == 1 && !vector_game)
 		if(depth == 8)
 			shader.program = CreateProgram(vertex_shader_prg, fragment_shader_scanline);
 		else
