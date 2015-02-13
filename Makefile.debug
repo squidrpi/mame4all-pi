@@ -46,7 +46,7 @@ CFLAGS = -g -fsigned-char $(DEVLIBS) \
 
 LDFLAGS = $(CFLAGS)
 
-LIBS = -L. -lm -lpthread -lSDL -L$(SDKSTAGE)/opt/vc/lib -lbcm_host -lGLESv2 -lEGL -lglib-2.0
+LIBS = -L. -lm -lpthread -lSDL -L$(SDKSTAGE)/opt/vc/lib -lbcm_host -lGLESv2 -lEGL -lglib-2.0 -lasound -lrt
 
 OBJ = obj_$(TARGET)_$(MAMEOS)_debug
 OBJDIRS = $(OBJ) $(OBJ)/cpu $(OBJ)/sound $(OBJ)/$(MAMEOS) \
