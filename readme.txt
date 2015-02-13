@@ -1,6 +1,6 @@
-=MAME4ALL for Pi by Squid=
+MAME4ALL for Pi by Squid
 
-*INTRODUCTION*
+INTRODUCTION
 
 This is a MAME Raspberry Pi port based on Franxis MAME4ALL which is itself based on the MAME 0.37b5 emulator by Nicola Salmoria.
 To see MAME license see the end of this document.
@@ -12,13 +12,16 @@ Although this is an old version of MAME it plays much faster than the newer vers
 
 This is a highly optimised version for the Raspberry Pi, using GLES2/dispmanx for graphics, ALSA for sound and SDL for input. It also uses the GPU for post-processing effects like scanlines.
 
-Web page for news, source, additional information:
-http://code.google.com/p/mame4all-pi/
+Pi Store version is here:
+http://store.raspberrypi.com/
 
-(No asking for ROMS, problems with ROMS)
+Web page for downloads, news, source, additional information:
+https://sourceforge.net/projects/mame4allpi/
+
+(No asking for ROMS)
 
 
-*CONTROLS*
+CONTROLS
 
 These are the standard MAME key definitions as follows. All MAME keys are also available.
   * Keys LControl, LAlt, Space, LShift are the fire buttons
@@ -33,10 +36,10 @@ These are the standard MAME key definitions as follows. All MAME keys are also a
 NOTE: To type OK when MAME requires it with the joystick, press LEFT and then RIGHT.
 
 
-*Pi CONFIGURATION*
+Pi CONFIGURATION
 
-I highly recommend overclocking your Raspberry Pi to gain maximum performance
-as MAME is very CPU intensive and overclocking will make most games run at full speed.
+I highly recommend overclocking your Raspberry Pi to gain maximum performance as MAME is very CPU intensive and overclocking will make most games run at full speed. The Pi 2 does not require overclocking.
+
 Overclocking is supported by the Raspberry Foundation.
 
 My overclocking settings which work well, (/boot/config.txt)
@@ -79,7 +82,7 @@ Composite output, try removing/commenting out the "overscan_" parameters from "/
 
 If the image goes off your TV screen then you can change the border width by setting "display_border" in mame.cfg. 
 
-*INSTALLATION*
+INSTALLATION
 {{{
 mame        -> MAME and frontend.
 mame.cfg    -> MAME configuration file, limited support to only the options in the supplied file (not the full MAME settings).
@@ -105,14 +108,14 @@ enter "./mame {gamerom}" where "{gamerom}" is the game to run.
 
 It will work in X-Windows or in the Console.
 
-*GRAPHICS CONFIGURATION*
+GRAPHICS CONFIGURATION
 
 To switch off anti-aliasing drawing set the "display_smooth_stretch" to "no" in the mame.cfg. Performance can be impacted depending on the size of your monitor's resolution when switching off anti-aliasing. The "antialias" setting in mame.cfg is only for vector drawing.
 
 Postprocessing scanline drawing is available, the "display_effect" in the mame.cfg controls this. Scanlines work best when "display_smooth_stretch" is set to "no".
 
 
-*SUPPORTED GAMES*
+SUPPORTED GAMES
 
 Folder names or ZIP file names are listed on "gamelist.txt" file.
 Romsets have to be MAME 0.37b5 ones (July 2000).
@@ -125,7 +128,7 @@ http://mamedev.emulab.it/clrmamepro/
 NOTE: File and directory names in Linux are case-sensitive. Put all file and directory names using lower case!
 
 
-*SOUND SAMPLES*
+SOUND SAMPLES
 
 The sound samples are used to get complete sound in some of the oldest games.
 They are placed into the 'samples' directory compressed into ZIP files.
@@ -137,13 +140,13 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2511
 You can also use "clrmame.dat" file with ClrMAME Pro utility to get the samples pack.
 
 
-*ARTWORK*
+ARTWORK
 
 Artwork is used to improve the visualization for some of the oldest games. Download it here:
 http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
 
-*ORIGINAL CREDITS*
+ORIGINAL CREDITS
 
   * MAME 0.37b5 original version by Nicola Salmoria and the MAME Team (http://www.mame.net).
   * Z80 emulator Copyright (c) 1998 Juergen Buchmueller, all rights reserved.
@@ -168,50 +171,50 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
   * YM2610 emulation by Hiromitsu Shioya.
 
 
-*PORT CREDITS*
+PORT CREDITS
 
   * Ported to Raspberry Pi by Squid.
   * Original MAM4ALL port to GP2X, WIZ and CAANOO by Franxis (franxism@gmail.com) based on source code MAME 0.37b5 (dated on july 2000).
   * ALSA sound code is based on code from RetroArch (http://themaister.net/retroarch.html)
 
 
-*CHANGE LOG*
+CHANGE LOG
 
-_February 11, 2014:_
+February 11, 2014:
   * Increased joystick axis detection
 
-_September 02, 2013:_
+September 02, 2013:
   * Supports more joystick axis and up to 16 joystick buttons.
   * Frontend keys and joystick controls now configurable.
   * Joystick START+SELECT now quits frontend.
   * Vector games no longer display scanlines.
   * Flushes filesystem for hiscore and input saves.
 
-_June 07, 2013:_
+June 07, 2013:
   * New graphics engine backend has options for non-antialised graphics, scanlines and 16bit colour support.
   * VSync support is much better eliminating stutter on full speed games.
   * New graphics backend may mean some 8bit games are faster, but 16bit games maybe slower.
   * Improvements to the sound should eliminate static on full speed games.
 
-_May 08, 2013:_
+May 08, 2013:
   * Fix for "roms" configuration not read in the frontend.
   * Added graphics options to the config file for display border, display stretch disable.
 
-_April 10, 2013:_
+April 10, 2013:
   * Added Mouse support (joysticks override mouse).
   * Fixed kiosk mode.
   * Fixed shinobi crashing (disabled drz80 audio for the rom).
 
-_April 06, 2013:_
+April 06, 2013:
   * HDMI audio option to force stereo for TVs that don't support mono properly. Configured using the "force_stereo" in mame.cfg.
 
-_April 01, 2013:_
+April 01, 2013:
   * Display ROM errors and invalid games messages.
 
-_March 26, 2013:_
+March 26, 2013:
   * Added favourites selection, press Coin 1 (or joystick button 6) to toggle favourites. File Favorites.ini goes in folders directory.
 
-_March 20, 2013:_
+March 20, 2013:
   * Reduced or eliminated sound static.
   * Fixed the sound in the galaxian group of games.
   * Fixed Neogeo crackling sound.
@@ -219,12 +222,12 @@ _March 20, 2013:_
   * Added key delay to frontend for easier selection.
   * Added "kiosk" mode option, stops MAME4ALL exiting from the game selection frontend.
 
-_March 16, 2013:_
+March 16, 2013:
   * Fixed the funky colour palette problems.
   * Now supports ten (previously six) joystick buttons.
   * Added configuration file (mame.cfg) support.
 
-_March 12, 2013:_
+March 12, 2013:
   * Added multiple USB joystick support.
   * Full keyboard support.
   * Added DrZ80 cpu core. Enabled by default for sound to improve performance for many games.
@@ -232,14 +235,14 @@ _March 12, 2013:_
   * Frontend GUI now uses 16bit bitmaps. 
   * Slightly higher sound mixer quality.
 
-_March 01, 2013:_
+March 01, 2013:
   * First release
 
-*TODO*
+TODO
 
   * Add better rotation support.
 
-*KNOWN PROBLEMS*
+KNOWN PROBLEMS
 
   * Not perfect sound or incomplete in some games. Sometimes simply quiting a game and restarting can fix the sound - believe this is due to ALSA Pi driver bugs. Additionally try removing pulseaudio to improve sound problems.
   * Make sure nothing is running in the background. For best performance run in the console instead of X-Windows. But if experiencing black screen in the console, try running in X-Windows or use the console overscan settings above.
@@ -248,16 +251,16 @@ _March 01, 2013:_
   * Slow playability in modern games. Most games run at full speed on an overclocked Pi.
   * Memory leaks. In case of errors/crashes reboot your Pi.
 
-*THANKS TO*
+THANKS TO
 
 tecboy for testing and patience!
 
-*INTERESTING WEBPAGES ABOUT MAME*
+INTERESTING WEBPAGES ABOUT MAME
 
   * http://www.mame.net/
   * http://www.mameworld.net/
 
-*SKINS*
+SKINS
 
 The frontend graphic skin used in the emulator is located in these files:
 
@@ -266,13 +269,13 @@ The frontend graphic skin used in the emulator is located in these files:
 
 Bitmaps have to be 640x480 pixels 65536 colors (16 bit R5G6B5). 
 
-*MAME LICENSE*
+MAME LICENSE
 
 http://www.mame.net
 
 http://www.mamedev.com
 
-Copyright 1997-2013, Nicola Salmoria and the MAME team. All rights reserved.
+Copyright 1997-2015, Nicola Salmoria and the MAME team. All rights reserved.
 
 Redistribution and use of this code or any derivative works are permitted provided
 that the following conditions are met:
