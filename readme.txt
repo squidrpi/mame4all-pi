@@ -12,9 +12,6 @@ Although this is an old version of MAME it plays much faster than the newer vers
 
 This is a highly optimised version for the Raspberry Pi, using GLES2/dispmanx for graphics, ALSA for sound and SDL for input. It also uses the GPU for post-processing effects like scanlines.
 
-Download it from the official Raspberry Pi Store App:
-http://store.raspberrypi.com/
-
 Web page for news, source, additional information:
 http://code.google.com/p/mame4all-pi/
 
@@ -179,6 +176,9 @@ http://dl.openhandhelds.org/cgi-bin/gp2x.cgi?0,0,0,0,5,2512
 
 
 *CHANGE LOG*
+
+_February 11, 2014:_
+  * Increased joystick axis detection
 
 _September 02, 2013:_
   * Supports more joystick axis and up to 16 joystick buttons.
