@@ -181,7 +181,8 @@ PORT CREDITS
 CHANGE LOG
 
 February 11, 2014:
-  * Increased joystick axis detection
+  * Increased joystick axis detection.
+  * Joystick controls default to XBOX 360 controller.
 
 September 02, 2013:
   * Supports more joystick axis and up to 16 joystick buttons.
