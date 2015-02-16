@@ -51,8 +51,9 @@ K_DOWN=274
 K_A=306
 K_QUIT=27
 #Joystick controls for frontend only
-J_START=9
-J_SELECT=8
+#Defaults to XBOX360 controller
+J_START=7
+J_SELECT=6
 J_A=0
 AXIS_LR=0
 AXIS_UD=1
