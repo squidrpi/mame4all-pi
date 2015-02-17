@@ -174,7 +174,7 @@ PORT CREDITS
 
 CHANGE LOG
 
-February 11, 2014:
+February 11, 2015:
   * Increased joystick axis detection.
   * Joystick controls default to XBOX 360 controller.
 
