@@ -8,7 +8,7 @@ It emulates all arcade games supported by original MAME 0.37b5 plus some additio
 
 This version emulates 2270 different romsets.
 
-Although this is an old version of MAME it plays much faster than the newer versions and as the Pi is rather CPU underpowered it was chosen to get as many games working at full speed as possible (full speed means 100% with no frame skip). It also plays most of the games I'm interested in playing!
+Although this is an old version of MAME it plays much faster than the newer versions and as the Pi is relatively CPU underpowered (yes even the RPi2) it was chosen to get as many games working at full speed as possible (full speed means 100% with no frame skip). It also plays most of the games I'm interested in playing!
 
 This is a highly optimised version for the Raspberry Pi, using GLES2/dispmanx for graphics, ALSA for sound and SDL for input. It also uses the GPU for post-processing effects like scanlines.
 
@@ -36,54 +36,10 @@ These are the standard MAME key definitions as follows. All MAME keys are also a
 NOTE: To type OK when MAME requires it with the joystick, press LEFT and then RIGHT.
 
 
-Pi CONFIGURATION
-
-I highly recommend overclocking your Raspberry Pi to gain maximum performance as MAME is very CPU intensive and overclocking will make most games run at full speed. The Pi 2 does not require overclocking.
-
-Overclocking is supported by the Raspberry Foundation.
-
-My overclocking settings which work well, (/boot/config.txt)
-{{{
-arm_freq=900
-core_freq=300
-sdram_freq=500
-}}}
-
-NOTE: Make sure overclocking is actually working by checking "cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor" should be "ondemand". Later kernels appear to set it to "powersave" by default. You will also need to make this permanent after a reboot.
-
-I'd also recommend a minimum of 64MB for the GPU RAM allocation (gpu_mem=64).
-
-If your sound is too quiet then do the following to fix that:
-{{{
-First get the playback device, type "amixer controls"
-This will show the numid for the playback device, probably 3.
-Now set the volume, type "amixer cset numid=3 90%".
-Then reboot to make it permanent.
-}}}
-
-If you're having problems with HDMI audio then it is likely PulseAudio
-is causing the issues as it has problems with the ALSA drivers. To fix
-this simply remove PulseAudio:
-{{{
-sudo apt-get --purge remove pulseaudio
-sudo apt-get autoremove
-}}}
-
-Additionally some TVs have problems with mono sound through HDMI, to fix this try setting the "force_stereo" to "yes" in mame.cfg.
-
-If you're getting a black screen when running in Console mode with
-Composite output, try removing/commenting out the "overscan_" parameters from "/boot/config.txt" as follows (using disable_overscan doesn't appear to fix it):
-{{{
-#overscan_left=16
-#overscan_right=16
-#overscan_top=16
-#overscan_bottom=16
-}}}
-
-If the image goes off your TV screen then you can change the border width by setting "display_border" in mame.cfg. 
-
 INSTALLATION
-{{{
+For the Pi Store version place the ROMS in the directory:
+/usr/local/bin/indiecity/InstalledApps/mame4all/Full/roms/
+
 mame        -> MAME and frontend.
 mame.cfg    -> MAME configuration file, limited support to only the options in the supplied file (not the full MAME settings).
 cheat.dat   -> Cheats definition file
@@ -100,13 +56,51 @@ samples/    -> Samples directory
 skins/      -> Frontend skins directory
 snap/       -> Screen snapshots directory
 sta/        -> Save states directory
-}}}
 
 To run MAME simple run the "mame" executable. At the command line "./mame".
 This runs the GUI frontend by default. To simply run MAME without the GUI
 enter "./mame {gamerom}" where "{gamerom}" is the game to run.
 
-It will work in X-Windows or in the Console.
+It will work in X-Windows or in the Console (which is preferred).
+
+
+Pi CONFIGURATION
+
+I highly recommend overclocking your Raspberry Pi to gain maximum performance as MAME is very CPU intensive and overclocking will make most games run at full speed. The Pi 2 does not require overclocking.
+
+Overclocking is supported by the Raspberry Foundation.
+
+My overclocking settings which work well, (/boot/config.txt)
+arm_freq=900
+core_freq=300
+sdram_freq=500
+
+NOTE: Make sure overclocking is actually working by checking "cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor" should be "ondemand". Later kernels appear to set it to "powersave" by default. You will also need to make this permanent after a reboot.
+
+I'd also recommend a minimum of 64MB for the GPU RAM allocation (gpu_mem=64).
+
+If your sound is too quiet then do the following to fix that:
+First get the playback device, type "amixer controls"
+This will show the numid for the playback device, probably 3.
+Now set the volume, type "amixer cset numid=3 90%".
+Then reboot to make it permanent.
+
+If you're having problems with HDMI audio then it is likely PulseAudio
+is causing the issues as it has problems with the ALSA drivers. To fix
+this simply remove PulseAudio:
+sudo apt-get --purge remove pulseaudio
+sudo apt-get autoremove
+
+Additionally some TVs have problems with mono sound through HDMI, to fix this try setting the "force_stereo" to "yes" in mame.cfg.
+
+If you're getting a black screen when running in Console mode with
+Composite output, try removing/commenting out the "overscan_" parameters from "/boot/config.txt" as follows (using disable_overscan doesn't appear to fix it):
+#overscan_left=16
+#overscan_right=16
+#overscan_top=16
+#overscan_bottom=16
+
+If the image goes off your TV screen then you can change the border width by setting "display_border" in mame.cfg. 
 
 GRAPHICS CONFIGURATION
 
