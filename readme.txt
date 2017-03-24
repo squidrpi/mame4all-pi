@@ -12,11 +12,8 @@ Although this is an old version of MAME it plays much faster than the newer vers
 
 This is a highly optimised version for the Raspberry Pi, using GLES2/dispmanx for graphics, ALSA for sound and SDL for input. It also uses the GPU for post-processing effects like scanlines.
 
-Pi Store version is here:
-http://store.raspberrypi.com/
-
 Web page for downloads, news, source, additional information:
-https://sourceforge.net/projects/mame4allpi/
+https://github.com/squidrpi/mame4all-pi
 
 (No asking for ROMS)
 
