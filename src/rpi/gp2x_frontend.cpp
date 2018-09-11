@@ -500,10 +500,14 @@ static void select_game(char *emu, char *game)
 		if (osd_is_sdlkey_pressed(pi_key[LEFT_1])) last_game_selected-=21;
 		if (osd_is_sdlkey_pressed(pi_key[RIGHT_1])) last_game_selected+=21;
 
+		if (is_joy_button_pressed(pi_joy[UP_1], ExKey1)) last_game_selected--;
+		if (is_joy_button_pressed(pi_joy[DOWN_1], ExKey1)) last_game_selected++;
+		if (is_joy_button_pressed(pi_joy[LEFT_1], ExKey1)) last_game_selected-=21;
+		if (is_joy_button_pressed(pi_joy[RIGHT_1], ExKey1)) last_game_selected+=21;
+
 		if (!kiosk_mode)
 		{
-			if( osd_is_sdlkey_pressed(pi_key[QUIT]) || 
-			    	(is_joy_button_pressed(pi_joy[START_1], ExKey1) && is_joy_button_pressed(pi_joy[SELECT_1], ExKey1)) ) {
+			if( osd_is_sdlkey_pressed(pi_key[QUIT]) || is_joy_button_pressed(pi_joy[QUIT], ExKey1)) {
 				gp2x_exit();
 			}
 		}
@@ -554,8 +558,12 @@ void frontend_gui (char *gamename, int first_run)
 {
 	FILE *f;
 
+    //Use changeres if it exists to switch screen mode to menu
+    system("./changeres mame");
+
 	/* GP2X Initialization */
 	gp2x_frontend_init();
+
 
 	gp2xmenu_bmp = (unsigned short*)calloc(1, 1000000);
 	gp2xsplash_bmp = (unsigned short*)calloc(1, 1000000);
@@ -597,9 +605,15 @@ void frontend_gui (char *gamename, int first_run)
 	pi_key[A_1] = get_int("frontend", "K_A",    NULL, KEY_LCONTROL);
 	pi_key[QUIT] = get_int("frontend", "K_QUIT",    NULL, KEY_ESC);
 
-	pi_joy[START_1] = get_int("frontend", "J_START",    NULL, 9);
-	pi_joy[SELECT_1] = get_int("frontend", "J_SELECT",    NULL, 8);
+	pi_joy[START_1] = get_int("frontend", "J_START",    NULL, 7);
+	pi_joy[SELECT_1] = get_int("frontend", "J_SELECT",    NULL, 6);
 	pi_joy[A_1] = get_int("frontend", "J_A",    NULL, 3);
+    pi_joy[QUIT] = get_int("frontend", "J_QUIT",    NULL, 8);
+
+    pi_joy[UP_1] = get_int("frontend", "J_UP",    NULL, 13);
+    pi_joy[DOWN_1] = get_int("frontend", "J_DOWN",    NULL, 14);
+    pi_joy[LEFT_1] = get_int("frontend", "J_LEFT",    NULL, 11);
+    pi_joy[RIGHT_1] = get_int("frontend", "J_RIGHT",    NULL, 12);
 
     //Read joystick axis to use, default to 0 & 1
     joyaxis_LR = get_int("frontend", "AXIS_LR", NULL, 0);
