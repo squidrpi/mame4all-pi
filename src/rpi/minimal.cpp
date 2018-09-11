@@ -315,7 +315,7 @@ void gp2x_set_video_mode(struct osd_bitmap *bitmap, int bpp,int width,int height
 		// Centre bitmap on screen
 	 	display_x = (display_x - sx) / 2;
 	 	display_y = (display_y - sy) / 2;
-	
+
 		vc_dispmanx_rect_set( &dst_rect, 
 								display_x + options.display_border, 
 								display_y + options.display_border, 
@@ -336,13 +336,15 @@ void gp2x_set_video_mode(struct osd_bitmap *bitmap, int bpp,int width,int height
 	  				10, &dst_rect, 0, &src_rect, 
 					DISPMANX_PROTECTION_NONE, NULL, NULL, DISPMANX_NO_ROTATE);
 
-	//Black background surface dimensions
-	vc_dispmanx_rect_set( &dst_rect, 0, 0, display_width, display_height );
-	vc_dispmanx_rect_set( &src_rect, 0, 0, 128 << 16, 128 << 16);
  
-	//Create a blank background for the whole screen, make sure width is divisible by 32!
+	//Create a blank background display, same size as display to avoid expensive stretching
 	uint32_t crap;
-	resource_bg = vc_dispmanx_resource_create(VC_IMAGE_RGB565, 128, 128, &crap);
+	resource_bg = vc_dispmanx_resource_create(VC_IMAGE_RGB565, display_width, display_height, &crap);
+
+	//Black background surface dimensions
+	vc_dispmanx_rect_set( &src_rect, 0, 0, display_width << 16, display_height << 16);
+	vc_dispmanx_rect_set( &dst_rect, 0, 0, display_width, display_height );
+
 	dispman_element_bg = vc_dispmanx_element_add(  dispman_update, dispman_display,
 	                                      9, &dst_rect, resource_bg, &src_rect,
 	                                      DISPMANX_PROTECTION_NONE, 0, 0,
