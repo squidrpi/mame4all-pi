@@ -411,6 +411,18 @@ gui_loop:
 
     /* go for it */
     printf ("%s (%s)...\n",drivers[game_index]->description,drivers[game_index]->name);
+
+    {
+        // Run changeres script if it exists, passing rom name. Used to change display
+        // resolution just before the game starts
+        char runcmd[256];
+        
+        strcpy(runcmd, "./changeres ");
+        strcat(runcmd, drivers[game_index]->name);
+        printf ("%s\n", runcmd);
+        system(runcmd);
+    }
+
     res = run_game (game_index);
 
 	/* close open files */
