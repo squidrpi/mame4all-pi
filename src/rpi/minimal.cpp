@@ -307,10 +307,18 @@ void gp2x_set_video_mode(struct osd_bitmap *bitmap, int bpp,int width,int height
 		display_x = sx = display_adj_width;
 		display_y = sy = display_adj_height;
 
-	 	if (game_ratio>display_ratio) 
-			sy = (float)display_adj_width/(float)game_ratio;
-	 	else 
-			sx = (float)display_adj_height*(float)game_ratio;
+        // Special 4/3 mode for CRT and special hdmi modes, see changeres script
+        if (options.display_crt_special)
+        {
+            if (height > width)
+                sx =  (float)display_adj_width/((float)4/(float)3);
+        }
+        else {
+    	 	if (game_ratio>display_ratio) 
+    			sy = (float)display_adj_width/(float)game_ratio;
+    	 	else 
+    			sx = (float)display_adj_height*(float)game_ratio;
+        }
 	 
 		// Centre bitmap on screen
 	 	display_x = (display_x - sx) / 2;

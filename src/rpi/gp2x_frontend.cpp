@@ -510,6 +510,10 @@ static void select_game(char *emu, char *game)
 			if( osd_is_sdlkey_pressed(pi_key[QUIT]) || is_joy_button_pressed(pi_joy[QUIT], ExKey1)) {
 				gp2x_exit();
 			}
+
+            if (is_joy_button_pressed(pi_joy[SELECT_1], ExKey1) && is_joy_button_pressed(pi_joy[START_1], ExKey1)) {
+                 gp2x_exit();
+            }
 		}
 
 		if (is_joy_button_pressed(pi_joy[A_1], ExKey1) || 

@@ -484,6 +484,7 @@ void parse_cmdline (int argc, char **argv, int game_index)
 	options.display_border = get_int ("config", "display_border", NULL, 24);
 	options.display_smooth_stretch = get_bool ("config", "display_smooth_stretch", NULL, 1);
 	options.display_effect = get_int ("config", "display_effect", NULL, 0);
+	options.display_crt_special = get_bool ("config", "display_crt_special", NULL, 0);
 
 	kiosk_mode = get_bool("config", "kioskmode", NULL, 0);
 

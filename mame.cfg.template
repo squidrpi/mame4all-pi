@@ -25,6 +25,7 @@ display_smooth_stretch=yes
 display_border=0
 # display effect postprocessing: 0 none, 1 scanlines
 display_effect=0
+display_crt_special=no
 
 [directory]
 inp=inp
