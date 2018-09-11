@@ -40,11 +40,11 @@ CFLAGS = -fsigned-char $(DEVLIBS) \
 	-mstructure-size-boundary=32 -fexpensive-optimizations \
 	-fweb -frename-registers -falign-functions=16 -falign-loops -falign-labels -falign-jumps \
 	-finline -finline-functions -fno-common -fno-builtin -fsingle-precision-constant \
-	-Wall -Wno-sign-compare -Wunused -Wpointer-arith -Wcast-align -Waggregate-return -Wshadow 
+	-Wall -Wno-sign-compare -Wunused -Wpointer-arith -Wcast-align -Waggregate-return -Wshadow -Wno-error=narrowing
 
 LDFLAGS = $(CFLAGS)
 
-LIBS = -lm -lpthread -lSDL -L$(SDKSTAGE)/opt/vc/lib -lbcm_host -lGLESv2 -lEGL -lglib-2.0 -lasound -lrt
+LIBS = -lm -lpthread -lSDL -L$(SDKSTAGE)/opt/vc/lib -lbcm_host -lbrcmGLESv2 -lbrcmEGL -lglib-2.0 -lasound -lrt
 
 OBJ = obj_$(TARGET)_$(MAMEOS)
 OBJDIRS = $(OBJ) $(OBJ)/cpu $(OBJ)/sound $(OBJ)/$(MAMEOS) \
