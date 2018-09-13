@@ -34,8 +34,7 @@ NOTE: To type OK when MAME requires it with the joystick, press LEFT and then RI
 
 
 INSTALLATION
-For the Pi Store version place the ROMS in the directory:
-/usr/local/bin/indiecity/InstalledApps/mame4all/Full/roms/
+Install the zip file anywhere you like, e.g. /usr/games/mame4all/
 
 mame        -> MAME and frontend.
 mame.cfg    -> MAME configuration file, limited support to only the options in the supplied file (not the full MAME settings).
@@ -104,6 +103,8 @@ GRAPHICS CONFIGURATION
 To switch off anti-aliasing drawing set the "display_smooth_stretch" to "no" in the mame.cfg. Performance can be impacted depending on the size of your monitor's resolution when switching off anti-aliasing. The "antialias" setting in mame.cfg is only for vector drawing.
 
 Postprocessing scanline drawing is available, the "display_effect" in the mame.cfg controls this. Scanlines work best when "display_smooth_stretch" is set to "no".
+
+On the fly HDMI resolution change is implemented. It calls the "changeres" script when the menu is opened and also when a game is opened. This is a custom script so edit to your liking, an example is included.
 
 
 SUPPORTED GAMES
