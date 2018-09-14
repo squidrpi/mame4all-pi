@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 #
 #GAMENAME=$1
 #
@@ -8,8 +8,8 @@
 #timing[1]="hdmi_timings 1920 1 172 192 332 224 1 14 5 20 0 0 0 60.0 0 41280480 1"
 #timing[2]="hdmi_timings 1920 1 172 192 332 256 1 0 5 2 0 0 0 60.0 0 41280480 1"
 #timing[3]="hdmi_timings 1920 1 172 192 332 256 1 10 5 16 0 0 0 55.0 0 41293560 1" #rtype 
+#timing[4]="hdmi_timings 470 1 34 35 70 280 1 10 1 20 0 0 0 60 0 9600000 1" #vector
 #
-## GAMENAME "mame" is the menu
 #if [ $GAMENAME == "mame" ];
 #then
 #  vcgencmd hdmi_timings 320 1 16 30 34 240 1 2 3 22 0 0 0 60 0 6400000 1
@@ -18,15 +18,17 @@
 #  exit
 #fi
 #
-#PAR1=`grep "^${GAMENAME} " changeres.db`
+#PAR1=`grep "^${GAMENAME} " changeres.db | head -1`
 #PARX=`echo $PAR1 | cut -d" " -f2`
 #PARY=`echo $PAR1 | cut -d" " -f3`
 #
-##Get framerate from advancemame listing
-#PAR2=`grep "^${GAMENAME} " advmame_games.txt`
+##Get framerate 
+#PAR2=`grep "^${GAMENAME} " changeres_timings.db`
 #REFRESH=`echo $PAR2 | cut -d" " -f4`
 #
-#if [ "$REFRESH" == "55.000000" ]; then
+#if [ "$PARX" == "vector" ]; then
+#    settiming=${timing[4]}
+#elif [ "$REFRESH" == "55.000000" ]; then
 #    settiming=${timing[3]}
 #elif [ "$PARY" == "240" -o  "$PARY" == "248" ]; then
 #    settiming=${timing[0]}
