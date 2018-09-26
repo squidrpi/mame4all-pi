@@ -172,6 +172,11 @@ PORT CREDITS
 
 CHANGE LOG
 
+September, 2018:
+  * Fixes for Raspbian Stretch
+  * Reinstated start+select quit
+  * CRT special mode
+
 February 11, 2015:
   * Increased joystick axis detection.
   * Joystick controls default to XBOX 360 controller.
